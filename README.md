@@ -1,4 +1,4 @@
-# mb-blog-client
+# cricket-creations-client
 
 ## Project setup
 ```

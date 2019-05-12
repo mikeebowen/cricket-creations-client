@@ -1,0 +1,36 @@
+// Sizes
+$htmlFontSize: 62.5%; // sets 1rem to 10px
+$defaultFontSize: 1.4rem;
+$h1FontSize: 2.4rem;
+
+//Breakpoints
+$smBreakPoint: 575.98px;
+$medBreakPoint: 767.98px;
+$lgBreakPoint: 991.98px;
+$xlBreakPoint: 1199.98px;
+
+// Palette URL: http://paletton.com/#uid=35-0u0k384+enlwdEjqj-eMmpdq */
+
+$color-primary-0: #343A40;	// Main Primary color */
+$color-primary-1: #6C747C;
+$color-primary-2: #4F575E;
+$color-primary-3: #1A1F24;
+$color-primary-4: #121B25;
+
+$color-secondary-1-0: #635E4F;	// Main Secondary color (1) */
+$color-secondary-1-1: #BFB8A4;
+$color-secondary-1-2: #918B78;
+$color-secondary-1-3: #383426;
+$color-secondary-1-4: #383119;
+
+$color-secondary-2-0: #63554F;	// Main Secondary color (2) */
+$color-secondary-2-1: #BFADA4;
+$color-secondary-2-2: #918078;
+$color-secondary-2-3: #382C26;
+$color-secondary-2-4: #382319;
+
+// Default Colors
+$white: white;
+$black: black;
+$bodyBackgroundColor: #f8f8ff;
+$defaultFontColor: $color-primary-4;
