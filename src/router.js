@@ -13,8 +13,8 @@ export default new Router({
       name: 'home',
       components: {
         default: Home,
-        headerComponent: null
-      }
+        headerComponent: null,
+      },
     },
     {
       path: '/about',
@@ -28,8 +28,8 @@ export default new Router({
         },
         headerComponent () {
           return import('./components/Header');
-        }
-      }
-    }
-  ]
+        },
+      },
+    },
+  ],
 });

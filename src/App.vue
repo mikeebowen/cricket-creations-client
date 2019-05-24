@@ -14,12 +14,23 @@ import FooterComponent from '@/components/Footer.vue';
 export default {
   name: 'app',
   components: {
-    FooterComponent
-  }
+    FooterComponent,
+  },
+  mounted () {
+
+  },
 };
 </script>
 
 
 <style lang="scss">
   @import "@/styles.scss";
+
+  #app {
+    height: 100%;
+  }
+
+  .container {
+    height: 100%;
+  }
 </style>
