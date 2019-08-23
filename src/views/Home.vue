@@ -38,7 +38,7 @@ import ExplodingParticles from '@/components/ExplodingParticles.vue';
 
 export default {
   name: 'home',
-  components: { ExplodingParticles },
+  components: {ExplodingParticles},
   data () {
     return {
       showParticles: false,
@@ -77,6 +77,8 @@ export default {
 
 .main-wrapper {
   overflow: hidden !important;
+  height: 100%;
+  width: 100%;
 }
 
 .home-container {

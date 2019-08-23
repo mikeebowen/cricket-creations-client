@@ -1,11 +1,17 @@
 <template>
-  <div id="app">
-    <router-view name="headerComponent" />
-    <b-container>
-      <router-view/>
-    </b-container>
-    <FooterComponent />
-  </div>
+  <v-app id="app">
+    <v-app-bar app>
+      <router-view name="headerComponent" />
+    </v-app-bar>
+    <v-content app>
+      <v-container fill-height>
+        <router-view/>
+      </v-container>
+    </v-content>
+    <v-footer app>
+      <FooterComponent />
+    </v-footer>
+  </v-app>
 </template>
 
 <script>

@@ -44,7 +44,6 @@ export default {
 
 <style lang="scss" scoped>
   @import "@/variables.scss";
-  @import "../../node_modules/bootstrap/scss/bootstrap.scss";
 
   :host {
     position: fixed;
@@ -66,7 +65,7 @@ export default {
 
   .router-link-active {
     &:not(.home-link) {
-      @extend .active;
+      // @extend .active;
     }
   }
 
