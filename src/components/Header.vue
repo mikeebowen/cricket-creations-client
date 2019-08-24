@@ -1,79 +1,32 @@
 <template>
-  <b-navbar toggleable="md" variant="dark" type="dark" fixed="true" >
-    <b-navbar-brand>
-      <router-link class="cricket-logo home-link" to="/" >
-        <img src="@/assets/images/grasshopper-white.png" class="d-inline-block align-top" alt="grasshopper">
-      </router-link>
-    </b-navbar-brand>
-    <b-navbar-toggle target="headerNavBar"></b-navbar-toggle>
-    <b-collapse id="headerNavBar" is-nav>
-      <b-navbar-nav>
-        <b-nav-item>
-          <router-link class="nav-link home-link" to="/" >
-            Home
-          </router-link>
-        </b-nav-item>
-        <b-nav-item>
-          <router-link class="nav-link" to="/projects">
-            Projects
-          </router-link>
-        </b-nav-item>
-        <b-nav-item>
-          <router-link class="nav-link" to="/blog" >
-            Blog
-          </router-link>
-        </b-nav-item>
-        <b-nav-item>
-          <router-link class="nav-link" to="/about" >
-            About
-          </router-link>
-        </b-nav-item>
-      </b-navbar-nav>
-      <ul class="navbar-nav">
-
-      </ul>
-    </b-collapse>
-  </b-navbar>
+  <div class="header">
+    <v-toolbar flat color="#f8f8ff">
+      <v-btn text to="/">
+        <v-img src="@/assets/images/grasshopper-black.png" max-height="50px" max-width="50px" to="/" />
+        <v-toolbar-title class="title">Cricket Creations</v-toolbar-title>
+      </v-btn>
+      <div class="flex-grow-1"></div>
+      <v-toolbar-items>
+        <v-btn text to="/projects">Projects</v-btn>
+        <v-btn text to="/blog">Blog</v-btn>
+        <v-btn text to="/about">About</v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'header-component',
+  name: 'Header',
 };
 </script>
 
 <style lang="scss" scoped>
-  @import "@/variables.scss";
-
-  :host {
-    position: fixed;
-    top: 0;
-    width: 100%;
-  }
-
-  #headerNavBar {
-    a {
-      font-size: 2.4rem;
-    }
-  }
-
-  .cricket-logo {
-    img {
-      height: 50px;
-    }
-  }
-
-  .router-link-active {
-    &:not(.home-link) {
-      // @extend .active;
-    }
-  }
-
-  @media screen and (max-width: $medBreakPoint) {
-    .cricket-logo {
-      img {
-        height: 30px;
-      }
+  // @import "@/variables.scss";
+  .header {
+    .title {
+      font-family: "Bevan", cursive !important;
+      text-transform: initial;
     }
   }
 </style>

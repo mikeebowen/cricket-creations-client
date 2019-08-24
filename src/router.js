@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
 
 Vue.use(Router);
 
@@ -12,7 +11,7 @@ export default new Router({
       path: '/',
       name: 'home',
       components: {
-        default: Home,
+        default: () => import('@/views/Home.vue'),
         headerComponent: null,
       },
     },
@@ -23,12 +22,24 @@ export default new Router({
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       components: {
-        default () {
-          return import(/* webpackChunkName: "about" */ './views/About.vue');
-        },
-        headerComponent () {
-          return import('./components/Header');
-        },
+        default: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+        headerComponent: () => import('@/components/Header.vue'),
+      },
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      components: {
+        default: () => import('@/views/Projects.vue'),
+        headerComponent: () => import('@/components/Header.vue'),
+      },
+    },
+    {
+      path: '/blog',
+      name: 'blog',
+      components: {
+        default: () => import('@/views/Blog.vue'),
+        headerComponent: () => import('@/components/Header.vue'),
       },
     },
   ],

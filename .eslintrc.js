@@ -22,7 +22,11 @@ module.exports = {
     _: true,
   },
   parserOptions: {
+    parser: 'babel-eslint',
     sourceType: 'module',
+    ecmaFeatures: {
+      impliedStrict: true,
+    },
   },
   rules: {
     'array-bracket-newline': ['error', 'consistent'],

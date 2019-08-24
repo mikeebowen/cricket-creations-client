@@ -1,8 +1,6 @@
 <template>
   <v-app id="app">
-    <v-app-bar app>
-      <router-view name="headerComponent" />
-    </v-app-bar>
+    <router-view name="headerComponent" />
     <v-content app>
       <v-container fill-height>
         <router-view/>
