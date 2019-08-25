@@ -1,26 +1,14 @@
 <template>
   <v-app id="app">
-    <router-view name="headerComponent" />
-    <v-content app>
-      <v-container fill-height>
-        <router-view/>
-      </v-container>
-    </v-content>
-    <FooterComponent />
+    <router-view name="appBar" />
+    <router-view/>
+    <router-view name="footer"></router-view>
   </v-app>
 </template>
 
 <script>
-import FooterComponent from '@/components/Footer.vue';
-
 export default {
-  name: 'app',
-  components: {
-    FooterComponent,
-  },
-  mounted () {
-
-  },
+  name: 'App',
 };
 </script>
 
@@ -29,10 +17,6 @@ export default {
   @import "@/styles.scss";
 
   #app {
-    height: 100%;
-  }
-
-  .container {
     height: 100%;
   }
 </style>

@@ -12,7 +12,8 @@ export default new Router({
       name: 'home',
       components: {
         default: () => import('@/views/Home.vue'),
-        headerComponent: null,
+        appBar: null,
+        footer: () => import('@/components/Footer.vue'),
       },
     },
     {
@@ -23,7 +24,8 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       components: {
         default: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
-        headerComponent: () => import('@/components/Header.vue'),
+        appBar: () => import('@/components/Header.vue'),
+        footer: () => import('@/components/Footer.vue'),
       },
     },
     {
@@ -31,7 +33,8 @@ export default new Router({
       name: 'projects',
       components: {
         default: () => import('@/views/Projects.vue'),
-        headerComponent: () => import('@/components/Header.vue'),
+        appBar: () => import('@/components/Header.vue'),
+        footer: () => import('@/components/Footer.vue'),
       },
     },
     {
@@ -39,7 +42,8 @@ export default new Router({
       name: 'blog',
       components: {
         default: () => import('@/views/Blog.vue'),
-        headerComponent: () => import('@/components/Header.vue'),
+        appBar: () => import('@/components/Header.vue'),
+        footer: () => import('@/components/Footer.vue'),
       },
     },
   ],

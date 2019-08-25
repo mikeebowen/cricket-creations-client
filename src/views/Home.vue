@@ -1,36 +1,38 @@
 <template>
-  <div class="main-wrapper">
-    <div id="stars1"></div>
-    <div id="stars2"></div>
-    <div id="stars3"></div>
-    <div class="home-container pt-4">
-      <h1>Cricket Creations</h1>
-    </div>
-    <div class="home-container">
-      <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" class="mt-sm-5">
-    </div>
-    <div class="home-container mt-5">
-      <h2 class="mr-sm-2 mr-md-3 mr-lg-5">
-        <span>{</span>
-        <router-link to="/projects" class="mx-1 homepage-link">Projects</router-link>
-        <span>}</span>
-      </h2>
-      <h2 class="mx-sm-2 mx-md-3 mx-lg-5">
-        <span>{</span>
-        <router-link to="/blog" class="mx-1 homepage-link">Blog</router-link>
-        <span>}</span>
-      </h2>
-      <h2 class="ml-sm-2 ml-md-3 ml-lg-5">
-        <span>{</span>
-        <router-link to="/about" class="mx-1 homepage-link">About</router-link>
-        <span>}</span>
-      </h2>
-    </div>
-    <div class="home-container">
-      <hr>
-    </div>
-    <ExplodingParticles ref="particles" v-show="showParticles" />
-  </div>
+  <v-content app>
+    <v-container class="main-wrapper">
+      <div id="stars1"></div>
+      <div id="stars2"></div>
+      <div id="stars3"></div>
+      <div class="home-container pt-4">
+        <h1>Cricket Creations</h1>
+      </div>
+      <div class="home-container">
+        <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" class="mt-sm-5">
+      </div>
+      <div class="home-container mt-5">
+        <h2 class="mr-sm-2 mr-md-3 mr-lg-5">
+          <span>{</span>
+          <router-link to="/projects" class="mx-1 homepage-link">Projects</router-link>
+          <span>}</span>
+        </h2>
+        <h2 class="mx-sm-2 mx-md-3 mx-lg-5">
+          <span>{</span>
+          <router-link to="/blog" class="mx-1 homepage-link">Blog</router-link>
+          <span>}</span>
+        </h2>
+        <h2 class="ml-sm-2 ml-md-3 ml-lg-5">
+          <span>{</span>
+          <router-link to="/about" class="mx-1 homepage-link">About</router-link>
+          <span>}</span>
+        </h2>
+      </div>
+      <div class="home-container">
+        <hr>
+      </div>
+      <ExplodingParticles ref="particles" v-show="showParticles" />
+    </v-container>
+  </v-content>
 </template>
 
 <script>
