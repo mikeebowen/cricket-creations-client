@@ -1,6 +1,6 @@
 <template>
   <div class="main-wrapper">
-    <div id="stars"></div>
+    <div id="stars1"></div>
     <div id="stars2"></div>
     <div id="stars3"></div>
     <div class="home-container pt-4">
@@ -45,14 +45,16 @@ export default {
     };
   },
   mounted () {
-    document.querySelectorAll('body')[0].addEventListener('mousedown', this.toggleStarBurst);
-    document.querySelectorAll('body')[0].addEventListener('mouseup', this.toggleStarBurst);
-    document.querySelectorAll('body')[0].style.overflow = 'hidden';
+    const body = document.querySelectorAll('body')[0];
+    body.addEventListener('mousedown', this.toggleStarBurst);
+    body.addEventListener('mouseup', this.toggleStarBurst);
+    body.setAttribute('style', 'overflow-y: hidden !important; overflow-x: hidden !important');
   },
   beforeDestroy () {
-    document.querySelectorAll('body')[0].removeEventListener('mousedown', this.toggleStarBurst);
-    document.querySelectorAll('body')[0].removeEventListener('mouseup', this.toggleStarBurst);
-    document.querySelectorAll('body')[0].style.overflow = 'auto';
+    const body = document.querySelectorAll('body')[0];
+    body.removeEventListener('mousedown', this.toggleStarBurst);
+    body.removeEventListener('mouseup', this.toggleStarBurst);
+    body.removeAttribute('style');
   },
   methods: {
     toggleStarBurst (e) {
@@ -140,54 +142,34 @@ $shadows-small: multiple-box-shadow(7000);
 $shadows-medium: multiple-box-shadow(2000);
 $shadows-big: multiple-box-shadow(1000);
 
-#stars {
-  width: 1px;
-  height: 1px;
-  background: transparent;
-  box-shadow: $shadows-small;
-  animation: animStar 50s linear infinite;
-
-  &:after {
-    content: " ";
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    background: transparent;
+@mixin boxShaddow($val) {
+  @if $val == 1 {
     box-shadow: $shadows-small;
   }
-}
-
-#stars2 {
-  width: 2px;
-  height: 2px;
-  background: transparent;
-  box-shadow: $shadows-medium;
-  animation: animStar 100s linear infinite;
-
-  &:after {
-    content: " ";
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: transparent;
+  @if $val == 2 {
     box-shadow: $shadows-medium;
+  }
+  @if $val == 3 {
+    box-shadow: $shadows-big;
   }
 }
 
-#stars3 {
-  width: 3px;
-  height: 3px;
-  background: transparent;
-  box-shadow: $shadows-big;
-  animation: animStar 150s linear infinite;
-
-  &:after {
-    content: " ";
-    position: absolute;
-    width: 3px;
-    height: 3px;
+@for $i from 1 to 3 {
+  #stars#{$i} {
+    height: #{$i}px;
+    width: #{$i}px;
     background: transparent;
-    box-shadow: $shadows-big;
+    @include boxShaddow($i);
+    animation: animStar #{$i * 50}s linear infinite;
+
+    &::after {
+      content: " ";
+      position: absolute;
+      height: #{$i}px;
+      width: #{$i}px;
+      background: transparent;
+      @include boxShaddow($i);
+    }
   }
 }
 
