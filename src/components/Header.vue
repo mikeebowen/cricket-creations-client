@@ -22,7 +22,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  // @import "@/variables.scss";
   .header {
     .title {
       font-family: "Bevan", cursive !important;

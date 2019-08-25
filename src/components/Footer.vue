@@ -1,30 +1,23 @@
 <template>
-  <div class="footer-wrapper">
-    <footer class="footer-container fixed-bottom d-flex justify-content-center align-content-center align-items-center w-100">
-      <div class="site-author mr-5">by Michael Bowen</div>
-      <a href="https://github.com/mikeebowen" class="mr-5"><font-awesome-icon :icon="['fab', 'github']" size="2x" /></a>
-      <a href="https://www.linkedin.com/in/michaelbowen1/" class="mr-5"><font-awesome-icon :icon="['fab', 'linkedin']" size="2x" /></a>
-      <a href="https://stackoverflow.com/users/5045467/cascadiajs"><font-awesome-icon :icon="['fab', 'stack-overflow']" size="2x" /></a>
-    </footer>
-  </div>
+  <v-footer app absolute width="100%" color="#f8f8ff">
+    <v-row>
+      <v-col class="text-center pa-0" cols="12">
+        <v-btn text href="https://github.com/mikeebowen">
+          <v-icon v-text="'fab fa-github'" />
+        </v-btn>
+        <v-btn text href="https://www.linkedin.com/in/michaelbowen1/">
+          <v-icon v-text="'fab fa-linkedin'" />
+        </v-btn>
+        <v-btn text href="https://stackoverflow.com/users/5045467/cascadiajs">
+          <v-icon v-text="'fab fa-stack-overflow'" />
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-footer>
 </template>
 
 <script>
 export default {
-  name: 'footer-component',
+  name: 'FooterComponent',
 };
 </script>
-
-<style lang="scss" scoped>
-  @import "@/variables.scss";
-
-  footer {
-    padding: .5rem 0;
-
-    &.footer-container {
-      a {
-        color: $defaultFontColor;
-      }
-    }
-  }
-</style>
