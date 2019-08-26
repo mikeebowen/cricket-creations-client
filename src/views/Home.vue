@@ -1,34 +1,19 @@
 <template>
   <v-content app>
-    <v-container class="main-wrapper">
-      <div id="stars1"></div>
-      <div id="stars2"></div>
-      <div id="stars3"></div>
-      <div class="home-container pt-4">
-        <h1>Cricket Creations</h1>
+    <div v-for="i in 4" :key="i" :id="`stars${i}`"></div>
+    <v-container class="main-wrapper d-flex flex-column justify-space-around">
+      <div class="home-container pt-4 align-start">
+        <h1 class="text-center">Cricket Creations</h1>
       </div>
       <div class="home-container">
-        <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" class="mt-sm-5">
+        <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" >
       </div>
       <div class="home-container mt-5">
-        <h2 class="mr-sm-2 mr-md-3 mr-lg-5">
-          <span>{</span>
-          <router-link to="/projects" class="mx-1 homepage-link">Projects</router-link>
-          <span>}</span>
-        </h2>
-        <h2 class="mx-sm-2 mx-md-3 mx-lg-5">
-          <span>{</span>
-          <router-link to="/blog" class="mx-1 homepage-link">Blog</router-link>
-          <span>}</span>
-        </h2>
-        <h2 class="ml-sm-2 ml-md-3 ml-lg-5">
-          <span>{</span>
-          <router-link to="/about" class="mx-1 homepage-link">About</router-link>
-          <span>}</span>
-        </h2>
-      </div>
-      <div class="home-container">
-        <hr>
+        <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
+            <span class="pr-1">{</span>
+            {{page.name}}
+            <span class="pl-1">}</span>
+          </v-btn>
       </div>
       <ExplodingParticles ref="particles" v-show="showParticles" />
     </v-container>
@@ -44,6 +29,11 @@ export default {
   data () {
     return {
       showParticles: false,
+      pages: [
+        {name: 'Projects', link: '/projects'},
+        {name: 'Blog', link: '/blog'},
+        {name: 'About', link: '/about'},
+      ],
     };
   },
   mounted () {
@@ -60,7 +50,7 @@ export default {
   },
   methods: {
     toggleStarBurst (e) {
-      if (!Array.prototype.includes.call(e.target.classList, 'homepage-link')) {
+      if (Array.prototype.every.call(e.target.classList, c => c !== 'homepage-link' && c !== 'v-btn__content')) {
         this.$refs.particles.$el.style.left = `${e.clientX}px`;
         this.$refs.particles.$el.style.top = `${e.clientY}px`;
         if (this.showParticles) {
@@ -83,6 +73,10 @@ export default {
   overflow: hidden !important;
   height: 100%;
   width: 100%;
+
+  &::v-deep .v-btn__content {
+    align-items: baseline;
+  }
 }
 
 .home-container {
@@ -97,9 +91,10 @@ export default {
     font-size: 4.8rem;
   }
 
-  h2 {
+  .homepage-link {
     span {
       visibility: hidden;
+      font-size: 1.25rem;
     }
 
     &:hover,
@@ -112,20 +107,11 @@ export default {
     a {
       color: $defaultFontColor;
       text-decoration: none;
-      vertical-align: middle;
     }
   }
 
   img {
-    max-height: 200px;
-  }
-
-  hr {
-    width: 80%;
-  }
-
-  .fab {
-    margin: 0 1rem;
+    max-height: 300px;
   }
 }
 
@@ -156,7 +142,7 @@ $shadows-big: multiple-box-shadow(1000);
   }
 }
 
-@for $i from 1 to 3 {
+@for $i from 1 to 4 {
   #stars#{$i} {
     height: #{$i}px;
     width: #{$i}px;
@@ -186,11 +172,32 @@ $shadows-big: multiple-box-shadow(1000);
 }
 //////////////////////////////////////////
 
-@media screen and (max-width: $smBreakPoint) {
+@media screen and (max-width: $medBreakPoint) {
   .home-container {
     h1 {
-      margin: 2rem;
-      text-align: center;
+      font-size: 3.8rem;
+    }
+
+     img {
+      max-width: 350px;
+     }
+  }
+}
+
+@media screen and (max-width: $smBreakPoint) {
+  .main-wrapper {
+    &::v-deep .v-btn:not(.v-btn--round).v-size--x-large {
+      padding-right: 0;
+    }
+  }
+
+  .home-container {
+    h1 {
+      font-size: 2.8rem;
+    }
+
+    img {
+      max-height: 150px;
     }
   }
 }
