@@ -129,6 +129,7 @@ export default {
 $shadows-small: multiple-box-shadow(7000);
 $shadows-medium: multiple-box-shadow(2000);
 $shadows-big: multiple-box-shadow(1000);
+$shadows-xl: multiple-box-shadow(500);
 
 @mixin boxShaddow($val) {
   @if $val == 1 {
@@ -139,6 +140,9 @@ $shadows-big: multiple-box-shadow(1000);
   }
   @if $val == 3 {
     box-shadow: $shadows-big;
+  }
+  @if $val == 4 {
+    box-shadow: $shadows-xl;
   }
 }
 
