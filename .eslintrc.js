@@ -32,7 +32,7 @@ module.exports = {
     'array-bracket-newline': ['error', 'consistent'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['error', 'always'],
-    indent: ['error', 2, {MemberExpression: 2, SwitchCase: 2}],
+    indent: ['error', 2, {MemberExpression: 1, SwitchCase: 2}],
     'max-len': ['warn', 140, {ignoreUrls: true, ignoreStrings: true, ignoreComments: true}],
     'newline-per-chained-call': ['error', {ignoreChainWithDepth: 3}],
     'no-console': ['warn', {allow: ['warn', 'error']}],
