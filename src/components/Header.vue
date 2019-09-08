@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app flat color="#f8f8ff">
+  <v-app-bar app flat color="#f8f8ff" absolute hide-on-scroll>
     <v-btn text to="/">
       <v-img src="@/assets/images/grasshopper-black.png" max-height="50px" max-width="50px" to="/" />
       <v-toolbar-title class="title">Cricket Creations</v-toolbar-title>

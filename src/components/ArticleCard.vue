@@ -1,18 +1,20 @@
 <template>
-  <v-card>
-      <slot>
-        <v-img :src="article && article.image" class="white--text">
-          <v-card-title class="align-end fill-height">{{article && article.title}}</v-card-title>
-        </v-img>
-        <v-card-text>
-          <p>{{article && article.author && article.author.firstName}} {{article && article.author && article.author.lastName}}</p>
-        </v-card-text>
-        <v-card-text class="text--primary article" v-html="article && article.shortText">
-        </v-card-text>
-        <v-card-actions>
-          <v-btn text>Read more...</v-btn>
-        </v-card-actions>
-      </slot>
+  <v-card class="d-inline-block ma-3">
+    <v-img :src="article && article.image && article.image.src" :alt="article && article.image && article.image.alt" min-height="100px" class="white--text" @load="isLoading = false">
+      <v-card-title v-if="!isLoading" class="align-end fill-height">{{article && article.title}}</v-card-title>
+      <template #placeholder>
+        <v-row class="fill-height ma-0" align="center" justify="center">
+          <v-icon v-text="'fas fa-circle-notch fa-spin'" />
+        </v-row>
+      </template>
+    </v-img>
+    <v-card-text>
+      <p>{{article && article.author && article.author.firstName}} {{article && article.author && article.author.lastName}}</p>
+    </v-card-text>
+    <v-card-text class="text--primary article" v-html="article && article.shortText" />
+    <v-card-actions>
+      <v-btn text>Read more...</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -21,6 +23,11 @@ export default {
   name: 'ArticleCard',
   props: {
     article: Object,
+  },
+  data() {
+    return {
+      isLoading: true,
+    };
   },
 };
 </script>
