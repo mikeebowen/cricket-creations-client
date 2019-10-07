@@ -8,7 +8,7 @@ html {
 html,
 body {
   height: 100%;
-  overflow-y: auto !important;
+  overflow-y: none !important;
 }
 
 body {
@@ -16,7 +16,6 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 1.4rem;
   color: $color-primary-4;
-  background-color: $bodyBackgroundColor;
 }
 
 @for $i from 1 to 6 {

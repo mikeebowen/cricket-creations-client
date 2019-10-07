@@ -1,5 +1,5 @@
 <template>
-  <v-content app>
+  <v-content app class="content-wrapper">
     <div v-for="i in 4" :key="i" :id="`stars${i}`"></div>
     <v-container class="main-wrapper d-flex flex-column justify-space-around">
       <div class="home-container pt-4 align-start">
@@ -68,6 +68,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/variables.scss";
+
+.content-wrapper {
+  background-color: $bodyBackgroundColor;
+}
 
 .main-wrapper {
   overflow: hidden !important;
