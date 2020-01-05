@@ -42,8 +42,17 @@ export default new Router({
       name: 'blog',
       components: {
         default: () => import('@/views/Blog.vue'),
-        appBar: () => import('@/components/Header.vue'),
+        header: () => import('@/components/Header.vue'),
         footer: () => import('@/components/Footer.vue'),
+      },
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      components: {
+        default: () => import('@/views/Admin.vue'),
+        header: () => import('@/components/AdminMenu.vue'),
+        footer: null,
       },
     },
   ],

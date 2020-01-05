@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vuex-orm/core": "^0.32.5",
+    "@vuex-orm/plugin-axios": "^0.9.2",
     "axios": "^0.19.0",
     "brick.js": "^3.0.5",
     "core-js": "^2.6.11",

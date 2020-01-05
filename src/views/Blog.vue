@@ -16,7 +16,8 @@
 
 <script>
 import axios from 'axios';
-import {debounce} from 'lodash';
+// import {debounce} from 'lodash';
+import BlogPost from '@/store/models/BlogPost';
 import ArticleCard from '@/components/ArticleCard.vue';
 
 export default {
@@ -24,7 +25,7 @@ export default {
   components: {ArticleCard},
   data() {
     return {
-      articles: [],
+      // articles: [],
       page: 0,
       perPage: 20,
       scrollingElem: null,
@@ -32,13 +33,24 @@ export default {
       endOfList: false,
     };
   },
+  computed: {
+    articles() {
+      const blogPosts = BlogPost.all();
+      return blogPosts;
+    },
+  },
+  watch: {
+    articles() {
+      
+    },
+  },
   methods: {
     onScroll({target: {scrollingElement: {scrollTop, clientHeight, scrollHeight}}}) {
       if (scrollTop + clientHeight >= scrollHeight) {
         if (!this.endOfList) {
           this.loading = true;
           this.page++;
-          debounce(this.getArticles, 300)();
+          // debounce(this.getArticles, 300)();
         }
       }
     },
@@ -55,7 +67,8 @@ export default {
     },
   },
   mounted() {
-    this.getArticles();
+    BlogPost.fetch({params: {page: this.page, perPage: this.perPage}});
+    // this.getArticles();
     this.scrollingElem = document.getElementsByTagName('body')[0];
     this.scrollingElem.onscroll = this.onScroll;
   },
