@@ -1,6 +1,6 @@
 <template>
   <v-card class="d-inline-block ma-3">
-    <v-img :src="article && article.image && article.image.src" :alt="article && article.image && article.image.alt" min-height="100px" class="white--text" @load="isLoading = false">
+    <v-img :src="article && article.image" min-height="100px" class="white--text" @load="isLoading = false">
       <v-card-title v-if="!isLoading" class="align-end fill-height">{{article && article.title}}</v-card-title>
       <template #placeholder>
         <v-row class="fill-height ma-0" align="center" justify="center">
@@ -11,7 +11,7 @@
     <v-card-text>
       <p>{{article && article.author && article.author.firstName}} {{article && article.author && article.author.lastName}}</p>
     </v-card-text>
-    <v-card-text class="text--primary article" v-html="article && article.shortText" />
+    <v-card-text class="text--primary article" v-html="article && article.article && article.article.split('<p>').pop().split('</p>')[0]" />
     <v-card-actions>
       <v-btn text>Read more...</v-btn>
     </v-card-actions>

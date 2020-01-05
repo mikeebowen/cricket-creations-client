@@ -67,7 +67,7 @@ export default {
     },
   },
   mounted() {
-    BlogPost.fetch({params: {page: this.page, perPage: this.perPage}});
+    BlogPost.fetch({params: {page: this.page, perPage: this.perPage}}); // TODO: make pagination work
     // this.getArticles();
     this.scrollingElem = document.getElementsByTagName('body')[0];
     this.scrollingElem.onscroll = this.onScroll;
