@@ -7,7 +7,9 @@ module.exports = {
     qunit: true,
     jquery: true,
   },
+
   extends: ['eslint:recommended', 'plugin:vue/essential'],
+
   globals: {
     expect: true,
     window: true,
@@ -21,6 +23,7 @@ module.exports = {
     App: true,
     _: true,
   },
+
   parserOptions: {
     parser: 'babel-eslint',
     sourceType: 'module',
@@ -28,6 +31,7 @@ module.exports = {
       impliedStrict: true,
     },
   },
+
   rules: {
     'array-bracket-newline': ['error', 'consistent'],
     'comma-dangle': ['warn', 'always-multiline'],
@@ -75,5 +79,18 @@ module.exports = {
     semi: ['error', 'always'],
     strict: 2,
   },
+
   plugins: ['standard', 'promise'],
+
+  overrides: [
+    {
+      files: [
+        '**/__tests__/*.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)',
+      ],
+      env: {
+        jest: true,
+      },
+    },
+  ],
 };
