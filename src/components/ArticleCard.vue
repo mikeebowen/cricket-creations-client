@@ -1,19 +1,38 @@
 <template>
   <v-card class="d-inline-block ma-3">
-    <v-img :src="article && article.image" min-height="100px" class="white--text" @load="isLoading = false">
-      <v-card-title v-if="!isLoading" class="align-end fill-height">{{article && article.title}}</v-card-title>
+    <v-img
+      :src="article && article.image"
+      min-height="100px"
+      class="white--text"
+      @load="isLoading = false"
+    >
+      <v-card-title
+        v-if="!isLoading"
+        class="align-end fill-height"
+      >
+        {{ article && article.title }}
+      </v-card-title>
       <template #placeholder>
-        <v-row class="fill-height ma-0" align="center" justify="center">
+        <v-row
+          class="fill-height ma-0"
+          align="center"
+          justify="center"
+        >
           <v-icon v-text="'fas fa-circle-notch fa-spin'" />
         </v-row>
       </template>
     </v-img>
     <v-card-text>
-      <p>{{article && article.author && article.author.firstName}} {{article && article.author && article.author.lastName}}</p>
+      <p>{{ article && article.author && article.author.firstName }} {{ article && article.author && article.author.lastName }}</p>
     </v-card-text>
-    <v-card-text class="text--primary article" v-html="article && article.article && article.article.split('<p>').pop().split('</p>')[0]" />
+    <v-card-text
+      class="text--primary article"
+      v-html="article && article.article && article.article.split('<p>').pop().split('</p>')[0]"
+    />
     <v-card-actions>
-      <v-btn text>Read more...</v-btn>
+      <v-btn text>
+        Read more...
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -27,9 +46,9 @@ export default {
   data() {
     return {
       isLoading: true,
-    };
+    }
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

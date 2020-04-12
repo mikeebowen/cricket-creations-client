@@ -1,5 +1,5 @@
-import {Model} from '@vuex-orm/core';
-import BlogPost from './BlogPost';
+import {Model} from '@vuex-orm/core'
+import BlogPost from './BlogPost'
 
 export default class User extends Model {
   static entity = 'users';
@@ -14,7 +14,7 @@ export default class User extends Model {
       email: this.string(null).nullable(),
       avatar: this.string(null).nullable(),
       blogPosts: this.hasMany(BlogPost, 'author_id'),
-    };
+    }
   }
   static apiConfig = {
     headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -24,6 +24,6 @@ export default class User extends Model {
   };
 
   static fetchById (id) {
-    return this.api().get(`/users/${id}`);
+    return this.api().get(`/users/${id}`)
   }
 }

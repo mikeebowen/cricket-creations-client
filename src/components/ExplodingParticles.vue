@@ -1,13 +1,17 @@
 <template>
   <div id="wrap">
-    <div class="box" v-for="i in 50" :key="i"></div>
+    <div
+      v-for="i in 50"
+      :key="i"
+      class="box"
+    />
   </div>
 </template>
 
 <script>
 export default {
   name: 'ExplodingParticles',
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -7,7 +7,7 @@
       <v-list>
         <v-list-item>
           <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>
+            <v-img src="https://randomuser.me/api/portraits/women/85.jpg" />
           </v-list-item-avatar>
         </v-list-item>
 
@@ -16,7 +16,9 @@
           two-line
         >
           <v-list-item-content>
-            <v-list-item-title class="title">Sandra Adams</v-list-item-title>
+            <v-list-item-title class="title">
+              Sandra Adams
+            </v-list-item-title>
             <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
@@ -26,7 +28,7 @@
       </v-list>
     </template>
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <v-list
       nav
@@ -57,5 +59,5 @@
 <script>
 export default {
   name: 'AdminMenu',
-};
+}
 </script>

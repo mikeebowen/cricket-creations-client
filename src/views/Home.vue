@@ -1,30 +1,53 @@
 <template>
-  <v-content app class="content-wrapper">
-    <div v-for="i in 4" :key="i" :id="`stars${i}`"></div>
+  <v-content
+    app
+    class="content-wrapper"
+  >
+    <div
+      v-for="i in 4"
+      :id="`stars${i}`"
+      :key="i"
+    />
     <v-container class="main-wrapper d-flex flex-column justify-space-around">
       <div class="home-container pt-4 align-start">
-        <h1 class="text-center">Cricket Creations</h1>
+        <h1 class="text-center">
+          Cricket Creations
+        </h1>
       </div>
       <div class="home-container">
-        <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" >
+        <img
+          src="@/assets/images/grasshopper-black.png"
+          alt="grasshopper"
+        >
       </div>
       <div class="home-container mt-5">
-        <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
+        <v-btn
+          v-for="(page, i) in pages"
+          :key="i"
+          text
+          x-large
+          top
+          :to="`${page.link}`"
+          class="homepage-link"
+        >
           <span class="pr-1">{</span>
-          {{page.name}}
+          {{ page.name }}
           <span class="pl-1">}</span>
         </v-btn>
       </div>
-      <ExplodingParticles ref="particles" v-show="showParticles" />
+      <ExplodingParticles
+        v-show="showParticles"
+        ref="particles"
+      />
     </v-container>
   </v-content>
 </template>
 
 <script>
-import ExplodingParticles from '@/components/ExplodingParticles.vue';
+import ExplodingParticles from '@/components/ExplodingParticles.vue'
 
 export default {
-  name: 'home',
+  name: 'Home',
   components: {ExplodingParticles},
   data () {
     return {
@@ -34,36 +57,36 @@ export default {
         {name: 'Blog', link: '/blog'},
         {name: 'About', link: '/about'},
       ],
-    };
+    }
   },
   mounted () {
-    const body = document.querySelectorAll('body')[0];
-    body.addEventListener('mousedown', this.toggleStarBurst);
-    body.addEventListener('mouseup', this.toggleStarBurst);
-    body.setAttribute('style', 'overflow-y: hidden !important; overflow-x: hidden !important');
+    const body = document.querySelectorAll('body')[0]
+    body.addEventListener('mousedown', this.toggleStarBurst)
+    body.addEventListener('mouseup', this.toggleStarBurst)
+    body.setAttribute('style', 'overflow-y: hidden !important; overflow-x: hidden !important')
   },
   beforeDestroy () {
-    const body = document.querySelectorAll('body')[0];
-    body.removeEventListener('mousedown', this.toggleStarBurst);
-    body.removeEventListener('mouseup', this.toggleStarBurst);
-    body.removeAttribute('style');
+    const body = document.querySelectorAll('body')[0]
+    body.removeEventListener('mousedown', this.toggleStarBurst)
+    body.removeEventListener('mouseup', this.toggleStarBurst)
+    body.removeAttribute('style')
   },
   methods: {
     toggleStarBurst (e) {
       if (Array.prototype.every.call(e.target.classList, c => c !== 'homepage-link' && c !== 'v-btn__content')) {
-        this.$refs.particles.$el.style.left = `${e.clientX}px`;
-        this.$refs.particles.$el.style.top = `${e.clientY}px`;
+        this.$refs.particles.$el.style.left = `${e.clientX}px`
+        this.$refs.particles.$el.style.top = `${e.clientY}px`
         if (this.showParticles) {
           setTimeout(() => {
-            this.showParticles = !this.showParticles;
-          }, 300);
+            this.showParticles = !this.showParticles
+          }, 300)
         } else {
-          this.showParticles = !this.showParticles;
+          this.showParticles = !this.showParticles
         }
       }
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

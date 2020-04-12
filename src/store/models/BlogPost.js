@@ -1,5 +1,5 @@
-import {Model} from '@vuex-orm/core';
-import {map} from 'lodash';
+import {Model} from '@vuex-orm/core'
+import {map} from 'lodash'
 
 export default class BlogPost extends Model {
   static  entity = 'blogPosts';
@@ -14,7 +14,7 @@ export default class BlogPost extends Model {
       title: this.string(''),
       article: this.string(''),
       image: this.attr(null),
-    };
+    }
   }
 
   static apiConfig = {
@@ -28,11 +28,11 @@ export default class BlogPost extends Model {
     return this.api().get('api/articles', {
       dataTransformer: ({data: {data}}) => {
         const res = map(data, (x, i) => {
-          x.id = i;
-          return x;
-        });
-        return res;
+          x.id = i
+          return x
+        })
+        return res
       },
-    });
+    })
   }
 }

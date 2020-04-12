@@ -8,20 +8,12 @@ module.exports = {
     jquery: true,
   },
 
-  extends: ['eslint:recommended', 'plugin:vue/essential'],
+  extends: ['eslint:recommended', 'plugin:vue/recommended'],
 
   globals: {
     expect: true,
     window: true,
     document: true,
-    Backbone: true,
-    Marionette: true,
-    ga: true,
-    Handlebars: true,
-    steal: true,
-    System: true,
-    App: true,
-    _: true,
   },
 
   parserOptions: {
@@ -76,8 +68,9 @@ module.exports = {
     'object-shorthand': ['error', 'always'],
     'prefer-const': ['error', {destructuring: 'any', ignoreReadBeforeAssign: false}],
     quotes: ['error', 'single'],
-    semi: ['error', 'always'],
+    semi: ['error', 'never'],
     strict: 2,
+    'no-plusplus': 0,
   },
 
   plugins: ['standard', 'promise'],
@@ -93,4 +86,4 @@ module.exports = {
       },
     },
   ],
-};
+}
