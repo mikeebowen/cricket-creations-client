@@ -17,6 +17,13 @@ export default class BlogPost extends Model {
     };
   }
 
+  static apiConfig = {
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
+    baseURL: '/',
+    dataKey: 'data',
+    save: true,
+  };
+
   static fetch(config) {
     return this.api().get('api/articles', {
       dataTransformer: ({data: {data}}) => {
@@ -26,7 +33,6 @@ export default class BlogPost extends Model {
         });
         return res;
       },
-      // ...config,
     });
   }
 }
