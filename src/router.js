@@ -55,14 +55,14 @@ export default new Router({
         footer: null,
       },
     },
-    {
-      path: '/login',
-      name: 'login',
-      components: {
-        header: null,
-        footer: null,
-        default: () => import('@/views/Login.vue'),
-      },
-    },
+    //{
+    //  path: '/login',
+    //  name: 'login',
+    //  components: {
+    //    header: null,
+    //    footer: null,
+    //    default: () => import('@/views/Login.vue'),
+    //  },
+    //},
   ],
 })
