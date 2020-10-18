@@ -1,9 +1,9 @@
-import {Model} from '@vuex-orm/core'
-import {map} from 'lodash'
+import { Model } from '@vuex-orm/core'
+import { map } from 'lodash'
 
 export default class BlogPost extends Model {
-  static  entity = 'blogPosts';
-  static primaryKey = 'id';
+  static entity = 'blogPosts'
+  static primaryKey = 'id'
 
   static fields() {
     return {
@@ -18,15 +18,15 @@ export default class BlogPost extends Model {
   }
 
   static apiConfig = {
-    headers: {'X-Requested-With': 'XMLHttpRequest'},
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
     baseURL: '/',
     dataKey: 'data',
     save: true,
-  };
+  }
 
   static fetch(config) {
-    return this.api().get('api/articles', {
-      dataTransformer: ({data: {data}}) => {
+    return this.api().get('api/blogposts', {
+      dataTransformer: ({ data: { data } }) => {
         const res = map(data, (x, i) => {
           x.id = i
           return x

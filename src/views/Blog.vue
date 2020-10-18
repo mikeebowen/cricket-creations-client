@@ -2,11 +2,11 @@
   <v-content class="content-wrapper">
     <v-container
       class="masonry-container"
-      :style="{height: Boolean(page) ? 'auto' : '100%'}"
+      :style="{ height: Boolean(page) ? 'auto' : '100%' }"
     >
       <h1>{{ articles.length }}</h1>
       <masonry
-        :cols="{default: 4, 1264: 3, 960: 2, 600: 1}"
+        :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }"
         :gutter="20"
       >
         <ArticleCard
@@ -19,7 +19,7 @@
       <div
         v-if="loading && !endOfList"
         class="d-flex w-100 justify-center loading-icon"
-        :style="{height: Boolean(page) ? 'auto' : '100%'}"
+        :style="{ height: Boolean(page) ? 'auto' : '100%' }"
       >
         <v-icon
           x-large
@@ -38,7 +38,7 @@ import ArticleCard from '@/components/ArticleCard.vue'
 
 export default {
   name: 'Blog',
-  components: {ArticleCard},
+  components: { ArticleCard },
   data() {
     return {
       // articles: [],
@@ -56,12 +56,10 @@ export default {
     },
   },
   watch: {
-    articles() {
-      
-    },
+    articles() {},
   },
   mounted() {
-    BlogPost.fetch({params: {page: this.page, perPage: this.perPage}}) // TODO: make pagination work
+    BlogPost.fetch({ params: { page: this.page, perPage: this.perPage } }) // TODO: make pagination work
     // this.getArticles();
     this.scrollingElem = document.getElementsByTagName('body')[0]
     this.scrollingElem.onscroll = this.onScroll
@@ -70,7 +68,11 @@ export default {
     this.scrollingElem.onscroll = null
   },
   methods: {
-    onScroll({target: {scrollingElement: {scrollTop, clientHeight, scrollHeight}}}) {
+    onScroll({
+      target: {
+        scrollingElement: { scrollTop, clientHeight, scrollHeight },
+      },
+    }) {
       if (scrollTop + clientHeight >= scrollHeight) {
         if (!this.endOfList) {
           this.loading = true
@@ -80,7 +82,9 @@ export default {
       }
     },
     async getArticles() {
-      const {data: {data}} = await axios.get('/api/articles', {
+      const {
+        data: { data },
+      } = await axios.get('/api/articles', {
         params: {
           page: this.page,
           perPage: this.perPage,
@@ -100,10 +104,10 @@ export default {
 }
 
 .content-wrapper {
-    overflow: auto;
+  overflow: auto;
 
-    .masonry-container {
-      overflow: hidden;
-    }
+  .masonry-container {
+    overflow: hidden;
+  }
 }
 </style>
