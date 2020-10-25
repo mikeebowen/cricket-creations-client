@@ -8,13 +8,14 @@
       "type": "chrome",
       "request": "launch",
       "name": "vuejs: chrome",
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8081",
       "sourceMaps": true,
       "webRoot": "${workspaceFolder}/src",
       "breakOnLoad": true,
       "sourceMapPathOverrides": {
         "webpack:///./*": "${webRoot}/*",
         "webpack:///src/*": "${webRoot}/*",
+        "webpack:///./src/*": "${webRoot}/*",
         "webpack:///*": "*",
         "webpack:///./~/*": "${webRoot}/node_modules/*",
         "meteor://💻app/*": "${webRoot}/*"
@@ -27,11 +28,11 @@
       "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}/src",
       "pathMappings": [
-        {"url": "webpack:///src/", "path": "${webRoot}/"},
-        {"url": "webpack:///./", "path": "${webRoot}/"},
-        {"url": "webpack:///", "path": "/"},
-        {"url": "webpack:///./~/", "path": "${webRoot}/node_modules/"},
-        {"url": "meteor://💻app/", "path": "${webRoot}/"}
+        { "url": "webpack:///src/", "path": "${webRoot}/" },
+        { "url": "webpack:///./", "path": "${webRoot}/" },
+        { "url": "webpack:///", "path": "/" },
+        { "url": "webpack:///./~/", "path": "${webRoot}/node_modules/" },
+        { "url": "meteor://💻app/", "path": "${webRoot}/" }
       ]
     },
     {
@@ -39,14 +40,9 @@
       "request": "launch",
       "name": "Launch via NPM",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev:debug"
-      ],
+      "runtimeArgs": ["run", "dev:debug"],
       "port": 9229,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

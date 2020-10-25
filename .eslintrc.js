@@ -79,5 +79,28 @@ module.exports = {
     semi: ['error', 'never'],
     strict: 2,
     'no-plusplus': 0,
+    'vue/max-attributes-per-line': [
+      'warning',
+      {
+        singleline: 3,
+        multiline: {
+          max: 1,
+          allowFirstLine: false,
+        },
+      },
+    ],
+    'vue/html-self-closing': [
+      'error',
+      {
+        html: {
+          void: 'always',
+          normal: 'always',
+          component: 'always',
+        },
+        svg: 'always',
+        math: 'always',
+      },
+    ],
+    'vue/no-v-html': false,
   },
 }
