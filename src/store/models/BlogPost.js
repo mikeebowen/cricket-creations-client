@@ -7,28 +7,31 @@ export default class BlogPost extends Model {
 
   static fields() {
     return {
-      id: this.attr(null),
-      author_id: this.attr(null),
-      created: this.attr(null),
-      lastUpdated: this.attr(null),
+      id: this.attr(null).nullable(),
+      userId: this.attr(null).nullable(),
+      created: this.attr(null).nullable(),
+      lastUpdated: this.attr(null).nullable(),
       title: this.string(''),
-      article: this.string(''),
-      image: this.attr(null),
+      content: this.string(''),
+      image: this.attr(null).nullable(),
     }
   }
 
   static apiConfig = {
-    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
     baseURL: '/',
     dataKey: 'data',
     save: true,
   }
 
   static fetch(config) {
-    return this.api().get('api/blogposts', {
+    return this.api().get('/api/blogpost', {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      baseURL: '/',
+      // dataKey: 'data',
+      save: true,
       dataTransformer: ({ data: { data } }) => {
-        const res = map(data, (x, i) => {
-          x.id = i
+        const res = map(data, x => {
           return x
         })
         return res

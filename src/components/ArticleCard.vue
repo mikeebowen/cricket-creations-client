@@ -1,23 +1,16 @@
 <template>
   <v-card class="d-inline-block ma-3">
     <v-img
-      :src="article && article.image"
+      :src="(article && article.image) || require('@/assets/logo.png')"
       min-height="100px"
       class="white--text"
       @load="isLoading = false"
     >
-      <v-card-title
-        v-if="!isLoading"
-        class="align-end fill-height"
-      >
+      <v-card-title v-if="!isLoading" class="align-end fill-height">
         {{ article && article.title }}
       </v-card-title>
       <template #placeholder>
-        <v-row
-          class="fill-height ma-0"
-          align="center"
-          justify="center"
-        >
+        <v-row class="fill-height ma-0" align="center" justify="center">
           <v-icon v-text="'fas fa-circle-notch fa-spin'" />
         </v-row>
       </template>
@@ -27,7 +20,14 @@
     </v-card-text>
     <v-card-text
       class="text--primary article"
-      v-html="article && article.article && article.article.split('<p>').pop().split('</p>')[0]"
+      v-html="
+        article &&
+          article.content &&
+          article.content
+            .split('<p>')
+            .pop()
+            .split('</p>')[0]
+      "
     />
     <v-card-actions>
       <v-btn text>
@@ -41,7 +41,7 @@
 export default {
   name: 'ArticleCard',
   props: {
-    article: Object,
+    article: { type: Object, default: () => ({}) },
   },
   data() {
     return {
@@ -51,6 +51,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

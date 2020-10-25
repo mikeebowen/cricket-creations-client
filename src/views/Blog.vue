@@ -1,38 +1,22 @@
 <template>
   <v-content class="content-wrapper">
-    <v-container
-      class="masonry-container"
-      :style="{ height: Boolean(page) ? 'auto' : '100%' }"
-    >
+    <v-container class="masonry-container" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
       <h1>{{ articles.length }}</h1>
-      <masonry
-        :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }"
-        :gutter="20"
-      >
-        <ArticleCard
-          v-for="article in articles"
-          :key="article.id"
-          :article="article"
-          class="masonry-item"
-        />
+      <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
+        <ArticleCard v-for="article in articles" :key="article.id" :article="article" class="masonry-item" />
       </masonry>
       <div
         v-if="loading && !endOfList"
         class="d-flex w-100 justify-center loading-icon"
         :style="{ height: Boolean(page) ? 'auto' : '100%' }"
       >
-        <v-icon
-          x-large
-          v-text="'fas fa-circle-notch fa-10x fa-spin'"
-        />
+        <v-icon x-large v-text="'fas fa-circle-notch fa-10x fa-spin'" />
       </div>
     </v-container>
   </v-content>
 </template>
 
 <script>
-import axios from 'axios'
-// import {debounce} from 'lodash';
 import BlogPost from '@/store/models/BlogPost'
 import ArticleCard from '@/components/ArticleCard.vue'
 
@@ -41,7 +25,6 @@ export default {
   components: { ArticleCard },
   data() {
     return {
-      // articles: [],
       page: 0,
       perPage: 20,
       scrollingElem: null,
@@ -59,8 +42,8 @@ export default {
     articles() {},
   },
   mounted() {
-    BlogPost.fetch({ params: { page: this.page, perPage: this.perPage } }) // TODO: make pagination work
-    // this.getArticles();
+    BlogPost.fetch()
+    // BlogPost.fetch({ params: { page: this.page, perPage: this.perPage } }) // TODO: make pagination work
     this.scrollingElem = document.getElementsByTagName('body')[0]
     this.scrollingElem.onscroll = this.onScroll
   },
@@ -80,19 +63,6 @@ export default {
           // debounce(this.getArticles, 300)();
         }
       }
-    },
-    async getArticles() {
-      const {
-        data: { data },
-      } = await axios.get('/api/articles', {
-        params: {
-          page: this.page,
-          perPage: this.perPage,
-        },
-      })
-      this.articles.push(...data)
-      this.endOfList = !(data && data.length)
-      this.loading = false
     },
   },
 }
