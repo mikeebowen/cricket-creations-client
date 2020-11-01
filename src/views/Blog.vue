@@ -1,7 +1,9 @@
 <template>
   <v-content class="content-wrapper">
     <v-container class="masonry-container" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
-      <h1>{{ articles.length }}</h1>
+      <h1 class="text-center">
+        My Musings & Other Thoughts
+      </h1>
       <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
         <ArticleCard v-for="article in articles" :key="article.id" :article="article" class="masonry-item" />
       </masonry>
@@ -19,14 +21,15 @@
 <script>
 import BlogPost from '@/store/models/BlogPost'
 import ArticleCard from '@/components/ArticleCard.vue'
+import debounce from 'lodash.debounce'
 
 export default {
   name: 'Blog',
   components: { ArticleCard },
   data() {
     return {
-      page: 0,
-      perPage: 20,
+      page: 1,
+      count: 10,
       scrollingElem: null,
       loading: true,
       endOfList: false,
@@ -42,8 +45,7 @@ export default {
     articles() {},
   },
   mounted() {
-    BlogPost.fetch()
-    // BlogPost.fetch({ params: { page: this.page, perPage: this.perPage } }) // TODO: make pagination work
+    BlogPost.fetch({ page: this.page, count: this.count })
     this.scrollingElem = document.getElementsByTagName('body')[0]
     this.scrollingElem.onscroll = this.onScroll
   },
@@ -60,7 +62,7 @@ export default {
         if (!this.endOfList) {
           this.loading = true
           this.page++
-          // debounce(this.getArticles, 300)();
+          debounce(BlogPost.fetch({ page: this.page, count: this.count }), 500)()
         }
       }
     },
@@ -69,6 +71,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+h1 {
+  font-family: 'Bevan', cursive;
+  font-size: 3.8rem;
+}
 .masonry-container {
   max-width: 1264px;
 }

@@ -33,7 +33,7 @@ export default {
       showParticles: false,
       pages: [
         { name: 'Projects', link: '/projects' },
-        { name: 'Blog', link: '/blog' },
+        { name: 'Musings', link: '/musings' },
         { name: 'About', link: '/about' },
       ],
     }

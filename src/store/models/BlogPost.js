@@ -25,8 +25,10 @@ export default class BlogPost extends Model {
   }
 
   static fetch(config) {
+    const { page, count } = config
     return this.api().get('/api/blogpost', {
       headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      params: { page, count },
       baseURL: '/',
       // dataKey: 'data',
       save: true,

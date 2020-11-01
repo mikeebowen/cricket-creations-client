@@ -38,8 +38,8 @@ export default new Router({
       },
     },
     {
-      path: '/blog',
-      name: 'blog',
+      path: '/musings',
+      name: 'musings',
       components: {
         default: () => import('@/views/Blog.vue'),
         header: () => import('@/components/Header.vue'),

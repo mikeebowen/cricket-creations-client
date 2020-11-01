@@ -20,14 +20,7 @@
     </v-card-text>
     <v-card-text
       class="text--primary article"
-      v-html="
-        article &&
-          article.content &&
-          article.content
-            .split('<p>')
-            .pop()
-            .split('</p>')[0]
-      "
+      v-html="article && article.content && article.content.replace('<p>', '').substring(0, Math.ceil(Math.random() * 200) + 300)"
     />
     <v-card-actions>
       <v-btn text>
