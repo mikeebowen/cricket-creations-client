@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import BlogPost from '@/store/models/BlogPost'
 import ArticleCard from '@/components/ArticleCard.vue'
 import debounce from 'lodash.debounce'
+import axios from 'axios'
 
 export default {
   name: 'Blog',
@@ -33,19 +33,14 @@ export default {
       scrollingElem: null,
       loading: true,
       endOfList: false,
+      articles: [],
     }
-  },
-  computed: {
-    articles() {
-      const blogPosts = BlogPost.all()
-      return blogPosts
-    },
   },
   watch: {
     articles() {},
   },
   mounted() {
-    BlogPost.fetch({ page: this.page, count: this.count })
+    this.getBlogPosts()
     this.scrollingElem = document.getElementsByTagName('body')[0]
     this.scrollingElem.onscroll = this.onScroll
   },
@@ -53,6 +48,17 @@ export default {
     this.scrollingElem.onscroll = null
   },
   methods: {
+    async getBlogPosts() {
+      const {
+        data: { data },
+      } = await axios.get('/api/blogpost', {
+        method: 'get',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        params: { page: this.page, count: this.count },
+        baseURL: '/',
+      })
+      this.articles.push(...data)
+    },
     onScroll({
       target: {
         scrollingElement: { scrollTop, clientHeight, scrollHeight },
@@ -62,7 +68,7 @@ export default {
         if (!this.endOfList) {
           this.loading = true
           this.page++
-          debounce(BlogPost.fetch({ page: this.page, count: this.count }), 500)()
+          debounce(this.getBlogPosts, 500)()
         }
       }
     },
