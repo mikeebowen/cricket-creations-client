@@ -22,18 +22,33 @@
 import ArticleCard from '@/components/ArticleCard.vue'
 import debounce from 'lodash.debounce'
 import axios from 'axios'
+import { ref } from '@vue/composition-api'
 
 export default {
   name: 'Blog',
   components: { ArticleCard },
+  setup(props) {
+    const articles = ref([])
+    const page = ref(1)
+    const count = ref(10)
+    const getBlogPosts = async () => {
+      const {
+        data: { data },
+      } = await axios.get('/api/blogpost', {
+        method: 'get',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        params: { page, count },
+        baseURL: '/',
+      })
+      articles.value.push(...data)
+    }
+    return { articles, page, count, getBlogPosts }
+  },
   data() {
     return {
-      page: 1,
-      count: 10,
       scrollingElem: null,
       loading: true,
       endOfList: false,
-      articles: [],
     }
   },
   watch: {
@@ -48,17 +63,6 @@ export default {
     this.scrollingElem.onscroll = null
   },
   methods: {
-    async getBlogPosts() {
-      const {
-        data: { data },
-      } = await axios.get('/api/blogpost', {
-        method: 'get',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        params: { page: this.page, count: this.count },
-        baseURL: '/',
-      })
-      this.articles.push(...data)
-    },
     onScroll({
       target: {
         scrollingElement: { scrollTop, clientHeight, scrollHeight },
