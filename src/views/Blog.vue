@@ -22,14 +22,14 @@
 import ArticleCard from '@/components/ArticleCard.vue'
 import debounce from 'lodash.debounce'
 import axios from 'axios'
-import { ref } from '@vue/composition-api'
+import { ref, onMounted, beforeDestroy } from '@vue/composition-api'
 
 export default {
   name: 'Blog',
   components: { ArticleCard },
   setup(props) {
     const articles = ref([])
-    const page = ref(1)
+    let page = ref(1)
     const count = ref(10)
     const getBlogPosts = async () => {
       const {
@@ -42,40 +42,31 @@ export default {
       })
       articles.value.push(...data)
     }
-    return { articles, page, count, getBlogPosts }
-  },
-  data() {
-    return {
-      scrollingElem: null,
-      loading: true,
-      endOfList: false,
-    }
-  },
-  watch: {
-    articles() {},
-  },
-  mounted() {
-    this.getBlogPosts()
-    this.scrollingElem = document.getElementsByTagName('body')[0]
-    this.scrollingElem.onscroll = this.onScroll
-  },
-  beforeDestroy() {
-    this.scrollingElem.onscroll = null
-  },
-  methods: {
-    onScroll({
+    const scrollingElem = ref(null)
+    const loading = ref(true)
+    const endOfList = ref(false)
+    const onScroll = ({
       target: {
         scrollingElement: { scrollTop, clientHeight, scrollHeight },
       },
-    }) {
+    }) => {
       if (scrollTop + clientHeight >= scrollHeight) {
-        if (!this.endOfList) {
-          this.loading = true
-          this.page++
-          debounce(this.getBlogPosts, 500)()
+        if (!endOfList.value) {
+          loading.value = true
+          page++
+          debounce(getBlogPosts, 500)()
         }
       }
-    },
+    }
+    onMounted(() => {
+      getBlogPosts()
+      scrollingElem.value = document.getElementsByTagName('body')[0]
+      scrollingElem.value.onscroll = onScroll
+    })
+    beforeDestroy(() => {
+      scrollingElem.onscroll = null
+    })
+    return { articles, loading, endOfList, page, count }
   },
 }
 </script>
