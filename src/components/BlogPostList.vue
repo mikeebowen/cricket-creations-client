@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="600" class="mx-auto">
+  <!-- <v-card max-width="600" class="mx-auto">
     <v-toolbar color="light-blue" dark>
       <v-toolbar-title>My Posts</v-toolbar-title>
       <v-list subheader two-line>
@@ -16,16 +16,38 @@
         </v-list-item>
       </v-list>
     </v-toolbar>
-  </v-card>
+  </v-card> -->
+  <v-list>
+    <v-subheader>My Posts</v-subheader>
+    <v-list-item-group v-model="selectedItem" color="primary">
+      <v-list-item v-for="post in posts" :key="post.id">
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-lead-pencil'" />
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title v-text="post.title" />
+        </v-list-item-content>
+      </v-list-item>
+    </v-list-item-group>
+  </v-list>
 </template>
 
 <script>
+import { ref } from '@vue/composition-api'
 export default {
   name: 'BlogPostList',
+  setup() {
+    const selectedItem = ref(null)
+    return { selectedItem }
+  },
   props: {
     posts: { type: Array, default: () => [] },
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+#app {
+  background-color: white;
+}
+</style>

@@ -12,7 +12,7 @@ export default new Router({
       name: 'home',
       components: {
         default: () => import('@/views/Home.vue'),
-        header: null,
+        // header: null,
         footer: () => import('@/components/Footer.vue'),
       },
     },
@@ -43,7 +43,6 @@ export default new Router({
       components: {
         default: () => import('@/views/Blog.vue'),
         header: () => import('@/components/Header.vue'),
-        footer: () => import('@/components/Footer.vue'),
       },
     },
     {
@@ -51,7 +50,8 @@ export default new Router({
       name: 'admin',
       components: {
         default: () => import('@/views/Admin.vue'),
-        header: () => import('@/components/AdminMenu.vue'),
+        header: () => import('@/components/Header.vue'),
+        adminHeader: () => import('@/components/AdminMenu.vue'),
         footer: null,
       },
     },

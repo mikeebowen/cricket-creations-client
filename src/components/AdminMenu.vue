@@ -1,8 +1,5 @@
 <template>
-  <v-navigation-drawer
-    expand-on-hover
-    permanent
-  >
+  <v-navigation-drawer expand-on-hover permanent app clipped>
     <template v-slot:prepend>
       <v-list>
         <v-list-item>
@@ -11,10 +8,7 @@
           </v-list-item-avatar>
         </v-list-item>
 
-        <v-list-item
-          link
-          two-line
-        >
+        <v-list-item link two-line>
           <v-list-item-content>
             <v-list-item-title class="title">
               Sandra Adams
@@ -30,10 +24,7 @@
 
     <v-divider />
 
-    <v-list
-      nav
-      dense
-    >
+    <v-list nav dense>
       <v-list-item link>
         <v-list-item-icon>
           <v-icon v-text="'fas fa-folder'" />

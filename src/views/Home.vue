@@ -1,5 +1,5 @@
 <template>
-  <v-content app class="content-wrapper">
+  <span class="content-wrapper">
     <div v-for="i in 4" :id="`stars${i}`" :key="i" />
     <v-container class="main-wrapper d-flex flex-column justify-space-around">
       <div class="home-container pt-4 align-start">
@@ -19,7 +19,7 @@
       </div>
       <ExplodingParticles v-show="showParticles" ref="particles" />
     </v-container>
-  </v-content>
+  </span>
 </template>
 
 <script>
@@ -73,6 +73,7 @@ export default {
 
 .content-wrapper {
   background-color: $bodyBackgroundColor;
+  height: 100vh;
 }
 
 .main-wrapper {

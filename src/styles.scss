@@ -8,12 +8,13 @@ html {
 html,
 body {
   height: 100%;
-  overflow-y: none !important;
+  // overflow-y: none !important;
+  overflow-y: auto !important;
 }
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   font-size: 1.4rem;
   color: $color-primary-4;
 }

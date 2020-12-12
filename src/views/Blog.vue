@@ -1,28 +1,22 @@
 <template>
-  <v-content class="content-wrapper">
-    <v-container class="masonry-container" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
-      <h1 class="text-center">
-        My Musings & Other Thoughts
-      </h1>
-      <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
-        <ArticleCard v-for="article in articles" :key="article.id" :article="article" class="masonry-item" />
-      </masonry>
-      <div
-        v-if="loading && !endOfList"
-        class="d-flex w-100 justify-center loading-icon"
-        :style="{ height: Boolean(page) ? 'auto' : '100%' }"
-      >
-        <v-icon x-large v-text="'fas fa-circle-notch fa-10x fa-spin'" />
-      </div>
-    </v-container>
-  </v-content>
+  <v-container class="masonry-container content-wrapper" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
+    <h1 class="text-center">
+      My Musings & Other Thoughts
+    </h1>
+    <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
+      <ArticleCard v-for="article in articles" :key="article.id" :article="article" class="masonry-item" />
+    </masonry>
+    <div v-if="loading && !endOfList" class="d-flex w-100 justify-center loading-icon" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
+      <v-icon x-large v-text="'fas fa-circle-notch fa-10x fa-spin'" />
+    </div>
+  </v-container>
 </template>
 
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
 import debounce from 'lodash.debounce'
 import axios from 'axios'
-import { ref, onMounted, beforeDestroy } from '@vue/composition-api'
+import { ref, onMounted, onBeforeUnmount } from '@vue/composition-api'
 
 export default {
   name: 'Blog',
@@ -63,8 +57,8 @@ export default {
       scrollingElem.value = document.getElementsByTagName('body')[0]
       scrollingElem.value.onscroll = onScroll
     })
-    beforeDestroy(() => {
-      scrollingElem.onscroll = null
+    onBeforeUnmount(() => {
+      scrollingElem.value.onscroll = null
     })
     return { articles, loading, endOfList, page, count }
   },

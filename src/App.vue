@@ -1,7 +1,10 @@
 <template>
   <v-app id="app">
     <router-view name="header" />
-    <router-view />
+    <router-view name="adminHeader" />
+    <v-main>
+      <router-view />
+    </v-main>
     <router-view name="footer" />
   </v-app>
 </template>
@@ -12,10 +15,9 @@ export default {
 }
 </script>
 
-
 <style lang="scss">
-  @import "@/styles.scss";
+@import '@/styles.scss';
 
-  #app {
-  }
+#app {
+}
 </style>

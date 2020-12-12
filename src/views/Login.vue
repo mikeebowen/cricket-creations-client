@@ -1,67 +1,69 @@
 <template>
-  <v-container>
-    <template>
-      <v-card class="mx-auto" max-width="344" outlined>
-        <v-list-item three-line>
-          <v-list-item-content>
-            <v-list-item-title class="headline mb-1">
-              Login to CricketCreations
-            </v-list-item-title>
-            <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
-            <form>
-              <v-text-field
-                v-model="name"
-                :error-messages="nameErrors"
-                :counter="10"
-                label="Name"
-                required
-                @input="$v.name.$touch()"
-                @blur="$v.name.$touch()"
-              />
-              <v-text-field
-                v-model="email"
-                :error-messages="emailErrors"
-                label="E-mail"
-                required
-                @input="$v.email.$touch()"
-                @blur="$v.email.$touch()"
-              />
-              <v-select
-                v-model="select"
-                :items="items"
-                :error-messages="selectErrors"
-                label="Item"
-                required
-                @change="$v.select.$touch()"
-                @blur="$v.select.$touch()"
-              />
-              <v-checkbox
-                v-model="checkbox"
-                :error-messages="checkboxErrors"
-                label="Do you agree?"
-                required
-                @change="$v.checkbox.$touch()"
-                @blur="$v.checkbox.$touch()"
-              />
+  <v-content>
+    <v-container>
+      <template>
+        <v-card class="mx-auto" max-width="344" outlined>
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title class="headline mb-1">
+                Login to CricketCreations
+              </v-list-item-title>
+              <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
+              <form>
+                <v-text-field
+                  v-model="name"
+                  :error-messages="nameErrors"
+                  :counter="10"
+                  label="Name"
+                  required
+                  @input="$v.name.$touch()"
+                  @blur="$v.name.$touch()"
+                />
+                <v-text-field
+                  v-model="email"
+                  :error-messages="emailErrors"
+                  label="E-mail"
+                  required
+                  @input="$v.email.$touch()"
+                  @blur="$v.email.$touch()"
+                />
+                <v-select
+                  v-model="select"
+                  :items="items"
+                  :error-messages="selectErrors"
+                  label="Item"
+                  required
+                  @change="$v.select.$touch()"
+                  @blur="$v.select.$touch()"
+                />
+                <v-checkbox
+                  v-model="checkbox"
+                  :error-messages="checkboxErrors"
+                  label="Do you agree?"
+                  required
+                  @change="$v.checkbox.$touch()"
+                  @blur="$v.checkbox.$touch()"
+                />
 
-              <v-btn class="mr-4" @click="submit">
-                submit
-              </v-btn>
-              <v-btn @click="clear">
-                clear
-              </v-btn>
-            </form>
-          </v-list-item-content>
-        </v-list-item>
+                <v-btn class="mr-4" @click="submit">
+                  submit
+                </v-btn>
+                <v-btn @click="clear">
+                  clear
+                </v-btn>
+              </form>
+            </v-list-item-content>
+          </v-list-item>
 
-        <v-card-actions>
-          <v-btn outlined rounded text>
-            Button
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-container>
+          <v-card-actions>
+            <v-btn outlined rounded text>
+              Button
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-container>
+  </v-content>
 </template>
 
 <script>
