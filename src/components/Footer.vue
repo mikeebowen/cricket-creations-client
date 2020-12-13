@@ -26,6 +26,6 @@ export default {
 @import '@/variables.scss';
 
 .footer {
-  background-color: $bodyBackgroundColor;
+  background-color: $white;
 }
 </style>

@@ -28,10 +28,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  .title {
-    font-family: 'Bevan', cursive !important;
-    text-transform: initial;
-  }
+.title {
+  font-family: 'Bevan', cursive !important;
+  text-transform: initial;
 }
 </style>

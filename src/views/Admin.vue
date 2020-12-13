@@ -1,17 +1,11 @@
 <template>
-  <v-container>
+  <v-container class="post-list d-flex flex-column">
     <v-row>
-      <v-col>
+      <v-col offset="2" cols="10">
         <BlogPostList :posts="posts" />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
-        <!-- <div class="text-center"> -->
-        <v-pagination v-model="page" :length="posts.length" :total-visible="7" />
-        <!-- </div> -->
-      </v-col>
-    </v-row>
+    <v-pagination v-model="page" :length="posts.length" :total-visible="7" />
   </v-container>
 </template>
 
@@ -44,4 +38,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.post-list {
+  height: 100%;
+}
+</style>
