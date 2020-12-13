@@ -2,7 +2,7 @@
   <v-container class="post-list d-flex flex-column">
     <v-row>
       <v-col offset="2" cols="10">
-        <BlogPostList :posts="posts" />
+        <BlogPostList :posts="posts" @postSelected="selectPost" />
       </v-col>
     </v-row>
     <v-pagination v-model="page" :length="total" :total-visible="9" />
@@ -11,7 +11,6 @@
 
 <script>
 import BlogPostList from '@/components/BlogPostList'
-// import AdminMenu from '@/components/AdminMenu.vue'
 import axios from 'axios'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 export default {
@@ -30,6 +29,9 @@ export default {
       t.value = ps?.data?.meta?.total
       posts.value.push(...ps?.data?.data)
     }
+    const selectPost = post => {
+      console.log('🚀 ~ file: Admin.vue ~ line 34 ~ constselectPost ~ post', post)
+    }
 
     watch(page, (cur, prev) => {
       getBlogPosts()
@@ -38,7 +40,7 @@ export default {
     onMounted(() => {
       getBlogPosts()
     })
-    return { page, count, posts, total, error }
+    return { page, count, posts, total, error, selectPost }
   },
 }
 </script>

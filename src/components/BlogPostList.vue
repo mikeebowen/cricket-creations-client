@@ -20,7 +20,7 @@
   <v-list>
     <v-subheader>My Posts</v-subheader>
     <v-list-item-group v-model="selectedItem" color="primary">
-      <v-list-item v-for="post in posts" :key="post.id">
+      <v-list-item v-for="post in posts" :key="post.id" @click="emitPost">
         <v-list-item-icon>
           <v-icon v-text="'mdi-lead-pencil'" />
         </v-list-item-icon>
@@ -36,9 +36,14 @@
 import { ref } from '@vue/composition-api'
 export default {
   name: 'BlogPostList',
-  setup() {
+  setup(props, { emit }) {
     const selectedItem = ref(null)
-    return { selectedItem }
+    const emitPost = () => {
+      setTimeout(() => {
+        emit('postSelected', props.posts[selectedItem.value])
+      })
+    }
+    return { selectedItem, emitPost }
   },
   props: {
     posts: { type: Array, default: () => [] },
