@@ -1,10 +1,39 @@
 <template>
   <v-container v-if="selectedPost">
-    <Editor :init="editorConfig" />
+    <v-row>
+      <v-col cols="3">
+        <v-subheader :inset="true"> Created: {{ createdDate }} </v-subheader>
+      </v-col>
+      <v-col cols="3">
+        <v-subheader :inset="true"> Last Updated: {{ lastUpdated }} </v-subheader>
+      </v-col>
+      <v-col cols="4 d-flex justify-end">
+        <v-btn-toggle>
+          <v-btn tile @click="updatePost">Save</v-btn>
+          <v-btn tile @click="saveAndClose">Save & Close</v-btn>
+          <v-btn tile @click="close">Close</v-btn>
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="9" offset="1">
+        <v-text-field v-model="selectedPost.title" label="Title" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="9" offset="1">
+        <Editor v-model="selectedPost.content" :init="editorConfig" />
+      </v-col>
+    </v-row>
   </v-container>
   <v-container v-else class="post-list d-flex flex-column">
     <v-row>
-      <v-col offset="2" cols="10">
+      <v-col cols="1" offset="1">
+        <v-btn color="gray">
+          <v-icon v-text="'mdi-plus-thick'" />
+        </v-btn>
+      </v-col>
+      <v-col cols="10">
         <BlogPostList :posts="posts" @postSelected="selectPost" />
       </v-col>
     </v-row>
@@ -15,6 +44,7 @@
 <script>
 import BlogPostList from '@/components/BlogPostList'
 import Editor from '@tinymce/tinymce-vue'
+import Post from '@/models/Post'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
 import 'tinymce/plugins/link'
@@ -26,7 +56,7 @@ import 'tinymce/plugins/lists'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import axios from 'axios'
-import { resolve } from 'path'
+import { DateTime } from 'luxon'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 export default {
   name: 'Admin',
@@ -46,16 +76,24 @@ export default {
     }
     const selectedPost = ref(null)
     const selectPost = post => {
-      console.log('🚀 ~ file: Admin.vue ~ line 34 ~ constselectPost ~ post', post)
-      console.log(resolve(__dirname, __filename))
-      selectedPost.value = post
+      selectedPost.value = new Post(post)
     }
-
+    const updatePost = async () => {
+      const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.data)
+      const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
+      posts.value[i] = updatedPost.data.data
+    }
+    const close = () => (selectedPost.value = null)
+    const saveAndClose = () => {
+      updatePost()
+      close()
+    }
+    const createdDate = computed(() => DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED))
+    const lastUpdated = computed(() => DateTime.fromISO(selectedPost.value.lastUpdated).toLocaleString(DateTime.DATETIME_MED))
     const editorConfig = ref({
       height: 500,
       // menubar: false,
       plugins: ['link', 'table', 'spellchecker', 'image', 'imagetools', 'save', 'lists', 'imagetools', 'codesample', 'code '],
-      // tslint:disable-next-line:max-line-length
       toolbar:
         'insertfile undo redo | code | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image codesample | save cancel',
       menubar: 'file edit insert view format table tools image',
@@ -73,17 +111,30 @@ export default {
         { text: 'C++', value: 'cpp' },
       ],
     })
-    const editor = ref(null)
 
     watch(page, async (cur, prev) => {
       await getBlogPosts()
     })
 
     onMounted(async () => {
-      console.log('editor: ', editor.value)
       await getBlogPosts()
     })
-    return { page, count, posts, total, error, selectPost, editorConfig, selectedPost, editor }
+
+    return {
+      page,
+      count,
+      posts,
+      total,
+      error,
+      selectPost,
+      editorConfig,
+      selectedPost,
+      createdDate,
+      lastUpdated,
+      updatePost,
+      close,
+      saveAndClose,
+    }
   },
 }
 </script>
