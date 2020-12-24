@@ -6,7 +6,7 @@ module.exports = {
     browser: true,
   },
 
-  extends: ['eslint:recommended', 'plugin:vue/recommended'],
+  extends: ['eslint:recommended', 'plugin:vue/recommended', 'prettier'],
 
   globals: {
     expect: true,
@@ -102,5 +102,6 @@ module.exports = {
       },
     ],
     'vue/no-v-html': false,
+    'vue/singleline-html-element-content-newline': false,
   },
 }
