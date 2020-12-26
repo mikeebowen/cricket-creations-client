@@ -29,7 +29,7 @@
   <v-container v-else class="post-list d-flex flex-column">
     <v-row>
       <v-col cols="1" offset="1">
-        <v-btn color="gray">
+        <v-btn color="gray" @click="createPost">
           <v-icon v-text="'mdi-plus-thick'" />
         </v-btn>
       </v-col>
@@ -78,18 +78,31 @@ export default {
     const selectPost = post => {
       selectedPost.value = new Post(post)
     }
+    const createPost = () => {
+      selectedPost.value = new Post({})
+    }
     const updatePost = async () => {
-      const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.data)
-      const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
-      posts.value[i] = updatedPost.data.data
+      if (selectedPost.value.userId) {
+        const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.patchData)
+        const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
+        posts.value[i] = updatedPost.data.data
+        selectedPost.value = new Post(updatedPost.data.data)
+      } else {
+        const newPost = await axios.post('/api/blogpost', selectedPost.value.postData)
+        selectedPost.value = new Post(newPost.data.data)
+      }
     }
     const close = () => (selectedPost.value = null)
     const saveAndClose = () => {
       updatePost()
       close()
     }
-    const createdDate = computed(() => DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED))
-    const lastUpdated = computed(() => DateTime.fromISO(selectedPost.value.lastUpdated).toLocaleString(DateTime.DATETIME_MED))
+    const createdDate = computed(() =>
+      selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
+    )
+    const lastUpdated = computed(() =>
+      selectedPost.value.lastUpdated ? DateTime.fromISO(selectedPost.value.lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
+    )
     const editorConfig = ref({
       height: 500,
       // menubar: false,
@@ -132,6 +145,7 @@ export default {
       createdDate,
       lastUpdated,
       updatePost,
+      createPost,
       close,
       saveAndClose,
     }

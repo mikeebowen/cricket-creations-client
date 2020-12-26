@@ -1,5 +1,6 @@
 class Post {
   id
+  userId
   created
   lastUpdated
   title
@@ -11,12 +12,20 @@ class Post {
     this.lastUpdated = data.lastUpdated
     this.title = data.title
     this.content = data.content
+    this.userId = data.userId
   }
 
-  get data() {
+  get patchData() {
     return {
       Title: this.title,
       Content: this.content,
+    }
+  }
+
+  get postData() {
+    return {
+      ...this.patchData,
+      UserId: 1,
     }
   }
 }
