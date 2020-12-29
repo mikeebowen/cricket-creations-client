@@ -22,7 +22,8 @@
     </v-row>
     <v-row>
       <v-col cols="9" offset="1">
-        <Editor v-model="selectedPost.content" :init="editorConfig" />
+        <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
+        <Editor v-else v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
   </span>
@@ -34,6 +35,7 @@
         </v-btn>
       </v-col>
       <v-col cols="10">
+        <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
         <BlogPostList :posts="posts" @postSelected="selectPost" />
       </v-col>
     </v-row>
@@ -68,11 +70,13 @@ export default {
     const t = ref(0)
     const error = ref('')
     const total = computed(() => parseInt(t.value / count.value + 1))
+    const loading = ref(true)
     const getBlogPosts = async () => {
       const ps = await axios.get('/api/blogpost', { params: { userId: 1, page: page.value, count: count.value } })
       posts.value.length = 0
       t.value = ps?.data?.meta?.total
       posts.value.push(...ps?.data?.data)
+      loading.value = false
     }
     const selectedPost = ref(null)
     const selectPost = post => {
@@ -83,13 +87,17 @@ export default {
     }
     const updatePost = async () => {
       if (selectedPost.value.userId) {
+        loading.value = true
         const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.patchData)
         const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
         posts.value[i] = updatedPost.data.data
         selectedPost.value = new Post(updatedPost.data.data)
+        loading.value = false
       } else {
+        loading.value = true
         const newPost = await axios.post('/api/blogpost', selectedPost.value.postData)
         selectedPost.value = new Post(newPost.data.data)
+        loading.value = false
       }
     }
     const close = () => (selectedPost.value = null)
@@ -148,6 +156,7 @@ export default {
       createPost,
       close,
       saveAndClose,
+      loading,
     }
   },
 }
