@@ -27,7 +27,7 @@
                 <v-icon v-text="'mdi-tag-plus-outline'" />
               </v-btn>
               <v-chip-group>
-                <v-chip v-for="tag in selectedPost.tags" :key="tag.id">{{ tag.name }}</v-chip>
+                <v-chip v-for="(tag, i) in selectedPost.tags" :key="tag.id" close @click:close="removeTag(i)">{{ tag.name }}</v-chip>
               </v-chip-group>
               <v-dialog v-model="dialog" width="500">
                 <v-card>
@@ -162,6 +162,9 @@ export default {
       newTagName.value = ''
       dialog.value = false
     }
+    const removeTag = index => {
+      selectedPost.value.tags.splice(index, 1)
+    }
     const dialog = ref(false)
     const createdDate = computed(() =>
       selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
@@ -220,6 +223,7 @@ export default {
       newTagName,
       errors,
       snackbar,
+      removeTag,
     }
   },
 }
