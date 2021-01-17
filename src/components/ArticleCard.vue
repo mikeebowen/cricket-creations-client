@@ -1,11 +1,6 @@
 <template>
   <v-card class="d-inline-block ma-3">
-    <v-img
-      :src="(article && article.image) || require('@/assets/logo.png')"
-      min-height="100px"
-      class="white--text"
-      @load="isLoading = false"
-    >
+    <v-img :src="(article && article.image) || require('@/assets/logo.png')" min-height="100px" @load="isLoading = false">
       <v-card-title v-if="!isLoading" class="align-end fill-height">
         <h3 class="grey--text text--darken-2">{{ article && article.title }}</h3>
       </v-card-title>
@@ -18,8 +13,9 @@
       </template>
     </v-img>
     <v-card-text>
+      <v-divider />
       <v-chip-group>
-        <v-chip v-for="tag in article.tags" :key="tag.id">{{ tag.name }}</v-chip>
+        <v-chip v-for="tag in article.tags" :key="tag.id" class="text-uppercase">{{ tag.name }}</v-chip>
       </v-chip-group>
       <p>{{ article && article.author && article.author.firstName }} {{ article && article.author && article.author.lastName }}</p>
     </v-card-text>

@@ -17,6 +17,43 @@
     </v-row>
     <v-row>
       <v-col cols="9" offset="1">
+        <v-expansion-panels flat>
+          <v-expansion-panel>
+            <v-expansion-panel-header>
+              <p class="grey--text text--darken-2 text-h5">Tags</p>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-btn depressed small class="grey--text text--darken-3" @click="dialog = true">
+                <v-icon v-text="'mdi-tag-plus-outline'" />
+              </v-btn>
+              <v-chip-group>
+                <v-chip v-for="tag in selectedPost.tags" :key="tag.id">{{ tag.name }}</v-chip>
+              </v-chip-group>
+              <v-dialog v-model="dialog" width="500">
+                <v-card>
+                  <v-card-actions>
+                    <v-btn depressed small class="grey--text text--darken-3" @click="dialog = false">
+                      <v-icon v-text="'mdi-close'" />
+                    </v-btn>
+                  </v-card-actions>
+                  <v-card-title>Create Tag</v-card-title>
+                  <v-card-text>
+                    <v-text-field
+                      v-model="newTagName"
+                      label="Tag Name"
+                      append-outer-icon="mdi-plus-box-outline"
+                      @click:append-outer="addTag"
+                    />
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="9" offset="1">
         <v-text-field v-model="selectedPost.title" label="Title" />
       </v-col>
     </v-row>
@@ -30,7 +67,7 @@
   <span v-else class="post-list d-flex flex-column">
     <v-row>
       <v-col cols="1" offset="1">
-        <v-btn color="gray" @click="createPost">
+        <v-btn color="gray" depressed outlined class="grey--text text--darken-3" @click="createPost">
           <v-icon v-text="'mdi-plus-thick'" />
         </v-btn>
       </v-col>
@@ -94,7 +131,7 @@ export default {
     }
     const updatePost = async () => {
       try {
-        if (selectedPost.value.userId) {
+        if (selectedPost.value.id) {
           loading.value = true
           const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.patchData)
           const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
@@ -119,6 +156,13 @@ export default {
       await updatePost()
       close()
     }
+    const newTagName = ref('')
+    const addTag = () => {
+      selectedPost.value.tags.push({ name: newTagName.value })
+      newTagName.value = ''
+      dialog.value = false
+    }
+    const dialog = ref(false)
     const createdDate = computed(() =>
       selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
     )
@@ -171,6 +215,11 @@ export default {
       close,
       saveAndClose,
       loading,
+      addTag,
+      dialog,
+      newTagName,
+      errors,
+      snackbar,
     }
   },
 }

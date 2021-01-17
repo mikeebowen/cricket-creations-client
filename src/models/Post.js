@@ -5,6 +5,7 @@ class Post {
   lastUpdated
   title
   content
+  tags
 
   constructor(data) {
     this.id = data.id
@@ -13,12 +14,14 @@ class Post {
     this.title = data.title
     this.content = data.content
     this.userId = data.userId
+    this.tags = data.tags || []
   }
 
   get patchData() {
     return {
       Title: this.title,
       Content: this.content,
+      Tags: this.tags.map(t => ({ Id: t.id, Name: t.name })),
     }
   }
 
