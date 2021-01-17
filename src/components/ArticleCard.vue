@@ -7,15 +7,20 @@
       @load="isLoading = false"
     >
       <v-card-title v-if="!isLoading" class="align-end fill-height">
-        {{ article && article.title }}
+        <h3 class="grey--text text--darken-2">{{ article && article.title }}</h3>
       </v-card-title>
       <template #placeholder>
         <v-row class="fill-height ma-0" align="center" justify="center">
-          <v-icon v-text="'fas fa-circle-notch fa-spin'" />
+          <v-col>
+            <v-icon v-text="'fas fa-circle-notch fa-spin'" />
+          </v-col>
         </v-row>
       </template>
     </v-img>
     <v-card-text>
+      <v-chip-group>
+        <v-chip v-for="tag in article.tags" :key="tag.id">{{ tag.name }}</v-chip>
+      </v-chip-group>
       <p>{{ article && article.author && article.author.firstName }} {{ article && article.author && article.author.lastName }}</p>
     </v-card-text>
     <v-card-text

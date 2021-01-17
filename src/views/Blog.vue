@@ -75,7 +75,7 @@ h1 {
 }
 
 .content-wrapper {
-  overflow: auto;
+  overflow: visible;
 
   .masonry-container {
     overflow: hidden;
