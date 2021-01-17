@@ -40,6 +40,11 @@
       </v-col>
     </v-row>
     <v-pagination v-model="page" :length="total" :total-visible="9" class="pagination" />
+    <v-snackbar v-model="snackbar" text color="red">
+      <p>Something went wrong, your post couldn't save.</p>
+      <v-icon color="red">mdi-alert</v-icon>
+      {{ errors }}
+    </v-snackbar>
   </span>
 </template>
 
@@ -79,6 +84,8 @@ export default {
       loading.value = false
     }
     const selectedPost = ref(null)
+    const errors = ref(null)
+    const snackbar = ref(false)
     const selectPost = post => {
       selectedPost.value = new Post(post)
     }
@@ -86,18 +93,25 @@ export default {
       selectedPost.value = new Post({})
     }
     const updatePost = async () => {
-      if (selectedPost.value.userId) {
-        loading.value = true
-        const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.patchData)
-        const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
-        posts.value[i] = updatedPost.data.data
-        selectedPost.value = new Post(updatedPost.data.data)
+      try {
+        if (selectedPost.value.userId) {
+          loading.value = true
+          const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.patchData)
+          const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
+          posts.value[i] = updatedPost.data.data
+          selectedPost.value = new Post(updatedPost.data.data)
+          loading.value = false
+        } else {
+          loading.value = true
+          const newPost = await axios.post('/api/blogpost', selectedPost.value.postData)
+          selectedPost.value = new Post(newPost.data.data)
+          loading.value = false
+        }
+      } catch (err) {
+        errors.value = err.message || err
+        close()
         loading.value = false
-      } else {
-        loading.value = true
-        const newPost = await axios.post('/api/blogpost', selectedPost.value.postData)
-        selectedPost.value = new Post(newPost.data.data)
-        loading.value = false
+        snackbar.value = true
       }
     }
     const close = () => (selectedPost.value = null)
