@@ -17,54 +17,7 @@
     </v-row>
     <v-row>
       <v-col cols="9" offset="1">
-        <v-expansion-panels flat>
-          <v-expansion-panel>
-            <v-expansion-panel-header>
-              <p class="grey--text text--darken-2 text-h5">Tags</p>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-btn depressed small class="grey--text text--darken-3" @click="dialog = true">
-                <v-icon v-text="'mdi-tag-plus-outline'" />
-              </v-btn>
-              <v-chip-group>
-                <v-chip v-for="(tag, i) in selectedPost.tags" :key="tag.id" close @click:close="removeTag(i)">{{ tag.name }}</v-chip>
-              </v-chip-group>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-        <v-dialog v-model="dialog" width="500">
-          <v-card>
-            <v-card-actions>
-              <v-btn depressed small class="grey--text text--darken-3" @click="dialog = false">
-                <v-icon v-text="'mdi-close'" />
-              </v-btn>
-            </v-card-actions>
-            <v-card-title>Create Tag</v-card-title>
-            <v-card-text>
-              <v-text-field
-                v-model="newTagName"
-                label="Tag Name"
-                append-outer-icon="mdi-plus-box-outline"
-                @click:append-outer="addTag({ name: newTagName })"
-              />
-              <v-expansion-panels flat>
-                <v-expansion-panel>
-                  <v-expansion-panel-header>
-                    <p class="grey--text text--darken-2 text-h5">Existing Tags</p>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    <v-chip-group column>
-                      <v-chip v-for="tag in existingTags" :key="tag.id" @click="addTag(tag)">
-                        {{ tag.name }}
-                        <v-icon>mdi-check-circle-outline</v-icon>
-                      </v-chip>
-                    </v-chip-group>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
+        <TagEditor :tags="selectedPost.tags" @new-tags="updateTags" />
       </v-col>
     </v-row>
     <v-row>
@@ -102,6 +55,7 @@
 
 <script>
 import BlogPostList from '@/components/BlogPostList'
+import TagEditor from '@/components/TagEditor'
 import Editor from '@tinymce/tinymce-vue'
 import Post from '@/models/Post'
 import 'tinymce/themes/silver'
@@ -119,12 +73,11 @@ import { DateTime } from 'luxon'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 export default {
   name: 'Admin',
-  components: { BlogPostList, Editor },
+  components: { BlogPostList, Editor, TagEditor },
   setup() {
     const page = ref(1)
     const count = ref(10)
     const posts = ref([])
-    const existingTags = ref([])
     const t = ref(0)
     const error = ref('')
     const total = computed(() => parseInt(t.value / count.value + 1))
@@ -132,10 +85,8 @@ export default {
     const getBlogPosts = async () => {
       try {
         const ps = await axios.get('/api/blogpost', { params: { userId: 1, page: page.value, count: count.value } })
-        const tags = await axios.get('/api/tag')
         posts.value.length = 0
         t.value = ps?.data?.meta?.total
-        existingTags.value.push(...tags?.data?.data)
         posts.value.push(...ps?.data?.data)
         loading.value = false
       } catch (err) {
@@ -179,15 +130,6 @@ export default {
       await updatePost()
       close()
     }
-    const newTagName = ref('')
-    const addTag = tag => {
-      selectedPost.value.tags.push(tag)
-      newTagName.value = ''
-    }
-    const removeTag = index => {
-      selectedPost.value.tags.splice(index, 1)
-    }
-    const dialog = ref(false)
     const createdDate = computed(() =>
       selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
     )
@@ -240,13 +182,8 @@ export default {
       close,
       saveAndClose,
       loading,
-      addTag,
-      dialog,
-      newTagName,
       errors,
       snackbar,
-      removeTag,
-      existingTags,
     }
   },
 }
