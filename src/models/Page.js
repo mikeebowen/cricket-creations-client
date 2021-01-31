@@ -16,4 +16,19 @@ export default class Page {
     this.heading = data.heading
     this.content = data.content
   }
+
+  get patchData() {
+    return {
+      Title: this.title,
+      Heading: this.heading,
+      Content: this.content,
+    }
+  }
+
+  get postData() {
+    return {
+      ...this.patchData,
+      UserId: 1,
+    }
+  }
 }

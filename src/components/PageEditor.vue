@@ -1,25 +1,59 @@
 <template>
   <span>
-    <v-tabs v-model="tab" show-arrows>
-      <v-tabs-slider color="teal lighten-3" />
-      <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#tab-${i}`">
-        {{ page.title }}
-      </v-tab>
-      <v-tab>
-        <v-icon v-text="'mdi-plus-thick'" />
-      </v-tab>
-    </v-tabs>
-    <v-tabs-items v-model="tab">
-      <v-tab-item v-for="(page, i) in pages" :key="page.id" :value="`tab-${i}`">
-        <Editor v-model="page.content" :init="editorConfig" />
-      </v-tab-item>
-    </v-tabs-items>
+    <v-row>
+      <v-col cols="9" offset="1">
+        <v-tabs v-model="tab" show-arrows centered>
+          <v-tabs-slider color="teal lighten-3" />
+          <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#${i}`">
+            <span v-if="page.id">
+              {{ page.title }}
+            </span>
+            <v-icon v-else v-text="'mdi-plus-thick'" />
+          </v-tab>
+        </v-tabs>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="3">
+        <v-subheader inset> Created: {{ createdDate }} </v-subheader>
+      </v-col>
+      <v-col cols="3">
+        <v-subheader inset> Last Updated: {{ lastUpdated }} </v-subheader>
+      </v-col>
+      <v-col cols="4 d-flex justify-end">
+        <v-btn-toggle>
+          <v-btn tile @click="savePage">Save</v-btn>
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="9" offset="1">
+        <v-text-field v-if="pages[tab]" v-model="pages[tab].title" label="Title" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="9" offset="1">
+        <v-tabs-items v-model="tab">
+          <template v-for="(page, i) in pages">
+            <v-tab-item :key="page.id" :value="`${i}`">
+              <Editor v-model="page.content" :init="editorConfig" />
+            </v-tab-item>
+          </template>
+        </v-tabs-items>
+      </v-col>
+    </v-row>
+    <v-snackbar v-model="snackbar" text color="red">
+      <p>Something went wrong, your post couldn't save.</p>
+      <v-icon color="red">mdi-alert</v-icon>
+      {{ errors }}
+    </v-snackbar>
   </span>
 </template>
 
 <script>
 import axios from 'axios'
-import { ref, onMounted, onBeforeMount } from '@vue/composition-api'
+import { ref, onMounted, computed } from '@vue/composition-api'
+import { DateTime } from 'luxon'
 import Editor from '@tinymce/tinymce-vue'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
@@ -31,20 +65,59 @@ import 'tinymce/plugins/save'
 import 'tinymce/plugins/lists'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
+import Page from '@/models/Page'
 
 export default {
   name: 'PageEditor',
   components: { Editor },
   setup() {
     const pages = ref([])
+    const newPage = ref('')
     const getPages = async () => {
       try {
         const pgs = await axios.get('/api/page')
-        console.log('🚀 ~ file: PageEditor.vue ~ line 53 ~ onMounted ~ pgs', pgs)
-        pages.value.push(...pgs?.data?.data)
+        pages.value.push(
+          ...pgs?.data?.data.map(p => new Page(p)),
+          new Page({
+            created: '',
+            lastUpdated: '',
+            title: '',
+            content: '',
+          }),
+        )
         loading.value = false
       } catch (err) {
         console.error(err)
+      }
+    }
+    const errors = ref(null)
+    const snackbar = ref(false)
+    const savePage = async () => {
+      try {
+        if (pages.value[tab.value].id) {
+          loading.value = true
+          const updatedPage = await axios.patch(`/api/page/${pages.value[tab.value].id}`, pages.value[tab.value].patchData)
+          pages.value[tab] = updatedPage.data.data
+          pages.value[tab.value] = new Page(updatedPage.data.data)
+          loading.value = false
+        } else {
+          loading.value = true
+          const newPage = await axios.post('/api/page', pages.value[tab.value].postData)
+          pages.value[tab.value] = new Page(newPage.data.data)
+          pages.value.push(
+            new Page({
+              created: '',
+              lastUpdated: '',
+              title: '',
+              content: '',
+            }),
+          )
+          loading.value = false
+        }
+      } catch (err) {
+        errors.value = err.message || err
+        loading.value = false
+        snackbar.value = true
       }
     }
     const loading = ref(true)
@@ -69,14 +142,20 @@ export default {
         { text: 'C++', value: 'cpp' },
       ],
     })
-    const tab = ref('tab-0')
-    onBeforeMount(async () => {})
+    const tab = ref('sub-tab-0')
+    const createdDate = computed(() =>
+      pages.value[tab.value]?.created ? DateTime.fromISO(pages.value[tab.value].created).toLocaleString(DateTime.DATETIME_MED) : '',
+    )
+    const lastUpdated = computed(() =>
+      pages.value[tab.value]?.lastUpdated ? DateTime.fromISO(pages.value[tab.value].lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
+    )
     onMounted(async () => {
       await getPages()
+      tab.value = '0'
     })
-    return { pages, loading, editorConfig, tab }
+    return { pages, loading, editorConfig, tab, newPage, createdDate, lastUpdated, savePage, errors, snackbar }
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss"></style>
