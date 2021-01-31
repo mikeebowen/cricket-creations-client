@@ -5,6 +5,9 @@
       <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#tab-${i}`">
         {{ page.title }}
       </v-tab>
+      <v-tab>
+        <v-icon v-text="'mdi-plus-thick'" />
+      </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item v-for="(page, i) in pages" :key="page.id" :value="`tab-${i}`">
