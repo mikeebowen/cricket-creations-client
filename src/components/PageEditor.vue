@@ -27,8 +27,11 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="9" offset="1">
+      <v-col cols="4" offset="1">
         <v-text-field v-if="pages[tab]" v-model="pages[tab].title" label="Title" />
+      </v-col>
+      <v-col cols="5">
+        <v-text-field v-if="pages[tab]" v-model="pages[tab].heading" label="Heading" />
       </v-col>
     </v-row>
     <v-row>
@@ -83,6 +86,7 @@ export default {
             lastUpdated: '',
             title: '',
             content: '',
+            heading: '',
           }),
         )
         loading.value = false
@@ -110,6 +114,7 @@ export default {
               lastUpdated: '',
               title: '',
               content: '',
+              heading: '',
             }),
           )
           loading.value = false
@@ -142,7 +147,7 @@ export default {
         { text: 'C++', value: 'cpp' },
       ],
     })
-    const tab = ref('sub-tab-0')
+    const tab = ref('0')
     const createdDate = computed(() =>
       pages.value[tab.value]?.created ? DateTime.fromISO(pages.value[tab.value].created).toLocaleString(DateTime.DATETIME_MED) : '',
     )

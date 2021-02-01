@@ -4,8 +4,9 @@ export default class Page {
   created
   lastUpdated
   title
-  heading
+  name
   content
+  heading
 
   constructor(data) {
     this.id = data.id
@@ -13,15 +14,17 @@ export default class Page {
     this.created = data.created
     this.lastUpdated = data.lastUpdated
     this.title = data.title
-    this.heading = data.heading
+    this.name = data.name
     this.content = data.content
+    this.heading = data.heading
   }
 
   get patchData() {
     return {
       Title: this.title,
-      Heading: this.heading,
+      Name: this.name,
       Content: this.content,
+      Heading: this.heading,
     }
   }
 
