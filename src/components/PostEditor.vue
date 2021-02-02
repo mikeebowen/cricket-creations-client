@@ -11,7 +11,8 @@
         <v-btn-toggle>
           <v-btn tile @click="updatePost">Save</v-btn>
           <v-btn tile @click="saveAndClose">Save & Close</v-btn>
-          <v-btn tile @click="close">Close</v-btn>
+          <v-btn tile @click="close">Close Without Saving</v-btn>
+          <v-btn class="activator" tile @click="openDialog">Delete</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -31,6 +32,7 @@
         <Editor v-else v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
+    <DeleteDialog :selected-name="selectedPost && selectedPost.title" activator-class="activator" :dialog="dialog" @submit="deletePost" />
   </span>
   <span v-else class="post-list d-flex flex-column">
     <v-row>
@@ -56,6 +58,7 @@
 <script>
 import BlogPostList from '@/components/BlogPostList'
 import TagEditor from '@/components/TagEditor'
+import DeleteDialog from '@/components/DeleteDialog'
 import Editor from '@tinymce/tinymce-vue'
 import Post from '@/models/Post'
 import 'tinymce/themes/silver'
@@ -73,7 +76,7 @@ import { DateTime } from 'luxon'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 export default {
   name: 'Admin',
-  components: { BlogPostList, Editor, TagEditor },
+  components: { BlogPostList, Editor, TagEditor, DeleteDialog },
   setup() {
     const page = ref(1)
     const count = ref(10)
@@ -82,6 +85,16 @@ export default {
     const error = ref('')
     const total = computed(() => parseInt(t.value / count.value + 1))
     const loading = ref(true)
+    const dialog = ref(false)
+    const openDialog = () => {
+      dialog.value = true
+      const { id } = selectedPost.value
+      if (id) {
+        dialog.value = true
+      } else {
+        deletePost(true)
+      }
+    }
     const getBlogPosts = async () => {
       try {
         const ps = await axios.get('/api/blogpost', { params: { userId: 1, page: page.value, count: count.value } })
@@ -129,6 +142,29 @@ export default {
     const saveAndClose = async () => {
       await updatePost()
       close()
+    }
+    const deletePost = async e => {
+      const { id } = selectedPost.value
+      dialog.value = false
+      if (id && e) {
+        try {
+          await axios.delete(`/api/blogpost/${id}`)
+          posts.value = posts.value.filter(p => p.id !== id)
+          selectedPost.value = null
+          close()
+        } catch (err) {
+          errors.value = err.message || err
+          close()
+          loading.value = false
+          snackbar.value = true
+        }
+      } else if (e) {
+        selectedPost.value = null
+        close()
+      }
+    }
+    const updateTags = e => {
+      selectedPost.value.tags = e
     }
     const createdDate = computed(() =>
       selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
@@ -184,6 +220,10 @@ export default {
       loading,
       errors,
       snackbar,
+      dialog,
+      openDialog,
+      deletePost,
+      updateTags,
     }
   },
 }

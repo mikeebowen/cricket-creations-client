@@ -1,6 +1,0 @@
-export { default as Footer } from './Footer.vue'
-export { default as HeaderComponent } from './Header.vue'
-export { default as AdminMenu } from './AdminMenu.vue'
-export { default as ExplodingParticles } from './ExplodingParticles.vue'
-export { default as ArticleCard } from './ArticleCard.vue'
-export { default as LoginForm } from './LoginForm.vue'

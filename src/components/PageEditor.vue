@@ -23,6 +23,7 @@
       <v-col cols="4 d-flex justify-end">
         <v-btn-toggle>
           <v-btn tile @click="savePage">Save</v-btn>
+          <v-btn class="activator" tile @click="openDialog">Delete</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -50,6 +51,7 @@
       <v-icon color="red">mdi-alert</v-icon>
       {{ errors }}
     </v-snackbar>
+    <DeleteDialog :selected-name="pages[tab] && pages[tab].name" activator-class="activator" :dialog="dialog" @submit="deletePage" />
   </span>
 </template>
 
@@ -69,10 +71,11 @@ import 'tinymce/plugins/lists'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import Page from '@/models/Page'
+import DeleteDialog from '@/components/DeleteDialog'
 
 export default {
   name: 'PageEditor',
-  components: { Editor },
+  components: { Editor, DeleteDialog },
   setup() {
     const pages = ref([])
     const newPage = ref('')
@@ -96,6 +99,7 @@ export default {
     }
     const errors = ref(null)
     const snackbar = ref(false)
+    const selectedFileName = computed(() => pages.value[tab.value].title)
     const savePage = async () => {
       try {
         if (pages.value[tab.value].id) {
@@ -125,6 +129,43 @@ export default {
         snackbar.value = true
       }
     }
+    const openDialog = () => {
+      const { id } = pages.value[tab.value]
+      if (id) {
+        dialog.value = true
+      } else {
+        deletePage(true)
+      }
+    }
+    const deletePage = async e => {
+      const { id } = pages.value[tab.value]
+      dialog.value = false
+      if (e && id) {
+        if (id) {
+          try {
+            await axios.delete(`/api/page/${id}`)
+            pages.value.splice(tab.value, 1)
+          } catch (err) {
+            errors.value = err.message || err
+            loading.value = false
+            snackbar.value = true
+          }
+        }
+      } else if (e && !id) {
+        pages.value.splice(
+          tab.value,
+          1,
+          new Page({
+            created: '',
+            lastUpdated: '',
+            title: '',
+            content: '',
+            heading: '',
+          }),
+        )
+      }
+    }
+    const dialog = ref(false)
     const loading = ref(true)
     const editorConfig = ref({
       height: 500,
@@ -158,7 +199,22 @@ export default {
       await getPages()
       tab.value = '0'
     })
-    return { pages, loading, editorConfig, tab, newPage, createdDate, lastUpdated, savePage, errors, snackbar }
+    return {
+      pages,
+      loading,
+      editorConfig,
+      tab,
+      newPage,
+      createdDate,
+      lastUpdated,
+      savePage,
+      errors,
+      snackbar,
+      dialog,
+      openDialog,
+      deletePage,
+      selectedFileName,
+    }
   },
 }
 </script>

@@ -57,10 +57,19 @@ export default {
     tags: { type: Array, default: () => [] },
   },
   emits: ['new-tags'],
-  setup(props) {
+  setup(props, { emit }) {
     const existingTags = ref([])
     const newTagName = ref('')
     const dialog = ref(false)
+    const updateTags = tag => {
+      props.tags.push(tag)
+      newTagName.value = ''
+      emit('new-tags', props.tags)
+    }
+    const removeTag = index => {
+      props.tags.splice(index, 1)
+      emit('new-tags', props.tags)
+    }
 
     onMounted(async () => {
       {
@@ -68,18 +77,7 @@ export default {
         existingTags.value.push(...dbTags?.data?.data)
       }
     })
-    return { newTagName, dialog, existingTags }
-  },
-  methods: {
-    updateTags(tag) {
-      this.tags.push(tag)
-      this.newTagName = ''
-      this.$emit('new-tags', this.tags)
-    },
-    removeTag(index) {
-      this.tags.splice(index, 1)
-      this.$emit('new-tags', this.tags)
-    },
+    return { newTagName, dialog, existingTags, updateTags, removeTag }
   },
 }
 </script>
