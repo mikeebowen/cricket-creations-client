@@ -72,7 +72,7 @@ export default {
 @import '@/variables.scss';
 
 .content-wrapper {
-  background-color: $bodyBackgroundColor;
+  background-color: $body-background-color;
   height: 100vh;
 }
 
@@ -112,7 +112,7 @@ export default {
     }
 
     a {
-      color: $defaultFontColor;
+      color: $primary-text-color-admin;
       text-decoration: none;
     }
   }
@@ -125,9 +125,9 @@ export default {
 // star background
 // n is number of stars required
 @function multiple-box-shadow($n) {
-  $value: '#{random(2000)}px #{random(2000)}px #{$bodyBackgroundColor}';
+  $value: '#{random(2000)}px #{random(2000)}px #{$body-background-color}';
   @for $i from 2 through $n {
-    $value: '#{$value} , #{random(2000)}px #{random(2000)}px #{$bodyBackgroundColor}';
+    $value: '#{$value} , #{random(2000)}px #{random(2000)}px #{$body-background-color}';
   }
 
   @return unquote($value);
@@ -183,7 +183,7 @@ $shadows-xl: multiple-box-shadow(500);
 }
 //////////////////////////////////////////
 
-@media screen and (max-width: $medBreakPoint) {
+@media screen and (max-width: $md-break-point) {
   .home-container {
     h1 {
       font-size: 3.8rem;
@@ -195,7 +195,7 @@ $shadows-xl: multiple-box-shadow(500);
   }
 }
 
-@media screen and (max-width: $smBreakPoint) {
+@media screen and (max-width: $sm-break-point) {
   .main-wrapper {
     &::v-deep .v-btn:not(.v-btn--round).v-size--x-large {
       padding-right: 0;

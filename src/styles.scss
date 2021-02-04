@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Bevan|Roboto&display=swap');
 
 html {
-  font-size: 62.5%;
+  font-size: $html-font-size;
 }
 
 html,
@@ -15,22 +15,22 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
-  font-size: 1.4rem;
-  color: $color-primary-4;
+  font-size: $default-font-size;
+  color: $default-text-color;
 }
 
 @for $i from 1 to 6 {
   h#{$i} {
-    color: $defaultFontColor;
+    color: $default-text-color;
   }
 }
 
 h1 {
-  font-size: 3.6rem;
+  font-size: $h1-font-size;
 }
 
 h2 {
-  font-size: 2.4rem;
+  font-size: $h2-font-size;
 }
 
 .hidden {
