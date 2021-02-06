@@ -51,7 +51,13 @@
       <v-icon color="red">mdi-alert</v-icon>
       {{ errors }}
     </v-snackbar>
-    <DeleteDialog :selected-name="pages[tab] && pages[tab].name" activator-class="activator" :dialog="dialog" @submit="deletePage" />
+    <ConfirmDialog
+      :headline="`Are you sure you want to delete ${pages[tab] && pages[tab].name}?`"
+      message="This will be very annoying to undo..."
+      activator-class="activator"
+      :dialog="dialog"
+      @submit="deletePage"
+    />
   </span>
 </template>
 
@@ -71,11 +77,11 @@ import 'tinymce/plugins/lists'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import Page from '@/models/Page'
-import DeleteDialog from '@/components/DeleteDialog'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 export default {
   name: 'PageEditor',
-  components: { Editor, DeleteDialog },
+  components: { Editor, ConfirmDialog },
   setup() {
     const pages = ref([])
     const newPage = ref('')

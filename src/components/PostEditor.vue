@@ -32,7 +32,20 @@
         <Editor v-else v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
-    <DeleteDialog :selected-name="selectedPost && selectedPost.title" activator-class="activator" :dialog="dialog" @submit="deletePost" />
+    <ConfirmDialog
+      :headline="`Are you sure you want to delete ${selectedPost && selectedPost.title}?`"
+      message="This will be super annoying to undo..."
+      activator-class="activator"
+      :dialog="dialog"
+      @submit="deletePost"
+    />
+    <ConfirmDialog
+      :headline="`There are unsaved changes to ${selectedPost && selectedPost.title}.`"
+      message="Do you want to discard them?"
+      activator-class="activator"
+      :dialog="dialog2"
+      @submit="confirmDiscard"
+    />
   </span>
   <span v-else class="post-list d-flex flex-column">
     <v-row>
@@ -58,9 +71,10 @@
 <script>
 import BlogPostList from '@/components/BlogPostList'
 import TagEditor from '@/components/TagEditor'
-import DeleteDialog from '@/components/DeleteDialog'
+import ConfirmDialog from '@/components/ConfirmDialog'
 import Editor from '@tinymce/tinymce-vue'
 import Post from '@/models/Post'
+import { isEqual } from '@/utils/'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
 import 'tinymce/plugins/link'
@@ -74,9 +88,10 @@ import 'tinymce/plugins/code'
 import axios from 'axios'
 import { DateTime } from 'luxon'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
+
 export default {
   name: 'Admin',
-  components: { BlogPostList, Editor, TagEditor, DeleteDialog },
+  components: { BlogPostList, Editor, TagEditor, ConfirmDialog },
   setup() {
     const page = ref(1)
     const count = ref(10)
@@ -86,6 +101,7 @@ export default {
     const total = computed(() => parseInt(t.value / count.value + 1))
     const loading = ref(true)
     const dialog = ref(false)
+    const dialog2 = ref(false)
     const openDialog = () => {
       dialog.value = true
       const { id } = selectedPost.value
@@ -108,13 +124,16 @@ export default {
       }
     }
     const selectedPost = ref(null)
+    const cachedPost = ref(null)
     const errors = ref(null)
     const snackbar = ref(false)
     const selectPost = post => {
       selectedPost.value = new Post(post)
+      cachedPost.value = new Post(post)
     }
     const createPost = () => {
       selectedPost.value = new Post({})
+      cachedPost.value = new Post({})
     }
     const updatePost = async () => {
       try {
@@ -124,11 +143,13 @@ export default {
           const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
           posts.value[i] = updatedPost.data.data
           selectedPost.value = new Post(updatedPost.data.data)
+          cachedPost.value = new Post(updatedPost.data.data)
           loading.value = false
         } else {
           loading.value = true
           const newPost = await axios.post('/api/blogpost', selectedPost.value.postData)
           selectedPost.value = new Post(newPost.data.data)
+          cachedPost.value = new Post(newPost.data.data)
           loading.value = false
         }
       } catch (err) {
@@ -138,7 +159,21 @@ export default {
         snackbar.value = true
       }
     }
-    const close = () => (selectedPost.value = null)
+    const confirmDiscard = e => {
+      if (e) {
+        selectedPost.value = null
+        cachedPost.value = null
+      }
+      dialog2.value = false
+    }
+    const close = () => {
+      if (!isEqual(selectedPost.value, cachedPost.value)) {
+        dialog2.value = true
+      } else {
+        selectedPost.value = null
+        cachedPost.value = null
+      }
+    }
     const saveAndClose = async () => {
       await updatePost()
       close()
@@ -151,6 +186,7 @@ export default {
           await axios.delete(`/api/blogpost/${id}`)
           posts.value = posts.value.filter(p => p.id !== id)
           selectedPost.value = null
+          cachedPost.value = null
           close()
         } catch (err) {
           errors.value = err.message || err
@@ -160,6 +196,7 @@ export default {
         }
       } else if (e) {
         selectedPost.value = null
+        cachedPost.value = null
         close()
       }
     }
@@ -221,9 +258,11 @@ export default {
       errors,
       snackbar,
       dialog,
+      dialog2,
       openDialog,
       deletePost,
       updateTags,
+      confirmDiscard,
     }
   },
 }

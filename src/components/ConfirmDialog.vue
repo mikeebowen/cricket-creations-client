@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="cDialog" persistent max-width="290">
     <v-card>
-      <v-card-title class="headline"> Are you sure you want to delete {{ selectedName }}? </v-card-title>
+      <v-card-title class="headline"> {{ headline }} </v-card-title>
       <v-card-text>
-        This will be super annoying to undo...
+        {{ message }}
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -22,11 +22,12 @@
 import { ref, watch } from '@vue/composition-api'
 
 export default {
-  name: 'DeleteDialog',
+  name: 'ConfirmDialog',
   props: {
     dialog: { default: false, type: Boolean },
     activatorClass: { default: '.activator', type: String },
-    selectedName: { default: '', type: String },
+    headline: { default: '', type: String },
+    message: { default: '', type: String },
   },
   setup(props, { emit, set }) {
     const cDialog = ref(false)
