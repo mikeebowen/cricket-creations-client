@@ -1,9 +1,15 @@
 <template>
-  <v-dialog v-model="cDialog" persistent max-width="290">
+  <v-dialog v-model="cDialog" persistent max-width="750">
     <v-card>
-      <v-card-title class="headline"> {{ headline }} </v-card-title>
+      <v-card-title class="headline">
+        <slot name="headline">
+          {{ headline }}
+        </slot>
+      </v-card-title>
       <v-card-text>
-        {{ message }}
+        <slot>
+          {{ message }}
+        </slot>
       </v-card-text>
       <v-card-actions>
         <v-spacer />

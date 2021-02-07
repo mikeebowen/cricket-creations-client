@@ -33,14 +33,14 @@
       </v-col>
     </v-row>
     <ConfirmDialog
-      :headline="`Are you sure you want to delete ${selectedPost && selectedPost.title}?`"
+      :headline="headline"
       message="This will be super annoying to undo..."
       activator-class="activator"
       :dialog="dialog"
       @submit="deletePost"
     />
     <ConfirmDialog
-      :headline="`There are unsaved changes to ${selectedPost && selectedPost.title}.`"
+      :headline="headline2"
       message="Do you want to discard them?"
       activator-class="activator"
       :dialog="dialog2"
@@ -92,7 +92,8 @@ import { ref, onMounted, watch, computed } from '@vue/composition-api'
 export default {
   name: 'Admin',
   components: { BlogPostList, Editor, TagEditor, ConfirmDialog },
-  setup() {
+  props: { selectedPost: { type: Post, default: () => null }, cachedPost: { type: Post, default: () => null } },
+  setup(props, context) {
     const page = ref(1)
     const count = ref(10)
     const posts = ref([])
@@ -102,9 +103,11 @@ export default {
     const loading = ref(true)
     const dialog = ref(false)
     const dialog2 = ref(false)
+    const headline = computed(() => `Are you sure you want to delete "${props.selectedPost.value && props.selectedPost.value.title}"?`)
+    const headline2 = computed(() => `There are unsaved changes to "${props.selectedPost && props.selectedPost.title}".`)
     const openDialog = () => {
       dialog.value = true
-      const { id } = selectedPost.value
+      const { id } = props.selectedPost
       if (id) {
         dialog.value = true
       } else {
@@ -123,33 +126,31 @@ export default {
         snackbar.value = true
       }
     }
-    const selectedPost = ref(null)
-    const cachedPost = ref(null)
     const errors = ref(null)
     const snackbar = ref(false)
     const selectPost = post => {
-      selectedPost.value = new Post(post)
-      cachedPost.value = new Post(post)
+      props.selectedPost = new Post(post)
+      props.cachedPost = new Post(post)
     }
     const createPost = () => {
-      selectedPost.value = new Post({})
-      cachedPost.value = new Post({})
+      props.selectedPost = new Post({})
+      props.cachedPost = new Post({})
     }
     const updatePost = async () => {
       try {
-        if (selectedPost.value.id) {
+        if (props.selectedPost.id) {
           loading.value = true
-          const updatedPost = await axios.patch(`/api/blogpost/${selectedPost.value.id}`, selectedPost.value.patchData)
+          const updatedPost = await axios.patch(`/api/blogpost/${props.selectedPost.id}`, props.selectedPost.patchData)
           const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
           posts.value[i] = updatedPost.data.data
-          selectedPost.value = new Post(updatedPost.data.data)
-          cachedPost.value = new Post(updatedPost.data.data)
+          props.selectedPost = new Post(updatedPost.data.data)
+          props.cachedPost = new Post(updatedPost.data.data)
           loading.value = false
         } else {
           loading.value = true
-          const newPost = await axios.post('/api/blogpost', selectedPost.value.postData)
-          selectedPost.value = new Post(newPost.data.data)
-          cachedPost.value = new Post(newPost.data.data)
+          const newPost = await axios.post('/api/blogpost', props.selectedPost.postData)
+          props.selectedPost = new Post(newPost.data.data)
+          props.cachedPost = new Post(newPost.data.data)
           loading.value = false
         }
       } catch (err) {
@@ -161,17 +162,17 @@ export default {
     }
     const confirmDiscard = e => {
       if (e) {
-        selectedPost.value = null
-        cachedPost.value = null
+        props.selectedPost = null
+        props.cachedPost = null
       }
       dialog2.value = false
     }
     const close = () => {
-      if (!isEqual(selectedPost.value, cachedPost.value)) {
+      if (!isEqual(props.selectedPost, props.cachedPost)) {
         dialog2.value = true
       } else {
-        selectedPost.value = null
-        cachedPost.value = null
+        props.selectedPost = null
+        props.cachedPost = null
       }
     }
     const saveAndClose = async () => {
@@ -179,14 +180,14 @@ export default {
       close()
     }
     const deletePost = async e => {
-      const { id } = selectedPost.value
+      const { id } = props.selectedPost
       dialog.value = false
       if (id && e) {
         try {
           await axios.delete(`/api/blogpost/${id}`)
           posts.value = posts.value.filter(p => p.id !== id)
-          selectedPost.value = null
-          cachedPost.value = null
+          props.selectedPost = null
+          props.cachedPost = null
           close()
         } catch (err) {
           errors.value = err.message || err
@@ -195,19 +196,19 @@ export default {
           snackbar.value = true
         }
       } else if (e) {
-        selectedPost.value = null
-        cachedPost.value = null
+        props.selectedPost = null
+        props.cachedPost = null
         close()
       }
     }
     const updateTags = e => {
-      selectedPost.value.tags = e
+      props.selectedPost.tags = e
     }
     const createdDate = computed(() =>
-      selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
+      props.selectedPost.created ? DateTime.fromISO(props.selectedPost.created).toLocaleString(DateTime.DATETIME_MED) : '',
     )
     const lastUpdated = computed(() =>
-      selectedPost.value.lastUpdated ? DateTime.fromISO(selectedPost.value.lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
+      props.selectedPost.lastUpdated ? DateTime.fromISO(props.selectedPost.lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
     )
     const editorConfig = ref({
       height: 500,
@@ -247,7 +248,6 @@ export default {
       error,
       selectPost,
       editorConfig,
-      selectedPost,
       createdDate,
       lastUpdated,
       updatePost,
@@ -263,6 +263,8 @@ export default {
       deletePost,
       updateTags,
       confirmDiscard,
+      headline,
+      headline2,
     }
   },
 }

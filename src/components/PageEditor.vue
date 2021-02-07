@@ -2,7 +2,7 @@
   <span>
     <v-row>
       <v-col cols="9" offset="1">
-        <v-tabs v-model="tab" show-arrows centered>
+        <v-tabs v-model="tabIndex" show-arrows centered>
           <v-tabs-slider color="teal lighten-3" />
           <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#${i}`">
             <span v-if="page.id">
@@ -29,15 +29,15 @@
     </v-row>
     <v-row>
       <v-col cols="4" offset="1">
-        <v-text-field v-if="pages[tab]" v-model="pages[tab].title" label="Title" />
+        <v-text-field v-if="pages[tabIndex]" v-model="pages[tabIndex].title" label="Title" />
       </v-col>
       <v-col cols="5">
-        <v-text-field v-if="pages[tab]" v-model="pages[tab].heading" label="Heading" />
+        <v-text-field v-if="pages[tabIndex]" v-model="pages[tabIndex].heading" label="Heading" />
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="9" offset="1">
-        <v-tabs-items v-model="tab">
+        <v-tabs-items v-model="tabIndex">
           <template v-for="(page, i) in pages">
             <v-tab-item :key="page.id" :value="`${i}`">
               <Editor v-model="page.content" :init="editorConfig" />
@@ -52,7 +52,7 @@
       {{ errors }}
     </v-snackbar>
     <ConfirmDialog
-      :headline="`Are you sure you want to delete ${pages[tab] && pages[tab].name}?`"
+      :headline="headline"
       message="This will be very annoying to undo..."
       activator-class="activator"
       :dialog="dialog"
@@ -82,13 +82,25 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 export default {
   name: 'PageEditor',
   components: { Editor, ConfirmDialog },
-  setup() {
-    const pages = ref([])
+  props: { pages: { type: Array, default: () => [] }, cachedPages: { type: Array, default: () => [] } },
+  setup(props, context) {
     const newPage = ref('')
     const getPages = async () => {
       try {
         const pgs = await axios.get('/api/page')
-        pages.value.push(
+        props.pages.splice(0, props.pages.length)
+        props.pages.push(
+          ...pgs?.data?.data.map(p => new Page(p)),
+          new Page({
+            created: '',
+            lastUpdated: '',
+            title: '',
+            content: '',
+            heading: '',
+          }),
+        )
+        props.cachedPages.splice(0, props.cachedPages.length)
+        props.cachedPages.push(
           ...pgs?.data?.data.map(p => new Page(p)),
           new Page({
             created: '',
@@ -105,20 +117,21 @@ export default {
     }
     const errors = ref(null)
     const snackbar = ref(false)
-    const selectedFileName = computed(() => pages.value[tab.value].title)
+    const selectedFileName = computed(() => props.pages[tabIndex.value].title)
     const savePage = async () => {
       try {
-        if (pages.value[tab.value].id) {
+        if (props.pages[tabIndex.value].id) {
           loading.value = true
-          const updatedPage = await axios.patch(`/api/page/${pages.value[tab.value].id}`, pages.value[tab.value].patchData)
-          pages.value[tab] = updatedPage.data.data
-          pages.value[tab.value] = new Page(updatedPage.data.data)
+          const updatedPage = await axios.patch(`/api/page/${props.pages[tabIndex.value].id}`, props.pages[tabIndex.value].patchData)
+          props.pages[tabIndex.value] = new Page(updatedPage.data.data)
+          props.cachedPages.splice(0, props.cachedPages.length)
+          props.cachedPages.push(...props.pages)
           loading.value = false
         } else {
           loading.value = true
-          const newPage = await axios.post('/api/page', pages.value[tab.value].postData)
-          pages.value[tab.value] = new Page(newPage.data.data)
-          pages.value.push(
+          const newPage = await axios.post('/api/page', props.pages[tabIndex.value].postData)
+          props.pages[tabIndex.value] = new Page(newPage.data.data)
+          props.pages.push(
             new Page({
               created: '',
               lastUpdated: '',
@@ -127,6 +140,8 @@ export default {
               heading: '',
             }),
           )
+          props.cachedPages.splice(0, props.cachedPages.length)
+          props.cachedPages.push(...props.pages)
           loading.value = false
         }
       } catch (err) {
@@ -136,7 +151,7 @@ export default {
       }
     }
     const openDialog = () => {
-      const { id } = pages.value[tab.value]
+      const { id } = props.pages[tabIndex.value]
       if (id) {
         dialog.value = true
       } else {
@@ -144,22 +159,22 @@ export default {
       }
     }
     const deletePage = async e => {
-      const { id } = pages.value[tab.value]
+      const { id } = props.pages[tabIndex.value]
       dialog.value = false
       if (e && id) {
-        if (id) {
-          try {
-            await axios.delete(`/api/page/${id}`)
-            pages.value.splice(tab.value, 1)
-          } catch (err) {
-            errors.value = err.message || err
-            loading.value = false
-            snackbar.value = true
-          }
+        try {
+          await axios.delete(`/api/page/${id}`)
+          props.pages.splice(tabIndex.value, 1)
+          props.cachedPages.splice(0, props.cachedPages.length)
+          props.cachedPages.push(...props.pages)
+        } catch (err) {
+          errors.value = err.message || err
+          loading.value = false
+          snackbar.value = true
         }
       } else if (e && !id) {
-        pages.value.splice(
-          tab.value,
+        props.pages.splice(
+          tabIndex.value,
           1,
           new Page({
             created: '',
@@ -169,9 +184,12 @@ export default {
             heading: '',
           }),
         )
+        props.cachedPages.splice(0, props.cachedPages.length)
+        props.cachedPages.push(...props.pages)
       }
     }
     const dialog = ref(false)
+    const headline = ref(`Are you sure you want to delete "${props.pages[tabIndex] && props.pages[tabIndex].name}"?`)
     const loading = ref(true)
     const editorConfig = ref({
       height: 500,
@@ -194,22 +212,25 @@ export default {
         { text: 'C++', value: 'cpp' },
       ],
     })
-    const tab = ref('0')
+    const tabIndex = ref('0')
     const createdDate = computed(() =>
-      pages.value[tab.value]?.created ? DateTime.fromISO(pages.value[tab.value].created).toLocaleString(DateTime.DATETIME_MED) : '',
+      props.pages[tabIndex.value]?.created
+        ? DateTime.fromISO(props.pages[tabIndex.value].created).toLocaleString(DateTime.DATETIME_MED)
+        : '',
     )
     const lastUpdated = computed(() =>
-      pages.value[tab.value]?.lastUpdated ? DateTime.fromISO(pages.value[tab.value].lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
+      props.pages[tabIndex.value]?.lastUpdated
+        ? DateTime.fromISO(props.pages[tabIndex.value].lastUpdated).toLocaleString(DateTime.DATETIME_MED)
+        : '',
     )
     onMounted(async () => {
       await getPages()
-      tab.value = '0'
+      tabIndex.value = '0'
     })
     return {
-      pages,
       loading,
       editorConfig,
-      tab,
+      tabIndex,
       newPage,
       createdDate,
       lastUpdated,
@@ -218,6 +239,7 @@ export default {
       snackbar,
       dialog,
       openDialog,
+      headline,
       deletePage,
       selectedFileName,
     }
