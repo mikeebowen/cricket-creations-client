@@ -6,7 +6,7 @@
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item value="tab-0">
-        <PostEditor :selected-post="selectedPost" :cached-post="cachedPost" />
+        <PostEditor :selected-post="selectedPost" :cached-post="cachedPost" @post-selected="updatePost" />
       </v-tab-item>
       <v-tab-item value="tab-1">
         <PageEditor :pages="pages" :cached-pages="cachedPages" />
@@ -48,7 +48,11 @@ export default {
     const handleConfirm = e => {
       console.log('🚀 ~ file: Admin.vue ~ line 47 ~ setup ~ e', e)
     }
-    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, dialog, handleConfirm }
+    const updatePost = e => {
+      selectedPost.value = e
+      cachedPost.value = e
+    }
+    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, dialog, handleConfirm, updatePost }
   },
   beforeRouteLeave(to, from, next) {
     const { pages, cachedPages, selectedPost, cachedPost, unsaved } = this

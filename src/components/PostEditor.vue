@@ -93,7 +93,7 @@ export default {
   name: 'Admin',
   components: { BlogPostList, Editor, TagEditor, ConfirmDialog },
   props: { selectedPost: { type: Post, default: () => null }, cachedPost: { type: Post, default: () => null } },
-  setup(props, context) {
+  setup(props, { emit }) {
     const page = ref(1)
     const count = ref(10)
     const posts = ref([])
@@ -129,8 +129,7 @@ export default {
     const errors = ref(null)
     const snackbar = ref(false)
     const selectPost = post => {
-      props.selectedPost = new Post(post)
-      props.cachedPost = new Post(post)
+      emit('post-selected', new Post(post))
     }
     const createPost = () => {
       props.selectedPost = new Post({})
@@ -143,14 +142,13 @@ export default {
           const updatedPost = await axios.patch(`/api/blogpost/${props.selectedPost.id}`, props.selectedPost.patchData)
           const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
           posts.value[i] = updatedPost.data.data
-          props.selectedPost = new Post(updatedPost.data.data)
-          props.cachedPost = new Post(updatedPost.data.data)
+          emit('updatePost')
+          emit('post-selected', new Post(updatedPost.data.data))
           loading.value = false
         } else {
           loading.value = true
           const newPost = await axios.post('/api/blogpost', props.selectedPost.postData)
-          props.selectedPost = new Post(newPost.data.data)
-          props.cachedPost = new Post(newPost.data.data)
+          emit('post-selected', new Post(newPost.data.data))
           loading.value = false
         }
       } catch (err) {
@@ -162,8 +160,7 @@ export default {
     }
     const confirmDiscard = e => {
       if (e) {
-        props.selectedPost = null
-        props.cachedPost = null
+        emit('post-selected', null)
       }
       dialog2.value = false
     }
@@ -171,8 +168,7 @@ export default {
       if (!isEqual(props.selectedPost, props.cachedPost)) {
         dialog2.value = true
       } else {
-        props.selectedPost = null
-        props.cachedPost = null
+        emit('post-selected', null)
       }
     }
     const saveAndClose = async () => {
@@ -186,8 +182,7 @@ export default {
         try {
           await axios.delete(`/api/blogpost/${id}`)
           posts.value = posts.value.filter(p => p.id !== id)
-          props.selectedPost = null
-          props.cachedPost = null
+          emit('post-selected', null)
           close()
         } catch (err) {
           errors.value = err.message || err
@@ -196,8 +191,7 @@ export default {
           snackbar.value = true
         }
       } else if (e) {
-        props.selectedPost = null
-        props.cachedPost = null
+        emit('post-selected', null)
         close()
       }
     }
