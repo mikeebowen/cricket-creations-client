@@ -13,28 +13,28 @@
       "webRoot": "${workspaceFolder}/src",
       "breakOnLoad": true,
       "sourceMapPathOverrides": {
-        "webpack:///./*": "${webRoot}/*",
+        "webpack:////src/*": "${webRoot}/*",
+        "webpack:////*": "${webRoot}/*",
         "webpack:///src/*": "${webRoot}/*",
-        "webpack:///./src/*": "${webRoot}/*",
         "webpack:///*": "*",
-        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack:////~/*": "${webRoot}/node_modules/*",
         "meteor://💻app/*": "${webRoot}/*"
       }
     },
-    {
-      "type": "firefox",
-      "request": "launch",
-      "name": "vuejs: firefox",
-      "url": "http://localhost:8080",
-      "webRoot": "${workspaceFolder}/src",
-      "pathMappings": [
-        { "url": "webpack:///src/", "path": "${webRoot}/" },
-        { "url": "webpack:///./", "path": "${webRoot}/" },
-        { "url": "webpack:///", "path": "/" },
-        { "url": "webpack:///./~/", "path": "${webRoot}/node_modules/" },
-        { "url": "meteor://💻app/", "path": "${webRoot}/" }
-      ]
-    },
+    // {
+    //   "type": "firefox",
+    //   "request": "launch",
+    //   "name": "vuejs: firefox",
+    //   "url": "http://localhost:8080",
+    //   "webRoot": "${workspaceFolder}/src",
+    //   "pathMappings": [
+    //     { "url": "webpack:///src/", "path": "${webRoot}/" },
+    //     { "url": "webpack:///./", "path": "${webRoot}/" },
+    //     { "url": "webpack:///", "path": "/" },
+    //     { "url": "webpack:///./~/", "path": "${webRoot}/node_modules/" },
+    //     { "url": "meteor://💻app/", "path": "${webRoot}/" }
+    //   ]
+    // },
     {
       "type": "node",
       "request": "launch",
