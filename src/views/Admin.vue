@@ -12,14 +12,14 @@
         <PageEditor :pages="pages" :cached-pages="cachedPages" />
       </v-tab-item>
     </v-tabs-items>
-    <ConfirmDialog activator-class="activator" :dialog="dialog" @submit="handleConfirm">
+    <ConfirmDialog ref="confirmDialog" activator-class="activator">
       <template v-slot:headline>
         The following items have unsaved changes
       </template>
       <v-list flat>
         <v-list-item-group>
-          <v-list-item v-for="(un, i) in unsaved" :key="i">
-            {{ un || 'Untitled' }}
+          <v-list-item v-for="(uns, i) in unsaved" :key="i">
+            {{ uns || 'Untitled' }}
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -29,6 +29,7 @@
 
 <script>
 import { ref } from '@vue/composition-api'
+import clonedeep from 'lodash.clonedeep'
 import { isEqual } from '@/utils/'
 import PostEditor from '@/components/PostEditor'
 import PageEditor from '@/components/PageEditor'
@@ -44,18 +45,15 @@ export default {
     const selectedPost = ref(null)
     const cachedPost = ref(null)
     const unsaved = ref([])
-    const dialog = ref(false)
-    const handleConfirm = e => {
-      console.log('🚀 ~ file: Admin.vue ~ line 47 ~ setup ~ e', e)
-    }
+    const confirmDialog = ref(null)
     const updatePost = e => {
       selectedPost.value = e
-      cachedPost.value = e
+      cachedPost.value = clonedeep(e)
     }
-    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, dialog, handleConfirm, updatePost }
+    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, updatePost, confirmDialog }
   },
-  beforeRouteLeave(to, from, next) {
-    const { pages, cachedPages, selectedPost, cachedPost, unsaved } = this
+  async beforeRouteLeave(to, from, next) {
+    const { pages, cachedPages, selectedPost, cachedPost, unsaved, $refs } = this
     pages.forEach((p, i) => {
       if (!isEqual(p, cachedPages[i])) {
         unsaved.push(p.title)
@@ -64,8 +62,11 @@ export default {
     if (!isEqual(selectedPost, cachedPost)) {
       unsaved.push(selectedPost.title)
     }
-    this.dialog = true
-    return false
+    if (unsaved.length) {
+      const decision = await $refs.confirmDialog.open()
+      return next(decision)
+    }
+    return next(true)
   },
 }
 </script>

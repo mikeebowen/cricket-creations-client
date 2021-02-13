@@ -23,7 +23,7 @@
       <v-col cols="4 d-flex justify-end">
         <v-btn-toggle>
           <v-btn tile @click="savePage">Save</v-btn>
-          <v-btn class="activator" tile @click="openDialog">Delete</v-btn>
+          <v-btn class="activator" tile @click="deletePage">Delete</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -51,13 +51,7 @@
       <v-icon color="red">mdi-alert</v-icon>
       {{ errors }}
     </v-snackbar>
-    <ConfirmDialog
-      :headline="headline"
-      message="This will be very annoying to undo..."
-      activator-class="activator"
-      :dialog="dialog"
-      @submit="deletePage"
-    />
+    <ConfirmDialog ref="dialog" :headline="headline" message="This will be very annoying to undo..." activator-class="activator" />
   </span>
 </template>
 
@@ -85,6 +79,12 @@ export default {
   props: { pages: { type: Array, default: () => [] }, cachedPages: { type: Array, default: () => [] } },
   setup(props, context) {
     const newPage = ref('')
+    const tabIndex = ref('0')
+    const dialog = ref(null)
+    const headline = computed(
+      () => `Are you sure you want to delete "${props.pages[tabIndex.value] && props.pages[tabIndex.value].title}"?`,
+    )
+    const loading = ref(true)
     const getPages = async () => {
       try {
         const pgs = await axios.get('/api/page')
@@ -150,18 +150,10 @@ export default {
         snackbar.value = true
       }
     }
-    const openDialog = () => {
+    const deletePage = async () => {
       const { id } = props.pages[tabIndex.value]
-      if (id) {
-        dialog.value = true
-      } else {
-        deletePage(true)
-      }
-    }
-    const deletePage = async e => {
-      const { id } = props.pages[tabIndex.value]
-      dialog.value = false
-      if (e && id) {
+      const confirmed = await dialog.value.open()
+      if (confirmed && id) {
         try {
           await axios.delete(`/api/page/${id}`)
           props.pages.splice(tabIndex.value, 1)
@@ -172,7 +164,7 @@ export default {
           loading.value = false
           snackbar.value = true
         }
-      } else if (e && !id) {
+      } else if (confirmed && !id) {
         props.pages.splice(
           tabIndex.value,
           1,
@@ -188,9 +180,6 @@ export default {
         props.cachedPages.push(...props.pages)
       }
     }
-    const dialog = ref(false)
-    const headline = ref(`Are you sure you want to delete "${props.pages[tabIndex] && props.pages[tabIndex].name}"?`)
-    const loading = ref(true)
     const editorConfig = ref({
       height: 500,
       // menubar: false,
@@ -212,7 +201,6 @@ export default {
         { text: 'C++', value: 'cpp' },
       ],
     })
-    const tabIndex = ref('0')
     const createdDate = computed(() =>
       props.pages[tabIndex.value]?.created
         ? DateTime.fromISO(props.pages[tabIndex.value].created).toLocaleString(DateTime.DATETIME_MED)
@@ -238,7 +226,6 @@ export default {
       errors,
       snackbar,
       dialog,
-      openDialog,
       headline,
       deletePage,
       selectedFileName,

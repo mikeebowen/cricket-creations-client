@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { ref, watch } from '@vue/composition-api'
+import { ref } from '@vue/composition-api'
 
 export default {
   name: 'ConfirmDialog',
@@ -35,20 +35,21 @@ export default {
     headline: { default: '', type: String },
     message: { default: '', type: String },
   },
-  setup(props, { emit, set }) {
+  setup() {
     const cDialog = ref(false)
+    let resolve
     const decide = agree => {
       cDialog.value = false
-      emit('submit', agree)
+      resolve(agree)
     }
-    watch(
-      () => props.dialog,
-      (cur, prev) => {
-        cDialog.value = cur
-      },
-    )
+    const open = () => {
+      cDialog.value = true
+      return new Promise((res, reject) => {
+        resolve = res
+      })
+    }
 
-    return { decide, cDialog }
+    return { decide, cDialog, open }
   },
 }
 </script>

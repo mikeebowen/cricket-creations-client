@@ -12,7 +12,7 @@
           <v-btn tile @click="updatePost">Save</v-btn>
           <v-btn tile @click="saveAndClose">Save & Close</v-btn>
           <v-btn tile @click="close">Close Without Saving</v-btn>
-          <v-btn class="activator" tile @click="openDialog">Delete</v-btn>
+          <v-btn class="activator" tile @click="deletePost">Delete</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -32,20 +32,7 @@
         <Editor v-else v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
-    <ConfirmDialog
-      :headline="headline"
-      message="This will be super annoying to undo..."
-      activator-class="activator"
-      :dialog="dialog"
-      @submit="deletePost"
-    />
-    <ConfirmDialog
-      :headline="headline2"
-      message="Do you want to discard them?"
-      activator-class="activator"
-      :dialog="dialog2"
-      @submit="confirmDiscard"
-    />
+    <ConfirmDialog ref="dialog" :headline="headline" :message="message" activator-class="activator" />
   </span>
   <span v-else class="post-list d-flex flex-column">
     <v-row>
@@ -56,7 +43,7 @@
       </v-col>
       <v-col cols="10">
         <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
-        <BlogPostList :posts="posts" @postSelected="selectPost" />
+        <BlogPostList :posts="posts" @post-selected="selectPost" />
       </v-col>
     </v-row>
     <v-pagination v-model="page" :length="total" :total-visible="9" class="pagination" />
@@ -101,19 +88,9 @@ export default {
     const error = ref('')
     const total = computed(() => parseInt(t.value / count.value + 1))
     const loading = ref(true)
-    const dialog = ref(false)
-    const dialog2 = ref(false)
-    const headline = computed(() => `Are you sure you want to delete "${props.selectedPost.value && props.selectedPost.value.title}"?`)
-    const headline2 = computed(() => `There are unsaved changes to "${props.selectedPost && props.selectedPost.title}".`)
-    const openDialog = () => {
-      dialog.value = true
-      const { id } = props.selectedPost
-      if (id) {
-        dialog.value = true
-      } else {
-        deletePost(true)
-      }
-    }
+    const dialog = ref(null)
+    const headline = ref('')
+    const message = ref('')
     const getBlogPosts = async () => {
       try {
         const ps = await axios.get('/api/blogpost', { params: { userId: 1, page: page.value, count: count.value } })
@@ -132,8 +109,7 @@ export default {
       emit('post-selected', new Post(post))
     }
     const createPost = () => {
-      props.selectedPost = new Post({})
-      props.cachedPost = new Post({})
+      emit('post-selected', new Post({}))
     }
     const updatePost = async () => {
       try {
@@ -142,7 +118,6 @@ export default {
           const updatedPost = await axios.patch(`/api/blogpost/${props.selectedPost.id}`, props.selectedPost.patchData)
           const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
           posts.value[i] = updatedPost.data.data
-          emit('updatePost')
           emit('post-selected', new Post(updatedPost.data.data))
           loading.value = false
         } else {
@@ -153,46 +128,43 @@ export default {
         }
       } catch (err) {
         errors.value = err.message || err
-        close()
+        emit('post-selected', null)
         loading.value = false
         snackbar.value = true
       }
     }
-    const confirmDiscard = e => {
-      if (e) {
-        emit('post-selected', null)
-      }
-      dialog2.value = false
-    }
-    const close = () => {
+    const close = async () => {
       if (!isEqual(props.selectedPost, props.cachedPost)) {
-        dialog2.value = true
+        message.value = `There are unsaved changes to "${props.selectedPost && props.selectedPost.title}".`
+        const confirm = await dialog.value.open()
+        if (confirm) {
+          emit('post-selected', null)
+        }
       } else {
         emit('post-selected', null)
       }
     }
     const saveAndClose = async () => {
       await updatePost()
-      close()
+      emit('post-selected', null)
     }
-    const deletePost = async e => {
+    const deletePost = async () => {
       const { id } = props.selectedPost
-      dialog.value = false
-      if (id && e) {
+      message.value = `Are you sure you want to delete "${props.selectedPost.value && props.selectedPost.value.title}"?`
+      const confirmed = await dialog.value.open()
+      if (id && confirmed) {
         try {
           await axios.delete(`/api/blogpost/${id}`)
           posts.value = posts.value.filter(p => p.id !== id)
           emit('post-selected', null)
-          close()
         } catch (err) {
           errors.value = err.message || err
-          close()
+          emit('post-selected', null)
           loading.value = false
           snackbar.value = true
         }
-      } else if (e) {
+      } else if (confirmed) {
         emit('post-selected', null)
-        close()
       }
     }
     const updateTags = e => {
@@ -252,13 +224,10 @@ export default {
       errors,
       snackbar,
       dialog,
-      dialog2,
-      openDialog,
       deletePost,
       updateTags,
-      confirmDiscard,
       headline,
-      headline2,
+      message,
     }
   },
 }
