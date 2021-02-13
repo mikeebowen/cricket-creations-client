@@ -59,7 +59,7 @@ export default new Router({
       path: '/login',
       name: 'login',
       components: {
-        header: null,
+        header: () => import('@/components/Header.vue'),
         footer: null,
         default: () => import('@/views/Login.vue'),
       },

@@ -1,138 +1,170 @@
 <template>
-  <v-content>
-    <v-container>
-      <template>
-        <v-card class="mx-auto" max-width="344" outlined>
-          <v-list-item three-line>
-            <v-list-item-content>
-              <v-list-item-title class="headline mb-1">
-                Login to CricketCreations
-              </v-list-item-title>
-              <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
-              <form>
-                <v-text-field
-                  v-model="name"
-                  :error-messages="nameErrors"
-                  :counter="10"
-                  label="Name"
-                  required
-                  @input="$v.name.$touch()"
-                  @blur="$v.name.$touch()"
-                />
-                <v-text-field
-                  v-model="email"
-                  :error-messages="emailErrors"
-                  label="E-mail"
-                  required
-                  @input="$v.email.$touch()"
-                  @blur="$v.email.$touch()"
-                />
-                <v-select
-                  v-model="select"
-                  :items="items"
-                  :error-messages="selectErrors"
-                  label="Item"
-                  required
-                  @change="$v.select.$touch()"
-                  @blur="$v.select.$touch()"
-                />
-                <v-checkbox
-                  v-model="checkbox"
-                  :error-messages="checkboxErrors"
-                  label="Do you agree?"
-                  required
-                  @change="$v.checkbox.$touch()"
-                  @blur="$v.checkbox.$touch()"
-                />
-
-                <v-btn class="mr-4" @click="submit">
-                  submit
-                </v-btn>
-                <v-btn @click="clear">
-                  clear
-                </v-btn>
-              </form>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-card-actions>
-            <v-btn outlined rounded text>
-              Button
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-container>
-  </v-content>
+  <v-dialog v-model="dialog" persistent max-width="600px" min-width="360px">
+    <div>
+      <v-tabs v-model="tab" show-arrows :background-color="primaryColorAdmin" icons-and-text dark grow>
+        <v-tabs-slider :color="accentColorAdmin" />
+        <v-tab v-for="(tab, i) in tabs" :key="i" :disabled="tab.disabled">
+          <v-icon large>{{ tab.icon }}</v-icon>
+          <div class="caption py-1">{{ tab.name }}</div>
+        </v-tab>
+        <v-tab-item>
+          <v-card class="px-4">
+            <v-card-text>
+              <v-form ref="loginForm" v-model="valid" lazy-validation>
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field v-model="loginEmail" :rules="loginEmailRules" label="E-mail" required />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="loginPassword"
+                      :append-icon="show1 ? 'eye' : 'eye-off'"
+                      :rules="[rules.required, rules.min]"
+                      :type="show1 ? 'text' : 'password'"
+                      name="input-10-1"
+                      label="Password"
+                      hint="At least 8 characters"
+                      counter
+                      @click:append="show1 = !show1"
+                    />
+                  </v-col>
+                  <v-col class="d-flex" cols="12" sm="6" xsm="12" />
+                  <v-spacer />
+                  <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>
+                    <v-btn x-large block :disabled="!valid" color="success" @click="validate"> Login </v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card class="px-4">
+            <v-card-text>
+              <v-form ref="registerForm" v-model="valid" lazy-validation>
+                <v-row>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="firstName" :rules="[rules.required]" label="First Name" maxlength="20" required />
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6">
+                    <v-text-field v-model="lastName" :rules="[rules.required]" label="Last Name" maxlength="20" required />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" required />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="password"
+                      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                      :rules="[rules.required, rules.min]"
+                      :type="show1 ? 'text' : 'password'"
+                      name="input-10-1"
+                      label="Password"
+                      hint="At least 8 characters"
+                      counter
+                      @click:append="show1 = !show1"
+                    />
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="verify"
+                      block
+                      :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                      :rules="[rules.required, passwordMatch]"
+                      :type="show1 ? 'text' : 'password'"
+                      name="input-10-1"
+                      label="Confirm Password"
+                      counter
+                      @click:append="show1 = !show1"
+                    />
+                  </v-col>
+                  <v-spacer />
+                  <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
+                    <v-btn x-large block :disabled="!valid" color="success" @click="validate">Register</v-btn>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
+    </div>
+  </v-dialog>
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, maxLength, email } from 'vuelidate/lib/validators'
+import { ref, computed } from '@vue/composition-api'
+import scssVariables from '@/variables.scss'
 
 export default {
-  name: 'Login',
-  mixins: [validationMixin],
+  name: 'LoginForm',
+  setup() {
+    const primaryColorAdmin = ref(scssVariables.primaryColorAdmin)
+    const accentColorAdmin = ref(scssVariables.accentColorAdmin)
+    const dialog = ref(true)
+    const tab = ref(0)
+    const tabs = ref([
+      { name: 'Login', icon: 'mdi-account', disabled: false },
+      { name: 'Register', icon: 'mdi-account-outline', disabled: true },
+    ])
+    const valid = ref(true)
 
-  validations: {
-    name: { required, maxLength: maxLength(10) },
-    email: { required, email },
-    select: { required },
-    checkbox: {
-      checked(val) {
-        return val
-      },
-    },
-  },
+    const firstName = ref('')
+    const lastName = ref('')
+    const email = ref('')
+    const password = ref('')
+    const verify = ref('')
+    const loginPassword = ref('')
+    const loginEmail = ref('')
+    const loginEmailRules = ref([v => !!v || 'Required', v => /.+@.+\..+/.test(v) || 'Email must be valid'])
+    const emailRules = ref([v => !!v || 'Required', v => /.+@.+\..+/.test(v) || 'Email must be valid'])
+    const passwordMatch = computed(() => password.value === verify.value || 'Password must match')
 
-  data: () => ({
-    name: '',
-    email: '',
-    select: null,
-    items: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
-    checkbox: false,
-  }),
+    const show1 = ref(false)
+    const rules = ref({
+      required: value => !!value || 'Required.',
+      min: v => (v && v.length >= 8) || 'Min 8 characters',
+    })
+    const loginForm = ref(null)
+    const form = ref(null)
 
-  computed: {
-    checkboxErrors() {
-      const errors = []
-      if (!this.$v.checkbox.$dirty) return errors
-      !this.$v.checkbox.checked && errors.push('You must agree to continue!')
-      return errors
-    },
-    selectErrors() {
-      const errors = []
-      if (!this.$v.select.$dirty) return errors
-      !this.$v.select.required && errors.push('Item is required')
-      return errors
-    },
-    nameErrors() {
-      const errors = []
-      if (!this.$v.name.$dirty) return errors
-      !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
-      !this.$v.name.required && errors.push('Name is required.')
-      return errors
-    },
-    emailErrors() {
-      const errors = []
-      if (!this.$v.email.$dirty) return errors
-      !this.$v.email.email && errors.push('Must be valid e-mail')
-      !this.$v.email.required && errors.push('E-mail is required')
-      return errors
-    },
-  },
+    const validate = () => {
+      if (loginForm.value.validate()) {
+        // submit form to server/API here...
+      }
+    }
+    const reset = () => {
+      form.value.reset()
+    }
+    const resetValidation = () => {
+      form.value.resetValidation()
+    }
 
-  methods: {
-    submit() {
-      this.$v.$touch()
-    },
-    clear() {
-      this.$v.$reset()
-      this.name = ''
-      this.email = ''
-      this.select = null
-      this.checkbox = false
-    },
+    return {
+      primaryColorAdmin,
+      accentColorAdmin,
+      dialog,
+      tab,
+      tabs,
+      valid,
+      firstName,
+      lastName,
+      email,
+      password,
+      verify,
+      loginPassword,
+      loginEmail,
+      loginEmailRules,
+      emailRules,
+      show1,
+      rules,
+      passwordMatch,
+      loginForm,
+      form,
+      validate,
+      reset,
+      resetValidation,
+    }
   },
 }
 </script>

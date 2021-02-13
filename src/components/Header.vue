@@ -36,7 +36,7 @@ export default {
     return { primaryColorAdmin, isAdmin, bodyBackgroundColor }
   },
   mounted() {
-    this.isAdmin = this.$route.name === 'admin'
+    this.isAdmin = this.$route.name === 'admin' || 'login'
   },
 }
 </script>
