@@ -1,5 +1,5 @@
 <template>
-  <span v-if="selectedPost" class="post-list d-flex flex-column">
+  <span v-if="showEditor" class="post-list d-flex flex-column">
     <v-row>
       <v-col cols="3">
         <v-subheader :inset="true"> Created: {{ createdDate }} </v-subheader>
@@ -11,12 +11,13 @@
         <v-btn-toggle>
           <v-btn tile @click="updatePost">Save</v-btn>
           <v-btn tile @click="saveAndClose">Save & Close</v-btn>
-          <v-btn tile @click="close">Close Without Saving</v-btn>
+          <v-btn tile @click="close(true)">Close Without Saving</v-btn>
           <v-btn class="activator" tile @click="deletePost">Delete</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
-    <v-row>
+    <v-skeleton-loader v-if="loading" class="mx-auto my-auto" :type="`list-item@${count}`" />
+    <v-row v-else>
       <v-col cols="9" offset="1">
         <TagEditor :tags="selectedPost.tags" @new-tags="updateTags" />
       </v-col>
@@ -28,25 +29,41 @@
     </v-row>
     <v-row>
       <v-col cols="9" offset="1">
-        <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
-        <Editor v-else v-model="selectedPost.content" :init="editorConfig" />
+        <Editor v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
-    <ConfirmDialog ref="dialog" :headline="headline" :message="message" activator-class="activator" />
+    <ConfirmDialog
+      ref="dialog"
+      :headline="headline"
+      :message="message"
+      activator-class="activator"
+    />
   </span>
+  <v-skeleton-loader v-else-if="loading" class="mx-auto my-10" type="article, paragraph, paragraph, paragraph, paragraph" />
   <span v-else class="post-list d-flex flex-column">
     <v-row>
       <v-col cols="1" offset="1">
-        <v-btn color="gray" depressed outlined class="grey--text text--darken-3" @click="createPost">
+        <v-btn
+          color="gray"
+          depressed
+          outlined
+          class="grey--text text--darken-3"
+          @click="createPost"
+        >
           <v-icon v-text="'mdi-plus-thick'" />
         </v-btn>
       </v-col>
       <v-col cols="10">
         <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
-        <BlogPostList :posts="posts" @post-selected="selectPost" />
+        <BlogPostList v-else :posts="posts" @post-selected="selectPost" />
       </v-col>
     </v-row>
-    <v-pagination v-model="page" :length="total" :total-visible="9" class="pagination" />
+    <v-pagination
+      v-model="page"
+      :length="total"
+      :total-visible="9"
+      class="pagination"
+    />
     <v-snackbar v-model="snackbar" text color="red">
       <p>Something went wrong, your post couldn't save.</p>
       <v-icon color="red">mdi-alert</v-icon>
@@ -62,6 +79,7 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 import Editor from '@tinymce/tinymce-vue'
 import Post from '@/models/Post'
 import { isEqual } from '@/utils/'
+import store from '@/store/store'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
 import 'tinymce/plugins/link'
@@ -79,102 +97,95 @@ import { ref, onMounted, watch, computed } from '@vue/composition-api'
 export default {
   name: 'Admin',
   components: { BlogPostList, Editor, TagEditor, ConfirmDialog },
-  props: { selectedPost: { type: Post, default: () => null }, cachedPost: { type: Post, default: () => null } },
-  setup(props, { emit }) {
+  setup() {
     const page = ref(1)
     const count = ref(10)
-    const posts = ref([])
-    const t = ref(0)
+    const posts = computed(() => store.state.post.posts)
+    const t = computed(() => store.state.post.total)
     const error = ref('')
     const total = computed(() => parseInt(t.value / count.value + 1))
     const loading = ref(true)
     const dialog = ref(null)
     const headline = ref('')
     const message = ref('')
-    const getBlogPosts = async () => {
-      try {
-        const ps = await axios.get('/api/blogpost', { params: { userId: 1, page: page.value, count: count.value } })
-        posts.value.length = 0
-        t.value = ps?.data?.meta?.total
-        posts.value.push(...ps?.data?.data)
-        loading.value = false
-      } catch (err) {
-        errors.value = err.message || err
-        snackbar.value = true
-      }
-    }
     const errors = ref(null)
     const snackbar = ref(false)
+    const selectedPost = computed(() => store.state.post.selectedPost)
+    const cachedPost = computed(() => store.state.post.cachedPost)
+    const showEditor = ref(false)
     const selectPost = post => {
-      emit('post-selected', new Post(post))
+      store.commit('post/SET_SELECTED_POST', new Post(post))
+      showEditor.value = true
     }
     const createPost = () => {
-      emit('post-selected', new Post({}))
+      store.commit('post/SET_SELECTED_POST', new Post({}))
+      showEditor.value = true
     }
     const updatePost = async () => {
       try {
-        if (props.selectedPost.id) {
-          loading.value = true
-          const updatedPost = await axios.patch(`/api/blogpost/${props.selectedPost.id}`, props.selectedPost.patchData)
-          const i = posts.value.findIndex(p => p.id == updatedPost.data.id)
-          posts.value[i] = updatedPost.data.data
-          emit('post-selected', new Post(updatedPost.data.data))
-          loading.value = false
-        } else {
-          loading.value = true
-          const newPost = await axios.post('/api/blogpost', props.selectedPost.postData)
-          emit('post-selected', new Post(newPost.data.data))
-          loading.value = false
-        }
+        loading.value = true
+        showEditor.value = false
+        await store.dispatch('post/updatePost', selectedPost.value)
+        await getBlogPosts()
+        page.value = 1
+        loading.value = false
+        showEditor.value = true
       } catch (err) {
         errors.value = err.message || err
-        emit('post-selected', null)
         loading.value = false
         snackbar.value = true
       }
     }
-    const close = async () => {
-      if (!isEqual(props.selectedPost, props.cachedPost)) {
-        message.value = `There are unsaved changes to "${props.selectedPost && props.selectedPost.title}".`
+    const close = async checkEqual => {
+      if (!isEqual(selectedPost.value, cachedPost.value) && checkEqual) {
+        headline.value = `There are unsaved changes to "${selectedPost.value && selectedPost.value.title}".`
+        message.value = 'This cannot be undone.'
         const confirm = await dialog.value.open()
         if (confirm) {
-          emit('post-selected', null)
+          showEditor.value = false
+          store.commit('post/SET_SELECTED_POST', null)
         }
       } else {
-        emit('post-selected', null)
+        showEditor.value = false
+        store.commit('post/SET_SELECTED_POST', null)
       }
     }
     const saveAndClose = async () => {
+      showEditor.value = false
       await updatePost()
-      emit('post-selected', null)
+      close(false)
     }
     const deletePost = async () => {
-      const { id } = props.selectedPost
-      message.value = `Are you sure you want to delete "${props.selectedPost.value && props.selectedPost.value.title}"?`
+      const { id } = selectedPost.value
+      headline.value = `Are you sure you want to delete "${selectedPost.value && selectedPost.value.title}"?`
+      message.value = 'This will be really annoying to undo...'
       const confirmed = await dialog.value.open()
       if (id && confirmed) {
         try {
+          showEditor.value = false
           await axios.delete(`/api/blogpost/${id}`)
           posts.value = posts.value.filter(p => p.id !== id)
-          emit('post-selected', null)
+          store.commit('post/SET_SELECTED_POST', null)
         } catch (err) {
+          showEditor.value = false
           errors.value = err.message || err
-          emit('post-selected', null)
+          store.commit('post/SET_SELECTED_POST', null)
           loading.value = false
           snackbar.value = true
         }
       } else if (confirmed) {
-        emit('post-selected', null)
+        showEditor.value = false
+        store.commit('post/SET_SELECTED_POST', null)
       }
     }
     const updateTags = e => {
-      props.selectedPost.tags = e
+      selectedPost.value.tags = e
     }
     const createdDate = computed(() =>
-      props.selectedPost.created ? DateTime.fromISO(props.selectedPost.created).toLocaleString(DateTime.DATETIME_MED) : '',
+      selectedPost.value.created ? DateTime.fromISO(selectedPost.value.created).toLocaleString(DateTime.DATETIME_MED) : '',
     )
     const lastUpdated = computed(() =>
-      props.selectedPost.lastUpdated ? DateTime.fromISO(props.selectedPost.lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
+      selectedPost.value.lastUpdated ? DateTime.fromISO(selectedPost.value.lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
     )
     const editorConfig = ref({
       height: 500,
@@ -197,6 +208,17 @@ export default {
         { text: 'C++', value: 'cpp' },
       ],
     })
+
+    const getBlogPosts = async () => {
+      try {
+        loading.value = true
+        await store.dispatch('post/getPosts', { params: { userId: 1, page: page.value, count: count.value } })
+        loading.value = false
+      } catch (err) {
+        errors.value = err.message || err
+        snackbar.value = true
+      }
+    }
 
     watch(page, async (cur, prev) => {
       await getBlogPosts()
@@ -228,6 +250,8 @@ export default {
       updateTags,
       headline,
       message,
+      selectedPost,
+      showEditor,
     }
   },
 }

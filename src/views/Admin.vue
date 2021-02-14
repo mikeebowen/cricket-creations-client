@@ -6,16 +6,14 @@
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item value="tab-0">
-        <PostEditor :selected-post="selectedPost" :cached-post="cachedPost" @post-selected="updatePost" />
+        <PostEditor />
       </v-tab-item>
       <v-tab-item value="tab-1">
         <PageEditor :pages="pages" :cached-pages="cachedPages" />
       </v-tab-item>
     </v-tabs-items>
     <ConfirmDialog ref="confirmDialog" activator-class="activator">
-      <template v-slot:headline>
-        The following items have unsaved changes
-      </template>
+      <template v-slot:headline> The following items have unsaved changes </template>
       <v-list flat>
         <v-list-item-group>
           <v-list-item v-for="(uns, i) in unsaved" :key="i">
@@ -28,9 +26,9 @@
 </template>
 
 <script>
-import { ref } from '@vue/composition-api'
-import clonedeep from 'lodash.clonedeep'
+import { ref, computed } from '@vue/composition-api'
 import { isEqual } from '@/utils/'
+import store from '@/store/store'
 import PostEditor from '@/components/PostEditor'
 import PageEditor from '@/components/PageEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
@@ -38,20 +36,6 @@ import ConfirmDialog from '@/components/ConfirmDialog'
 export default {
   name: 'Admin',
   components: { PostEditor, PageEditor, ConfirmDialog },
-  setup() {
-    const tab = ref('tab-0')
-    const pages = ref([])
-    const cachedPages = ref([])
-    const selectedPost = ref(null)
-    const cachedPost = ref(null)
-    const unsaved = ref([])
-    const confirmDialog = ref(null)
-    const updatePost = e => {
-      selectedPost.value = e
-      cachedPost.value = clonedeep(e)
-    }
-    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, updatePost, confirmDialog }
-  },
   async beforeRouteLeave(to, from, next) {
     const { pages, cachedPages, selectedPost, cachedPost, unsaved, $refs } = this
     pages.forEach((p, i) => {
@@ -67,6 +51,17 @@ export default {
       return next(decision)
     }
     return next(true)
+  },
+  setup() {
+    const tab = ref('tab-0')
+    const pages = ref([])
+    const cachedPages = ref([])
+    const selectedPost = computed(() => store.state.post.selectedPost)
+    const cachedPost = computed(() => store.state.post.cachedPost)
+    const unsaved = ref([])
+    const confirmDialog = ref(null)
+
+    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, confirmDialog }
   },
 }
 </script>
