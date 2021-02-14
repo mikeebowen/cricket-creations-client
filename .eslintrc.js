@@ -80,7 +80,7 @@ module.exports = {
     strict: 2,
     'no-plusplus': 0,
     'vue/max-attributes-per-line': [
-      'warning',
+      1,
       {
         singleline: 3,
         multiline: {
@@ -101,7 +101,7 @@ module.exports = {
         math: 'always',
       },
     ],
-    'vue/no-v-html': false,
-    'vue/singleline-html-element-content-newline': false,
+    'vue/no-v-html': 0,
+    'vue/singleline-html-element-content-newline': 0,
   },
 }
