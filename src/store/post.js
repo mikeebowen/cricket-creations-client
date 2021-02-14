@@ -29,7 +29,7 @@ export default {
         commit('GET_POSTS', { posts: ps?.data?.data, total: ps?.data?.meta?.total })
         return Promise.resolve()
       } catch (err) {
-        Promise.reject(err)
+        return Promise.reject(err)
       }
     },
     updatePost: async ({ dispatch, state }, post) => {
@@ -39,9 +39,9 @@ export default {
         } else {
           await axios.post('/api/blogpost', post.postData)
         }
-        Promise.resolve()
+        return Promise.resolve()
       } catch (err) {
-        Promise.reject(err)
+        return Promise.reject(err)
       }
     },
   },

@@ -54,8 +54,8 @@ export default {
   },
   setup() {
     const tab = ref('tab-0')
-    const pages = ref([])
-    const cachedPages = ref([])
+    const pages = computed(() => store.state.page.pages)
+    const cachedPages = computed(() => store.state.page.cachedPages)
     const selectedPost = computed(() => store.state.post.selectedPost)
     const cachedPost = computed(() => store.state.post.cachedPost)
     const unsaved = ref([])
