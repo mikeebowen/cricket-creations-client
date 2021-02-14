@@ -1,5 +1,10 @@
 <template>
-  <v-navigation-drawer expand-on-hover permanent app clipped>
+  <v-navigation-drawer
+    expand-on-hover
+    permanent
+    app
+    clipped
+  >
     <template v-slot:prepend>
       <v-list>
         <v-list-item>

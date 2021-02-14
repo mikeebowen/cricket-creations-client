@@ -1,5 +1,10 @@
 <template>
-  <v-footer app tile width="100%" class="footer">
+  <v-footer
+    app
+    tile
+    width="100%"
+    class="footer"
+  >
     <v-row>
       <v-col class="text-center pa-0" cols="12">
         <v-btn text href="https://github.com/mikeebowen">

@@ -5,18 +5,35 @@
         <p class="grey--text text--darken-2 text-h5">Tags</p>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
-        <v-btn depressed small class="grey--text text--darken-3" @click="dialog = true">
+        <v-btn
+          depressed
+          small
+          class="grey--text text--darken-3"
+          @click="dialog = true"
+        >
           <v-icon v-text="'mdi-tag-plus-outline'" />
         </v-btn>
         <v-chip-group>
-          <v-chip v-for="(tag, i) in tags" :key="tag.id" close @click:close="removeTag(i)">{{ tag.name }}</v-chip>
+          <v-chip
+            v-for="(tag, i) in tags"
+            :key="tag.id"
+            close
+            @click:close="removeTag(i)"
+          >
+            {{ tag.name }}
+          </v-chip>
         </v-chip-group>
       </v-expansion-panel-content>
     </v-expansion-panel>
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-actions>
-          <v-btn depressed small class="grey--text text--darken-3" @click="dialog = false">
+          <v-btn
+            depressed
+            small
+            class="grey--text text--darken-3"
+            @click="dialog = false"
+          >
             <v-icon v-text="'mdi-close'" />
           </v-btn>
         </v-card-actions>

@@ -11,7 +11,15 @@
         <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" />
       </div>
       <div class="home-container mt-5">
-        <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
+        <v-btn
+          v-for="(page, i) in pages"
+          :key="i"
+          text
+          x-large
+          top
+          :to="`${page.link}`"
+          class="homepage-link"
+        >
           <span class="pr-1">{</span>
           {{ page.name }}
           <span class="pl-1">}</span>
