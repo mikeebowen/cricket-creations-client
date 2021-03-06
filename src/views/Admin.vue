@@ -27,7 +27,7 @@
 
 <script>
 import { ref, computed } from '@vue/composition-api'
-import { isEqual } from '@/utils/'
+import { isEqual } from '@/utils/utils'
 import store from '@/store/store'
 import PostEditor from '@/components/PostEditor'
 import PageEditor from '@/components/PageEditor'

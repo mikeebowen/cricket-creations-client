@@ -1,8 +1,6 @@
 <template>
   <v-container class="masonry-container content-wrapper" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
-    <h1 class="text-center">
-      My Musings & Other Thoughts
-    </h1>
+    <h1 class="text-center">My Musings & Other Thoughts</h1>
     <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
       <ArticleCard
         v-for="article in articles"

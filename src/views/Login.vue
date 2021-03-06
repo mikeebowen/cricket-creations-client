@@ -160,11 +160,13 @@
 
 <script>
 import { ref, computed } from '@vue/composition-api'
+
+import store from '@/store/store'
 import scssVariables from '@/variables.scss'
 
 export default {
   name: 'LoginForm',
-  setup() {
+  setup(props, { root }) {
     const primaryColorAdmin = ref(scssVariables.primaryColorAdmin)
     const accentColorAdmin = ref(scssVariables.accentColorAdmin)
     const dialog = ref(true)
@@ -193,10 +195,13 @@ export default {
     })
     const loginForm = ref(null)
     const form = ref(null)
-
-    const validate = () => {
+    const validate = async () => {
       if (loginForm.value.validate()) {
-        // submit form to server/API here...
+        const user = store.state?.user?.user
+        await store.dispatch('user/login', { password: loginPassword.value, email: loginEmail.value })
+        if (user) {
+          root.$router.push('admin')
+        }
       }
     }
     const reset = () => {

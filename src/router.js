@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store/store'
 
 Vue.use(Router)
 
@@ -53,6 +54,25 @@ export default new Router({
         header: () => import('@/components/Header.vue'),
         adminHeader: () => import('@/components/AdminMenu.vue'),
         footer: null,
+      },
+      beforeEnter: async (to, from, next) => {
+        const user = store.state?.user?.user
+        if (!user) {
+          return next('/login')
+        }
+        try {
+          if (Date.now() >= user.expiration) {
+            await store.dispatch('user/refresh', { id: user.id, refreshToken: user.refreshToken })
+            if (!user) {
+              return next('/login')
+            }
+            return next()
+          }
+          return next()
+        } catch (err) {
+          console.error(err.message || err)
+          return next('/login')
+        }
       },
     },
     {

@@ -78,7 +78,7 @@ import TagEditor from '@/components/TagEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Editor from '@tinymce/tinymce-vue'
 import Post from '@/models/Post'
-import { isEqual } from '@/utils/'
+import { isEqual } from '@/utils/utils'
 import store from '@/store/store'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
@@ -114,11 +114,11 @@ export default {
     const cachedPost = computed(() => store.state.post.cachedPost)
     const showEditor = ref(false)
     const selectPost = post => {
-      store.commit('post/SET_SELECTED_POST', new Post(post))
+      store.dispatch('post/selectPost', new Post(post))
       showEditor.value = true
     }
     const createPost = () => {
-      store.commit('post/SET_SELECTED_POST', new Post({}))
+      store.dispatch('post/selectPost', new Post({}))
       showEditor.value = true
     }
     const updatePost = async () => {
@@ -143,11 +143,11 @@ export default {
         const confirm = await dialog.value.open()
         if (confirm) {
           showEditor.value = false
-          store.commit('post/SET_SELECTED_POST', null)
+          store.dispatch('post/selectPost', null)
         }
       } else {
         showEditor.value = false
-        store.commit('post/SET_SELECTED_POST', null)
+        store.dispatch('post/selectPost', null)
       }
     }
     const saveAndClose = async () => {
@@ -165,17 +165,17 @@ export default {
           showEditor.value = false
           await axios.delete(`/api/blogpost/${id}`)
           posts.value = posts.value.filter(p => p.id !== id)
-          store.commit('post/SET_SELECTED_POST', null)
+          store.dispatch('post/selectPost', null)
         } catch (err) {
           showEditor.value = false
           errors.value = err.message || err
-          store.commit('post/SET_SELECTED_POST', null)
+          store.dispatch('post/selectPost', null)
           loading.value = false
           snackbar.value = true
         }
       } else if (confirmed) {
         showEditor.value = false
-        store.commit('post/SET_SELECTED_POST', null)
+        store.dispatch('post/selectPost', null)
       }
     }
     const updateTags = e => {

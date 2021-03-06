@@ -17,7 +17,7 @@ export default {
       state.posts = posts
       state.total = total
     },
-    SET_SELECTED_POST(state, post) {
+    SELECT_POST(state, post) {
       state.selectedPost = post
       state.cachedPost = cloneDeep(post)
     },
@@ -43,6 +43,9 @@ export default {
       } catch (err) {
         return Promise.reject(err)
       }
+    },
+    selectPost({ commit }, post) {
+      commit('SELECT_POST', post)
     },
   },
 }
