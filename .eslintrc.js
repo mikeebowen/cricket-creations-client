@@ -33,6 +33,7 @@ module.exports = {
     },
   ],
   rules: {
+    'no-debugger': 'warn',
     'array-bracket-newline': ['error', 'consistent'],
     'comma-dangle': ['warn', 'always-multiline'],
     'eol-last': ['error', 'always'],
@@ -78,7 +79,9 @@ module.exports = {
     quotes: ['error', 'single'],
     semi: ['error', 'never'],
     strict: 2,
-    'no-plusplus': 0,
+    curly: 'error',
+    'valid-typeof': 'error',
+    eqeqeq: ['error', 'always', { null: 'ignore' }],
     'vue/max-attributes-per-line': [
       1,
       {
