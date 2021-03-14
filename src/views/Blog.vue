@@ -34,7 +34,7 @@ export default {
       } = await axios.get('/api/blogpost', {
         method: 'get',
         headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        params: { page, count },
+        params: { page: page.value, count: count.value },
         baseURL: '/',
       })
       articles.value.push(...data)

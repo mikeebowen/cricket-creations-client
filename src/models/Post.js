@@ -1,3 +1,5 @@
+import store from '../store/store'
+
 class Post {
   id
   userId
@@ -6,6 +8,7 @@ class Post {
   title
   content
   tags
+  published
 
   constructor(data) {
     this.id = data.id
@@ -15,12 +18,14 @@ class Post {
     this.content = data.content
     this.userId = data.userId
     this.tags = data.tags || []
+    this.published = !!data.published
   }
 
   get patchData() {
     return {
       Title: this.title,
       Content: this.content,
+      Published: this.published,
       Tags: this.tags.map(t => ({ Id: t.id, Name: t.name })),
     }
   }
@@ -28,7 +33,7 @@ class Post {
   get postData() {
     return {
       ...this.patchData,
-      UserId: 1,
+      UserId: store.state?.user?.user?.id,
     }
   }
 }

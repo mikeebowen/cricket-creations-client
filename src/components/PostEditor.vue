@@ -18,10 +18,10 @@
     </v-row>
     <v-skeleton-loader v-if="loading" class="mx-auto my-auto" :type="`list-item@${count}`" />
     <v-row v-else>
-      <v-col cols="9" offset="1">
+      <v-col cols="7" offset="1">
         <TagEditor :tags="selectedPost.tags" @new-tags="updateTags" />
       </v-col>
-    </v-row>
+      <v-col cols="2"> <v-switch v-model="selectedPost.published" inset label="published" /></v-col></v-row>
     <v-row>
       <v-col cols="9" offset="1">
         <v-text-field v-model="selectedPost.title" label="Title" />
