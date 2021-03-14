@@ -101,7 +101,7 @@
                     <v-text-field
                       v-model="email"
                       :rules="emailRules"
-                      label="E-mail"
+                      label="Email"
                       required
                     />
                   </v-col>
@@ -197,8 +197,8 @@ export default {
     const form = ref(null)
     const validate = async () => {
       if (loginForm.value.validate()) {
-        const user = store.state?.user?.user
         await store.dispatch('user/login', { password: loginPassword.value, email: loginEmail.value })
+        const user = store.state?.user?.user
         if (user) {
           root.$router.push('admin')
         }
