@@ -90,7 +90,6 @@ import 'tinymce/plugins/save'
 import 'tinymce/plugins/lists'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
-import axios from 'axios'
 import { DateTime } from 'luxon'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 
@@ -163,7 +162,7 @@ export default {
       if (id && confirmed) {
         try {
           showEditor.value = false
-          await axios.delete(`/api/blogpost/${id}`)
+          await store.dispatch('post/deletePost', id)
           posts.value = posts.value.filter(p => p.id !== id)
           store.dispatch('post/selectPost', null)
         } catch (err) {
@@ -212,7 +211,13 @@ export default {
     const getBlogPosts = async () => {
       try {
         loading.value = true
-        await store.dispatch('post/getPosts', { params: { userId: 1, page: page.value, count: count.value } })
+        await store.dispatch('post/getPosts', {
+          params: {
+            userId: store.state?.user?.user?.id,
+            page: page.value,
+            count: count.value,
+          },
+        })
         loading.value = false
       } catch (err) {
         errors.value = err.message || err

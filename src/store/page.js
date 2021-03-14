@@ -1,6 +1,7 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 import Page from '../models/Page'
+import store from '@/store/store'
 
 export default {
   namespaced: true,
@@ -36,10 +37,18 @@ export default {
     async updatePage({ dispatch }, page) {
       try {
         if (page.id) {
-          await axios.patch(`/api/page/${page.id}`, page.patchData)
+          await axios.patch(`/api/page/${page.id}`, page.patchData, {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            },
+          })
           dispatch('getPages')
         } else {
-          await axios.post('/api/page', page.postData)
+          await axios.post('/api/page', page.postData, {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            },
+          })
           dispatch('getPages')
         }
         Promise.resolve()
@@ -50,7 +59,11 @@ export default {
     async deletePage({ dispatch }, id) {
       try {
         if (id) {
-          await axios.delete(`/api/page/${id}`)
+          await axios.delete(`/api/page/${id}`, {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            },
+          })
         }
         dispatch('getPages')
         Promise.resolve()

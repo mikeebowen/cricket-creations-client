@@ -1,5 +1,6 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
+import store from '@/store/store'
 
 export default {
   namespaced: true,
@@ -35,9 +36,17 @@ export default {
     updatePost: async ({ dispatch, state }, post) => {
       try {
         if (post.id) {
-          await axios.patch(`/api/blogpost/${post.id}`, post.patchData)
+          await axios.patch(`/api/blogpost/${post.id}`, post.patchData, {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            },
+          })
         } else {
-          await axios.post('/api/blogpost', post.postData)
+          await axios.post('/api/blogpost', post.postData, {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            },
+          })
         }
         return Promise.resolve()
       } catch (err) {
@@ -46,6 +55,13 @@ export default {
     },
     selectPost({ commit }, post) {
       commit('SELECT_POST', post)
+    },
+    async deletePost({ commit }, id) {
+      await axios.delete(`/api/blogpost/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + store.state?.user?.user?.token,
+        },
+      })
     },
   },
 }
