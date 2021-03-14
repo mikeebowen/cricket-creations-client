@@ -1,6 +1,7 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
-import store from '@/store/store'
+import store from '../store/store'
+import router from '../router'
 
 export default {
   namespaced: true,
@@ -35,6 +36,13 @@ export default {
     },
     updatePost: async ({ dispatch, state }, post) => {
       try {
+        if (Date.now() >= store.state?.user?.user.expiration) {
+          await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+          if (!store.state?.user?.user) {
+            return router.push('/login')
+          }
+        }
+
         if (post.id) {
           await axios.patch(`/api/blogpost/${post.id}`, post.patchData, {
             headers: {
@@ -57,6 +65,13 @@ export default {
       commit('SELECT_POST', post)
     },
     async deletePost({ commit }, id) {
+      if (Date.now() >= store.state?.user?.user.expiration) {
+        await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+        if (!store.state?.user?.user) {
+          return router.push('/login')
+        }
+      }
+
       await axios.delete(`/api/blogpost/${id}`, {
         headers: {
           Authorization: 'Bearer ' + store.state?.user?.user?.token,

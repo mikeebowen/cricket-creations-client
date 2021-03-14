@@ -33,7 +33,7 @@ class Post {
   get postData() {
     return {
       ...this.patchData,
-      UserId: store.state?.user?.user?.id,
+      UserId: parseInt(store.state?.user?.user?.id),
     }
   }
 }

@@ -1,3 +1,5 @@
+import store from '../store/store'
+
 export default class Page {
   id
   userId
@@ -31,7 +33,7 @@ export default class Page {
   get postData() {
     return {
       ...this.patchData,
-      UserId: 1,
+      UserId: parseInt(store.state?.user?.user?.id),
     }
   }
 }

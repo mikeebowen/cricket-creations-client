@@ -2,6 +2,7 @@ import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 import Page from '../models/Page'
 import store from '@/store/store'
+import router from '../router'
 
 export default {
   namespaced: true,
@@ -36,6 +37,13 @@ export default {
     },
     async updatePage({ dispatch }, page) {
       try {
+        if (Date.now() >= store.state?.user?.user.expiration) {
+          await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+          if (!store.state?.user?.user) {
+            return router.push('/login')
+          }
+        }
+
         if (page.id) {
           await axios.patch(`/api/page/${page.id}`, page.patchData, {
             headers: {
@@ -59,6 +67,13 @@ export default {
     async deletePage({ dispatch }, id) {
       try {
         if (id) {
+          if (Date.now() >= store.state?.user?.user.expiration) {
+            await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+            if (!store.state?.user?.user) {
+              return router.push('/login')
+            }
+          }
+
           await axios.delete(`/api/page/${id}`, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
