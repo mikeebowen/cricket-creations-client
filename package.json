@@ -18,7 +18,7 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
     "luxon": "^1.26.0",
-    "tinymce": "^5.7.0",
+    "tinymce": "^5.7.1",
     "vue": "^2.6.12",
     "vue-masonry-css": "^1.0.3",
     "vue-router": "^2.8.1",
