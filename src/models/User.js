@@ -2,6 +2,7 @@ export default class User {
   id
   name
   surname
+  userName
   email
   avatar
   token
@@ -12,6 +13,7 @@ export default class User {
     this.id = options.id
     this.name = options.name
     this.surname = options.surname
+    this.userName = options.userName
     this.email = options.email
     this.avatar = options.avatar
     this.token = options.token

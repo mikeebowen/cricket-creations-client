@@ -3,6 +3,7 @@
     <v-tabs v-model="tab">
       <v-tab href="#tab-0">Posts</v-tab>
       <v-tab href="#tab-1">Pages</v-tab>
+      <v-tab href="#tab-2">Account</v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
       <v-tab-item value="tab-0">
@@ -10,6 +11,9 @@
       </v-tab-item>
       <v-tab-item value="tab-1">
         <PageEditor :pages="pages" :cached-pages="cachedPages" />
+      </v-tab-item>
+      <v-tab-item value="tab-2">
+        <AccountEditor />
       </v-tab-item>
     </v-tabs-items>
     <ConfirmDialog ref="confirmDialog" activator-class="activator">
@@ -32,10 +36,11 @@ import store from '@/store/store'
 import PostEditor from '@/components/PostEditor'
 import PageEditor from '@/components/PageEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
+import AccountEditor from '@/components/AccountEditor'
 
 export default {
   name: 'Admin',
-  components: { PostEditor, PageEditor, ConfirmDialog },
+  components: { PostEditor, PageEditor, ConfirmDialog, AccountEditor },
   async beforeRouteLeave(to, from, next) {
     const { pages, cachedPages, selectedPost, cachedPost, unsaved, $refs } = this
     pages.forEach((p, i) => {
