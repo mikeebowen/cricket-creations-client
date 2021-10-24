@@ -40,6 +40,9 @@ export default {
         return Promise.reject(err)
       }
     },
+    logout: ({ commit }) => {
+      commit('SET_USER', null)
+    },
   },
 }
 
