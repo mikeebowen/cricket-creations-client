@@ -83,9 +83,12 @@ export default new Router({
         footer: null,
         default: () => import('@/views/Login.vue'),
       },
-      beforeEnter: (to, from, next) => {
-        if (store.state?.user?.user) {
+      beforeEnter(to, from, next) {
+        const user = store.state?.user?.user
+        if (user) {
           next('/admin')
+        } else {
+          next()
         }
       },
     },
