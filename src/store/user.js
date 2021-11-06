@@ -27,6 +27,20 @@ export default {
         return Promise.reject(err)
       }
     },
+    async register({ commit }, userInfo) {
+      try {
+        const newUser = getNewUser(userInfo)
+        const res = await axios.post('/api/user/', newUser)
+        if (res) {
+          const user = getUser(res)
+          commit('SET_USER', user)
+        } else {
+          commit('SET_USER', null)
+        }
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    },
     refresh: async ({ commit, state }) => {
       try {
         const res = await axios.post('/api/user/refresh', { id: state.user.id, refreshToken: state.user.refreshToken })
@@ -45,7 +59,6 @@ export default {
     logout: ({ commit }) => {
       commit('SET_USER', null)
     },
-    register: ({ commit, state }) => {},
   },
 }
 
@@ -65,4 +78,15 @@ function getUser(res) {
   user.refreshToken = refreshToken
   user.expiration = exp * 1000
   return new User(user)
+}
+
+function getNewUser(user) {
+  const newUser = {}
+  newUser.Name = user.firstName
+  newUser.Surname = user.lastName
+  newUser.Email = user.email
+  newUser.UserName = user.userName
+  newUser.Password = user.password
+
+  return newUser
 }

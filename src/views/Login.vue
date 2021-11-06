@@ -86,7 +86,7 @@
                 </v-col>
                 <v-spacer />
                 <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
-                  <v-btn x-large block :disabled="!valid" color="success" @click="login"> Register </v-btn>
+                  <v-btn x-large block :disabled="!valid" color="success" @click="register"> Register </v-btn>
                 </v-col>
               </v-row>
             </v-form>
@@ -150,10 +150,25 @@ export default {
       }
     }
 
-    // const register = async () => {
-    //   if (registerForm.value.validate()) {
-    //   }
-    // }
+    const register = async () => {
+      if (registerForm.value.validate()) {
+        loading.value = true
+        await store.dispatch('user/register', {
+          firstName: firstName.value,
+          lastName: lastName.value,
+          email: email.value,
+          userName: userName.value,
+          password: password.value,
+        })
+        loading.value = false
+        const user = store.state?.user?.user
+
+        if (user) {
+          router.push('admin')
+          loading.value = false
+        }
+      }
+    }
     const reset = () => {
       registerForm.value.reset()
     }
@@ -192,7 +207,7 @@ export default {
       login,
       reset,
       resetValidation,
-      // register,
+      register,
       loading,
     }
   },
