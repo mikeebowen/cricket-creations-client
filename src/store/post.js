@@ -1,7 +1,8 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
-import store from '../store/store'
+import store from './store'
 import router from '../router'
+import DOMPurify from 'dompurify'
 
 export default {
   namespaced: true,
@@ -27,7 +28,13 @@ export default {
   actions: {
     getPosts: async ({ commit }, params) => {
       try {
-        const ps = await axios.get('/api/blogpost', params)
+        if (Date.now() >= store.state?.user?.user.expiration) {
+          await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+          if (!store.state?.user?.user) {
+            return router.push('/login')
+          }
+        }
+        const ps = await axios.get('/api/blogpost', { ...params, headers: { Authorization: 'Bearer ' + store.state?.user?.user?.token } })
         commit('GET_POSTS', { posts: ps?.data?.data, total: ps?.data?.meta?.total })
         return Promise.resolve()
       } catch (err) {
@@ -43,14 +50,16 @@ export default {
           }
         }
 
+        post.content = DOMPurify.sanitize(post.content)
+
         if (post.id) {
-          await axios.patch(`/api/blogpost/${post.id}`, post.patchData, {
+          await axios.patch('/api/blogpost', post.patchData, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },
           })
         } else {
-          await axios.post('/api/blogpost', post.postData, {
+          await axios.post('/api/blogpost', post.data, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },

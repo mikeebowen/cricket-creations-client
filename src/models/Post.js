@@ -1,5 +1,3 @@
-import store from '../store/store'
-
 class Post {
   id
   userId
@@ -16,12 +14,11 @@ class Post {
     this.lastUpdated = data.lastUpdated
     this.title = data.title
     this.content = data.content
-    this.userId = data.userId
     this.tags = data.tags || []
     this.published = !!data.published
   }
 
-  get patchData() {
+  get data() {
     return {
       Title: this.title,
       Content: this.content,
@@ -30,10 +27,10 @@ class Post {
     }
   }
 
-  get postData() {
+  get patchData() {
     return {
-      ...this.patchData,
-      UserId: parseInt(store.state?.user?.user?.id),
+      Id: this.id,
+      ...this.data,
     }
   }
 }

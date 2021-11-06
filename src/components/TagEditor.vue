@@ -5,21 +5,11 @@
         <p class="grey--text text--darken-2 text-h5">Tags</p>
       </v-expansion-panel-header>
       <v-expansion-panel-content>
-        <v-btn
-          depressed
-          small
-          class="grey--text text--darken-3"
-          @click="dialog = true"
-        >
+        <v-btn depressed small class="grey--text text--darken-3" @click="dialog = true">
           <v-icon v-text="'mdi-tag-plus-outline'" />
         </v-btn>
         <v-chip-group>
-          <v-chip
-            v-for="(tag, i) in tags"
-            :key="tag.id"
-            close
-            @click:close="removeTag(i)"
-          >
+          <v-chip v-for="(tag, i) in tags" :key="tag.id" close @click:close="removeTag(i)">
             {{ tag.name }}
           </v-chip>
         </v-chip-group>
@@ -28,12 +18,7 @@
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-actions>
-          <v-btn
-            depressed
-            small
-            class="grey--text text--darken-3"
-            @click="dialog = false"
-          >
+          <v-btn depressed small class="grey--text text--darken-3" @click="dialog = false">
             <v-icon v-text="'mdi-close'" />
           </v-btn>
         </v-card-actions>
@@ -82,6 +67,7 @@ export default {
       props.tags.push(tag)
       newTagName.value = ''
       emit('new-tags', props.tags)
+      dialog.value = false
     }
     const removeTag = index => {
       props.tags.splice(index, 1)
@@ -89,10 +75,8 @@ export default {
     }
 
     onMounted(async () => {
-      {
-        const dbTags = await axios.get('/api/tag')
-        existingTags.value.push(...dbTags?.data?.data)
-      }
+      const dbTags = await axios.get('/api/tag', { params: { page: 1, count: 10 } })
+      existingTags.value.push(...dbTags?.data?.data)
     })
     return { newTagName, dialog, existingTags, updateTags, removeTag }
   },

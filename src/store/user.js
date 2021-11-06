@@ -4,7 +4,9 @@ import User from '../models/User'
 
 export default {
   namespaced: true,
-  state: {},
+  state: {
+    user: null,
+  },
   mutations: {
     SET_USER(state, user) {
       state.user = user
@@ -43,6 +45,7 @@ export default {
     logout: ({ commit }) => {
       commit('SET_USER', null)
     },
+    register: ({ commit, state }) => {},
   },
 }
 

@@ -1,8 +1,5 @@
-import store from '../store/store'
-
 export default class Page {
   id
-  userId
   created
   lastUpdated
   title
@@ -12,7 +9,6 @@ export default class Page {
 
   constructor(data) {
     this.id = data.id
-    this.userId = data.userId
     this.created = data.created
     this.lastUpdated = data.lastUpdated
     this.title = data.title
@@ -21,19 +17,12 @@ export default class Page {
     this.heading = data.heading
   }
 
-  get patchData() {
+  get data() {
     return {
       Title: this.title,
       Name: this.name,
       Content: this.content,
       Heading: this.heading,
-    }
-  }
-
-  get postData() {
-    return {
-      ...this.patchData,
-      UserId: parseInt(store.state?.user?.user?.id),
     }
   }
 }
