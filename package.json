@@ -11,7 +11,7 @@
   "dependencies": {
     "@tinymce/tinymce-vue": "^3.2.6",
     "@vue/composition-api": "^1.0.0-rc.1",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "brick.js": "^3.0.5",
     "core-js": "^3.6.5",
     "dompurify": "^2.3.0",
