@@ -2,12 +2,7 @@
   <v-container class="masonry-container content-wrapper" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
     <h1 class="text-center">My Musings & Other Thoughts</h1>
     <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
-      <ArticleCard
-        v-for="article in articles"
-        :key="article.id"
-        :article="article"
-        class="masonry-item"
-      />
+      <ArticleCard v-for="article in articles" :key="article.id" :article="article" class="masonry-item" />
     </masonry>
     <div v-if="loading && !endOfList" class="d-flex w-100 justify-center loading-icon" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
       <v-icon x-large v-text="'fas fa-circle-notch fa-10x fa-spin'" />
