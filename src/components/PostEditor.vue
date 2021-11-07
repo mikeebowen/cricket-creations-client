@@ -35,16 +35,14 @@
     <ConfirmDialog ref="dialog" :headline="headline" :message="message" activator-class="activator" />
   </span>
   <v-skeleton-loader v-else-if="loading" class="mx-auto my-10" type="article, paragraph, paragraph, paragraph, paragraph" />
-  <span v-else class="post-list d-flex flex-column">
+  <span v-else class="post-list">
     <v-row>
-      <v-col cols="1" offset="1">
-        <v-btn color="gray" depressed outlined class="grey--text text--darken-3" @click="createPost">
-          <v-icon v-text="'mdi-plus-thick'" />
-        </v-btn>
-      </v-col>
       <v-col cols="10">
         <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
         <BlogPostList v-else :posts="posts" @post-selected="selectPost" />
+      </v-col>
+      <v-col cols="1">
+        <v-btn color="gray" depressed outlined class="grey--text text--darken-3" @click="createPost"> New </v-btn>
       </v-col>
     </v-row>
     <v-pagination v-model="page" :length="total" :total-visible="9" class="pagination" />
