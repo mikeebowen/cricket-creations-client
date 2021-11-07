@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 import Page from '../models/Page'
-import store from '@/store/store'
+import store from './store'
 import router from '../router'
 
 export default {
@@ -35,24 +35,24 @@ export default {
         return Promise.reject(err)
       }
     },
-    async updatePage({ dispatch }, page) {
+    async updatePage({ dispatch, state }, page) {
       try {
         if (Date.now() >= store.state?.user?.user.expiration) {
-          await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+          await dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
           if (!store.state?.user?.user) {
             return router.push('/login')
           }
         }
 
         if (page.id) {
-          await axios.patch(`/api/page/${page.id}`, page.patchData, {
+          await axios.patch('/api/page', page.data, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },
           })
           dispatch('getPages')
         } else {
-          await axios.post('/api/page', page.postData, {
+          await axios.post('/api/page', page.data, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },
