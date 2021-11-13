@@ -8,8 +8,10 @@
     <div class="flex-grow-1" />
     <v-toolbar-items>
       <v-btn :class="{ admin__text: isAdmin }" text to="/projects"> Projects </v-btn>
-      <v-btn :class="{ admin__text: isAdmin }" text to="/blog"> Musings </v-btn>
-      <v-btn :class="{ admin__text: isAdmin }" text to="/about"> About </v-btn>
+      <v-btn :class="{ admin__text: isAdmin }" text to="/musings"> Musings </v-btn>
+      <v-btn v-for="page in pages" :key="page.id" :class="{ admin__text: isAdmin }" text :to="encodeURI(`${page.heading}`)">
+        {{ page.heading }}
+      </v-btn>
     </v-toolbar-items>
   </v-app-bar>
 </template>
@@ -17,9 +19,20 @@
 <script>
 import { ref } from '@vue/composition-api'
 import scssVariables from '@/variables.scss'
+import store from '../store/store'
 
 export default {
   name: 'Header',
+  data() {
+    return {
+      pages: [],
+    }
+  },
+  beforeMount() {
+    store.dispatch('page/getPages', this.$route.name).then(() => {
+      this.pages = store.state.page.pages
+    })
+  },
   setup(props, context) {
     const primaryColorAdmin = ref(scssVariables.primaryColorAdmin)
     const bodyBackgroundColor = ref(scssVariables.bodyBackgroundColor)
@@ -27,9 +40,9 @@ export default {
 
     return { primaryColorAdmin, isAdmin, bodyBackgroundColor }
   },
-  mounted() {
-    this.isAdmin = this.$route.name === 'admin' || 'login'
-  },
+  // mounted() {
+  //   this.isAdmin = this.$route.name === 'admin' || 'login'
+  // },
 }
 </script>
 

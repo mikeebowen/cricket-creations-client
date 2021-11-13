@@ -1,8 +1,8 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
-import Page from '../models/Page'
 import store from './store'
 import router from '../router'
+import Page from '../models/Page'
 
 export default {
   namespaced: true,
@@ -17,19 +17,22 @@ export default {
     },
   },
   actions: {
-    async getPages({ commit }) {
+    async getPages({ commit }, routeName) {
       try {
         const pgs = await axios.get('/api/page')
-        commit('GET_PAGES', [
-          ...pgs?.data?.data.map(p => new Page(p)),
-          new Page({
-            created: '',
-            lastUpdated: '',
-            title: '',
-            content: '',
-            heading: '',
-          }),
-        ])
+        const pages = pgs?.data?.data.map(p => new Page(p))
+        if (store.state?.user?.user && routeName.toLowerCase() === 'admin') {
+          pages.push(
+            new Page({
+              created: '',
+              lastUpdated: '',
+              title: '',
+              content: '',
+              heading: '',
+            }),
+          )
+        }
+        commit('GET_PAGES', pages)
         return Promise.resolve()
       } catch (err) {
         return Promise.reject(err)
