@@ -21,7 +21,7 @@ export default {
       try {
         const pgs = await axios.get('/api/page')
         const pages = pgs?.data?.data.map(p => new Page(p))
-        if (store.state?.user?.user && routeName.toLowerCase() === 'admin') {
+        if (store.state?.user?.user && routeName?.toLowerCase() === 'admin') {
           pages.push(
             new Page({
               created: '',

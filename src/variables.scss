@@ -30,6 +30,8 @@ $default-text-color: $primary-text-color-admin;
 // Sizes
 $defaultBorderRadius: 5px;
 
+$body-font-family: 'Maven Pro', 'Helvetica Neue', sans-serif;
+
 :export {
   primaryColorAdmin: $primary-color-admin;
   primaryColorTextAdmin: $primary-color-text-admin;

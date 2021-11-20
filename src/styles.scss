@@ -1,5 +1,6 @@
 @import './variables.scss';
-@import url('https://fonts.googleapis.com/css?family=Bevan|Roboto&display=swap');
+// @import url('https://fonts.googleapis.com/css?family=Bevan|Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bevan&family=Maven+Pro:wght@400;700&display=swap');
 
 html {
   font-size: $html-font-size;
@@ -14,10 +15,14 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  font-size: $default-font-size;
-  color: $default-text-color;
+
+  .v-application {
+    font-family: $body-font-family;
+    font-size: $default-font-size;
+    color: $default-text-color;
+  }
 }
+
 
 @for $i from 1 to 6 {
   h#{$i} {
