@@ -12,20 +12,11 @@ export default new Router({
       path: '/',
       name: 'home',
       components: {
-        default: () => import('@/views/Home.vue'),
+        // route level code-splitting
+        // this generates a separate chunk (home.[hash].js) for this route
+        // which is lazy-loaded when the route is visited.
+        default: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
         // header: null,
-        footer: () => import('@/components/Footer.vue'),
-      },
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      components: {
-        default: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
-        header: () => import('@/components/Header.vue'),
         footer: () => import('@/components/Footer.vue'),
       },
     },
@@ -33,7 +24,7 @@ export default new Router({
       path: '/projects',
       name: 'projects',
       components: {
-        default: () => import('@/views/Projects.vue'),
+        default: () => import(/* webpackChunkName: "projects" */ '@/views/Projects.vue'),
         header: () => import('@/components/Header.vue'),
         footer: () => import('@/components/Footer.vue'),
       },
@@ -42,7 +33,7 @@ export default new Router({
       path: '/musings',
       name: 'musings',
       components: {
-        default: () => import('@/views/Blog.vue'),
+        default: () => import(/* webpackChunkName: "blog" */ '@/views/Blog.vue'),
         header: () => import('@/components/Header.vue'),
       },
     },
@@ -50,7 +41,7 @@ export default new Router({
       path: '/admin',
       name: 'admin',
       components: {
-        default: () => import('@/views/Admin.vue'),
+        default: () => import(/* webpackChunkName: "admin" */ '@/views/Admin.vue'),
         header: () => import('@/components/Header.vue'),
         adminHeader: () => import('@/components/AdminMenu.vue'),
         footer: null,
@@ -81,7 +72,7 @@ export default new Router({
       components: {
         header: () => import('@/components/Header.vue'),
         footer: null,
-        default: () => import('@/views/Login.vue'),
+        default: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
       },
       beforeEnter(to, from, next) {
         const user = store.state?.user?.user
@@ -93,8 +84,12 @@ export default new Router({
       },
     },
     {
-      path: '/:name',
-      component: () => import('@/views/About.vue'),
+      path: '/:heading',
+      components: {
+        default: () => import(/* webpackChunkName: "page" */ '@/views/Page.vue'),
+        header: () => import('@/components/Header.vue'),
+        footer: () => import('@/components/Footer.vue'),
+      },
     },
   ],
 })
