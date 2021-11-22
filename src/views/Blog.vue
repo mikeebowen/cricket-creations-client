@@ -12,7 +12,6 @@
 
 <script>
 import ArticleCard from '@/components/ArticleCard.vue'
-import debounce from 'lodash.debounce'
 import axios from 'axios'
 import { ref, onMounted, onBeforeUnmount } from '@vue/composition-api'
 
@@ -21,43 +20,64 @@ export default {
   components: { ArticleCard },
   setup(props) {
     const articles = ref([])
-    let page = ref(1)
-    const count = ref(10)
+    const page = ref(1)
+    const count = ref(4)
+    const total = ref(null)
+
     const getBlogPosts = async () => {
-      const {
-        data: { data },
-      } = await axios.get('/api/blogpost', {
-        method: 'get',
-        headers: { 'X-Requested-With': 'XMLHttpRequest' },
-        params: { page: page.value, count: count.value },
-        baseURL: '/',
-      })
-      articles.value.push(...data)
+      try {
+        loading.value = true
+        const { data: res } = await axios.get('/api/blogpost', {
+          method: 'get',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          params: { page: page.value, count: count.value },
+          baseURL: '/',
+        })
+
+        total.value = res.meta.total
+
+        if (total.value <= count.value * page.value) {
+          endOfList.value = true
+        }
+
+        page.value++
+        loading.value = false
+        articles.value.push(...res.data)
+      } catch (err) {
+        console.error(err.message || err)
+      }
     }
-    const scrollingElem = ref(null)
+
     const loading = ref(true)
     const endOfList = ref(false)
-    const onScroll = ({
-      target: {
-        scrollingElement: { scrollTop, clientHeight, scrollHeight },
-      },
-    }) => {
-      if (scrollTop + clientHeight >= scrollHeight) {
+
+    const onScroll = async e => {
+      e.preventDefault()
+
+      const { target } = e
+      if (target?.scrollTop + target?.clientHeight >= target?.scrollHeight) {
         if (!endOfList.value) {
-          loading.value = true
-          page++
-          debounce(getBlogPosts, 500)()
+          await getBlogPosts()
         }
       }
     }
-    onMounted(() => {
-      getBlogPosts()
-      scrollingElem.value = document.getElementsByTagName('body')[0]
-      scrollingElem.value.onscroll = onScroll
+
+    onMounted(async () => {
+      await getBlogPosts()
+      document.body.addEventListener('scroll', onScroll)
+
+      let hasVerticalScrollbar = document.body.scrollHeight > document.body.clientHeight
+
+      while (!hasVerticalScrollbar && total.value > count.value * page.value) {
+        await getBlogPosts()
+        hasVerticalScrollbar = document.body.scrollHeight > document.body.clientHeight
+      }
     })
+
     onBeforeUnmount(() => {
-      scrollingElem.value.onscroll = null
+      document.body.removeEventListener('scroll', onScroll)
     })
+
     return { articles, loading, endOfList, page, count }
   },
 }
