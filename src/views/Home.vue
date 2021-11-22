@@ -3,23 +3,13 @@
     <div v-for="i in 4" :id="`stars${i}`" :key="i" />
     <v-container class="main-wrapper d-flex flex-column justify-space-around">
       <div class="home-container pt-4 align-start">
-        <h1 class="text-center">
-          Cricket Creations
-        </h1>
+        <h1 class="text-center">Cricket Creations</h1>
       </div>
       <div class="home-container">
         <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" />
       </div>
       <div class="home-container mt-5">
-        <v-btn
-          v-for="(page, i) in pages"
-          :key="i"
-          text
-          x-large
-          top
-          :to="`${page.link}`"
-          class="homepage-link"
-        >
+        <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
           <span class="pr-1">{</span>
           {{ page.name }}
           <span class="pl-1">}</span>
@@ -41,7 +31,7 @@ export default {
       showParticles: false,
       pages: [
         { name: 'Projects', link: '/projects' },
-        { name: 'Musings', link: '/musings' },
+        { name: 'Blog', link: '/blog' },
         { name: 'About', link: '/about' },
       ],
     }

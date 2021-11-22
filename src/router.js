@@ -30,8 +30,8 @@ export default new Router({
       },
     },
     {
-      path: '/musings',
-      name: 'musings',
+      path: '/blog',
+      name: 'blog',
       components: {
         default: () => import(/* webpackChunkName: "blog" */ '@/views/Blog.vue'),
         header: () => import('@/components/Header.vue'),

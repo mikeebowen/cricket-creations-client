@@ -8,7 +8,7 @@
     <div class="flex-grow-1" />
     <v-toolbar-items>
       <v-btn :class="{ admin__text: isAdmin }" text to="/projects"> Projects </v-btn>
-      <v-btn :class="{ admin__text: isAdmin }" text to="/musings"> Musings </v-btn>
+      <v-btn :class="{ admin__text: isAdmin }" text to="/blog"> Blog </v-btn>
       <v-btn v-for="page in pages" :key="page.id" :class="{ admin__text: isAdmin }" text :to="encodeURI(`${page.heading}`)">
         {{ page.heading }}
       </v-btn>
