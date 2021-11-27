@@ -73,7 +73,7 @@ function getUser(res) {
   user.userName = unique_name
   user.surname = family_name
   user.email = email
-  user.avatar = avatar
+  user.avatar = avatar ? avatar : require('@/assets/images/abstract-user-flat-4.svg')
   user.token = token
   user.refreshToken = refreshToken
   user.expiration = exp * 1000
