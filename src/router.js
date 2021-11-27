@@ -75,11 +75,15 @@ export default new Router({
         default: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
       },
       beforeEnter(to, from, next) {
-        const user = store.state?.user?.user
-        if (user) {
-          next('/admin')
-        } else {
-          next()
+        try {
+          const user = store.state?.user?.user
+          if (user) {
+            next('/admin')
+          } else {
+            next()
+          }
+        } catch (err) {
+          console.error(err.message || err)
         }
       },
     },

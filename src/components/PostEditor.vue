@@ -21,7 +21,8 @@
       <v-col cols="7" offset="1">
         <TagEditor :tags="selectedPost.tags" @new-tags="updateTags" />
       </v-col>
-      <v-col cols="2"> <v-switch v-model="selectedPost.published" inset label="published" /></v-col></v-row>
+      <v-col cols="2"> <v-switch v-model="selectedPost.published" inset label="published" /></v-col>
+    </v-row>
     <v-row>
       <v-col cols="9" offset="1">
         <v-text-field v-model="selectedPost.title" label="Title" />
@@ -84,7 +85,7 @@ export default {
     const posts = computed(() => store.state.post.posts)
     const t = computed(() => store.state.post.total)
     const error = ref('')
-    const total = computed(() => parseInt(t.value / count.value + 1))
+    const total = computed(() => Math.max(parseInt(t.value / count.value + 1)))
     const loading = ref(true)
     const dialog = ref(null)
     const headline = ref('')
@@ -94,6 +95,7 @@ export default {
     const selectedPost = computed(() => store.state.post.selectedPost)
     const cachedPost = computed(() => store.state.post.cachedPost)
     const showEditor = ref(false)
+
     const selectPost = post => {
       store.dispatch('post/selectPost', new Post(post))
       showEditor.value = true
