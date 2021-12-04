@@ -47,10 +47,10 @@
             <v-form ref="registerForm" v-model="valid" lazy-validation>
               <v-row>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field v-model="firstName" :rules="[rules.required]" label="First Name" maxlength="20" required />
+                  <v-text-field v-model="name" :rules="[rules.required]" label="First Name" maxlength="20" required />
                 </v-col>
                 <v-col cols="12" sm="6" md="6">
-                  <v-text-field v-model="lastName" :rules="[rules.required]" label="Last Name" maxlength="20" required />
+                  <v-text-field v-model="surname" :rules="[rules.required]" label="Last Name" maxlength="20" required />
                 </v-col>
                 <v-col cols="12">
                   <v-text-field v-model="email" :rules="emailRules" label="Email" required />
@@ -117,8 +117,8 @@ export default {
     ])
     const valid = ref(true)
 
-    const firstName = ref('')
-    const lastName = ref('')
+    const name = ref('')
+    const surname = ref('')
     const email = ref('')
     const userName = ref('')
     const password = ref('')
@@ -154,8 +154,8 @@ export default {
       if (registerForm.value.validate()) {
         loading.value = true
         await store.dispatch('user/register', {
-          firstName: firstName.value,
-          lastName: lastName.value,
+          name: name.value,
+          surname: surname.value,
           email: email.value,
           userName: userName.value,
           password: password.value,
@@ -189,8 +189,8 @@ export default {
       tab,
       tabs,
       valid,
-      firstName,
-      lastName,
+      name,
+      surname,
       email,
       userName,
       password,
