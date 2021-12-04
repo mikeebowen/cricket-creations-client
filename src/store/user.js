@@ -1,6 +1,8 @@
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
 import User from '../models/User'
+import store from './store'
+import router from '../router'
 
 export default {
   namespaced: true,
@@ -27,9 +29,32 @@ export default {
         return Promise.reject(err)
       }
     },
+    async saveUser({ commit, dispatch }, userInfo) {
+      try {
+        if (Date.now() >= store.state?.user?.user.expiration) {
+          await dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+          if (!store.state?.user?.user) {
+            return router.push('/login')
+          }
+        }
+
+        const user = getDatabaseUser(userInfo)
+        await axios.patch('/api/user', user, {
+          headers: {
+            Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            'Content-Type': 'application/json',
+            'Clear-Site-Data': '*',
+          },
+        })
+        commit('SET_USER', userInfo)
+      } catch (err) {
+        commit('SET_USER', null)
+        return Promise.reject(err)
+      }
+    },
     async register({ commit }, userInfo) {
       try {
-        const newUser = getNewUser(userInfo)
+        const newUser = getDatabaseUser(userInfo)
         const res = await axios.post('/api/user/', newUser)
         if (res) {
           const user = getUser(res)
@@ -64,10 +89,10 @@ export default {
 
 function getUser(res) {
   const {
-    data: { token, refreshToken },
+    data: { token, refreshToken, avatar },
   } = res
   const user = {}
-  const { nameid, given_name, unique_name, family_name, email, avatar, exp } = jwtDecode(res.data.token)
+  const { nameid, given_name, unique_name, family_name, email, exp } = jwtDecode(token)
   user.id = nameid
   user.name = given_name
   user.userName = unique_name
@@ -80,13 +105,14 @@ function getUser(res) {
   return new User(user)
 }
 
-function getNewUser(user) {
+function getDatabaseUser(user) {
   const newUser = {}
-  newUser.Name = user.firstName
-  newUser.Surname = user.lastName
+  newUser.Name = user.name
+  newUser.Surname = user.surname
   newUser.Email = user.email
   newUser.UserName = user.userName
   newUser.Password = user.password
+  newUser.Avatar = user.avatar
 
   return newUser
 }

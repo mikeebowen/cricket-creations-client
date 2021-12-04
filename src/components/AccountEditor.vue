@@ -9,14 +9,14 @@
         </v-img>
       </v-col>
       <v-col cols="8 d-flex align-end">
-        <v-file-input v-model="file" label="File input" prepend-icon="mdi-camera" accept="image/*" @change="onFilePicked" />
+        <v-file-input v-model="file" label="Select New Avatar" prepend-icon="mdi-camera" accept="image/*" @change="onFilePicked" />
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="5" offset="1">
         <v-text-field v-model="user.name" required :rules="[rules.required, rules.maxLength]" label="Name" />
       </v-col>
-      <v-col cols="5">
+      <v-col cols="6">
         <v-text-field v-model="user.surname" :rules="[rules.required, rules.maxLength]" required label="Surname" />
       </v-col>
     </v-row>
@@ -24,8 +24,16 @@
       <v-col cols="5" offset="1">
         <v-text-field v-model="user.userName" required :rules="[rules.required, rules.maxLength]" label="User Name" />
       </v-col>
-      <v-col cols="5">
+      <v-col cols="6">
         <v-text-field v-model="user.email" required :rules="[rules.required, rules.maxLength, rules.email]" label="Email" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="d-flex justify-end">
+        <v-btn-toggle>
+          <v-btn tile @click="saveUser">Save Changes</v-btn>
+          <v-btn tile @click="cancelUserUpdate">Cancel</v-btn>
+        </v-btn-toggle>
       </v-col>
     </v-row>
   </v-form>
@@ -33,7 +41,7 @@
 
 <script>
 import { defineComponent, ref } from '@vue/composition-api'
-import axios from 'axios'
+
 import store from '@/store/store'
 
 export default defineComponent({
@@ -48,23 +56,27 @@ export default defineComponent({
 
     const file = ref(null)
 
-    let imageUrl
-    let imageFile
     const onFilePicked = () => {
-      // console.log('file: ', file)
+      if (file.value.size > 800000) {
+        alert('file is too large')
+        return
+      }
       const fr = new FileReader()
       fr.readAsDataURL(file.value)
-      fr.addEventListener('load', async () => {
-        imageUrl = fr.result
-        console.log('🚀 ~ file: AccountEditor.vue ~ line 92 ~ fr.addEventListener ~ fr', fr)
-        console.log('🚀 ~ file: AccountEditor.vue ~ line 91 ~ fr.addEventListener ~ imageUrl', imageUrl)
-        imageFile = file.value // this is an image file that can be sent to server...
-        console.log('🚀 ~ file: AccountEditor.vue ~ line 92 ~ fr.addEventListener ~ imageFile', imageFile)
-        // const base64String = fr.result.split(',')[1]
-        await axios.post('/api/image', { ...file.value, data: fr.result })
+      fr.addEventListener('load', () => {
+        user.value.avatar = fr.result
       })
     }
-    return { user, valid, rules, file, onFilePicked }
+
+    const saveUser = async () => {
+      await store.dispatch('user/saveUser', user.value)
+    }
+
+    const cancelUserUpdate = () => {
+      user.value = Object.assign({}, store.state.user.user)
+    }
+
+    return { user, valid, rules, onFilePicked, saveUser, cancelUserUpdate, file }
   },
 })
 </script>

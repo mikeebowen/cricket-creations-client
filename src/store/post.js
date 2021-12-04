@@ -34,7 +34,14 @@ export default {
             return router.push('/login')
           }
         }
-        const ps = await axios.get('/api/blogpost', { ...params, headers: { Authorization: 'Bearer ' + store.state?.user?.user?.token } })
+        const ps = await axios.get('/api/blogpost', {
+          ...params,
+          headers: {
+            Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            'Content-Type': 'application/json',
+            'Clear-Site-Data': '*',
+          },
+        })
         commit('GET_POSTS', { posts: ps?.data?.data, total: ps?.data?.meta?.total })
         return Promise.resolve()
       } catch (err) {
