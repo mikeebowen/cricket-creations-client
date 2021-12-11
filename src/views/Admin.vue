@@ -1,6 +1,7 @@
 <template>
   <v-container class="admin-container">
     <v-tabs v-model="tab">
+      <v-tab><v-btn @click="logout">Logout</v-btn></v-tab>
       <v-tab href="#tab-0">Posts</v-tab>
       <v-tab href="#tab-1">Pages</v-tab>
       <v-tab href="#tab-2">Account</v-tab>
@@ -26,6 +27,13 @@
         </v-list-item-group>
       </v-list>
     </ConfirmDialog>
+    <ConfirmDialog ref="logoutDialog" activator-class="activator">
+      <template v-slot:headline>You are attempting to log out.</template>
+      Are you sure?
+    </ConfirmDialog>
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64" />
+    </v-overlay>
   </v-container>
 </template>
 
@@ -37,6 +45,7 @@ import PostEditor from '@/components/PostEditor'
 import PageEditor from '@/components/PageEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import AccountEditor from '@/components/AccountEditor'
+import router from '@/router'
 
 export default {
   name: 'Admin',
@@ -65,8 +74,20 @@ export default {
     const cachedPost = computed(() => store.state.post.cachedPost)
     const unsaved = ref([])
     const confirmDialog = ref(null)
+    const logoutDialog = ref(null)
+    const overlay = ref(false)
 
-    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, confirmDialog }
+    const logout = async () => {
+      const lg = await logoutDialog.value.open()
+      if (lg) {
+        overlay.value = true
+        await store.dispatch('user/logout')
+        router.push('login')
+        overlay.value = false
+      }
+    }
+
+    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, confirmDialog, logout, overlay, logoutDialog }
   },
 }
 </script>

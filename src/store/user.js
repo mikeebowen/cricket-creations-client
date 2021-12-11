@@ -66,6 +66,23 @@ export default {
         return Promise.reject(err)
       }
     },
+    async updatePassword({ commit }, password) {
+      try {
+        await axios.post(
+          '/api/user/password',
+          { password },
+          {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+              'Content-Type': 'application/json',
+              'Clear-Site-Data': '*',
+            },
+          },
+        )
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    },
     refresh: async ({ commit, state }) => {
       try {
         const res = await axios.post('/api/user/refresh', { id: state.user.id, refreshToken: state.user.refreshToken })
@@ -81,8 +98,20 @@ export default {
         return Promise.reject(err)
       }
     },
-    logout: ({ commit }) => {
-      commit('SET_USER', null)
+    logout: async ({ commit }) => {
+      try {
+        await axios.delete('/api/user/logout', {
+          headers: {
+            Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            'Content-Type': 'application/json',
+            'Clear-Site-Data': '*',
+          },
+        })
+
+        commit('SET_USER', null)
+      } catch (err) {
+        return Promise.reject(err)
+      }
     },
   },
 }

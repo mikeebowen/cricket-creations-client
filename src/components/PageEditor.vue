@@ -7,10 +7,10 @@
           <v-tabs v-model="tabIndex" show-arrows centered>
             <v-tabs-slider color="teal lighten-3" />
             <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#${i}`">
-              <span v-if="page.id">
-                {{ page.title }}
-              </span>
-              <v-icon v-else v-text="'mdi-plus-thick'" />
+              {{ page.title }}
+            </v-tab>
+            <v-tab>
+              <v-icon color="blue" v-text="'mdi-plus-thick'" />
             </v-tab>
           </v-tabs>
         </v-col>
@@ -54,12 +54,7 @@
         {{ errors }}
       </v-snackbar>
     </span>
-    <ConfirmDialog
-      ref="dialog"
-      :headline="headline"
-      message="This will be very annoying to undo..."
-      activator-class="activator"
-    />
+    <ConfirmDialog ref="dialog" :headline="headline" message="This will be very annoying to undo..." activator-class="activator" />
   </span>
 </template>
 

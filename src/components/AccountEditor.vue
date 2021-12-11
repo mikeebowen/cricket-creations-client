@@ -73,7 +73,7 @@
             <v-card-actions>
               <v-spacer />
               <v-btn color="red darken-1" text @click="dialog = false"> Cancel </v-btn>
-              <v-btn color="blue darken-1" text :disabled="!password || password !== verify" @click="updatePasswod"> Save </v-btn>
+              <v-btn color="blue darken-1" text :disabled="!password || password !== verify" @click="updatePassword"> Save </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -99,7 +99,7 @@ import store from '@/store/store'
 
 export default defineComponent({
   setup() {
-    const user = ref(Object.assign({ password: null }, store.state.user.user))
+    const user = ref(Object.assign({}, store.state.user.user))
     const userHasUpdates = ref(false)
     const valid = ref(true)
     const rules = ref({
@@ -113,8 +113,8 @@ export default defineComponent({
     const passwordDots = computed(() => {
       let pass = ''
 
-      if (user.value.password && user.value.password.length) {
-        for (let i = 0; i < user.value.password.length; i++) {
+      if (password.value.length) {
+        for (let i = 0; i < password.value.length; i++) {
           pass += 'x'
         }
       } else {
@@ -164,19 +164,19 @@ export default defineComponent({
       loading.value = true
       await store.dispatch('user/saveUser', user.value)
       loading.value = false
-      user.value.password = null
+      userHasUpdates.value = false
     }
 
     const cancelUserUpdate = () => {
-      user.value = Object.assign({ password: null }, store.state.user.user)
+      user.value = Object.assign({}, store.state.user.user)
     }
 
     const openPasswordDialog = () => {
       dialog.value = true
     }
 
-    const updatePasswod = () => {
-      user.value.password = password.value
+    const updatePassword = async () => {
+      await store.dispatch('user/updatePassword', password.value)
       dialog.value = false
     }
 
@@ -197,7 +197,7 @@ export default defineComponent({
       show1,
       password,
       verify,
-      updatePasswod,
+      updatePassword,
       passwordDots,
     }
   },

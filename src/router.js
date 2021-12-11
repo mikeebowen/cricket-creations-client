@@ -43,7 +43,7 @@ export default new Router({
       components: {
         default: () => import(/* webpackChunkName: "admin" */ '@/views/Admin.vue'),
         header: () => import('@/components/Header.vue'),
-        adminHeader: () => import('@/components/AdminMenu.vue'),
+        // adminHeader: () => import('@/components/AdminMenu.vue'),
         footer: null,
       },
       beforeEnter: async (to, from, next) => {
