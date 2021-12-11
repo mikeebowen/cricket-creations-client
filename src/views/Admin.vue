@@ -1,11 +1,38 @@
 <template>
   <v-container class="admin-container">
-    <v-tabs v-model="tab">
-      <v-tab><v-btn @click="logout">Logout</v-btn></v-tab>
-      <v-tab href="#tab-0">Posts</v-tab>
-      <v-tab href="#tab-1">Pages</v-tab>
-      <v-tab href="#tab-2">Account</v-tab>
-    </v-tabs>
+    <v-toolbar flat>
+      <v-tabs v-model="tab">
+        <v-tab href="#tab-0">Posts</v-tab>
+        <v-tab href="#tab-1">Pages</v-tab>
+        <v-tab href="#tab-2" class="d-none">Account</v-tab>
+      </v-tabs>
+      <v-spacer />
+      <v-menu bottom left offset-x offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn fab dark small v-bind="attrs" v-on="on">
+            <v-avatar>
+              <img :src="user.avatar" :alt="`${user.name} ${user.surname}`" />
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item-group>
+            <v-list-item @click="goToTab('tab-2')">
+              <v-list-item-icon>
+                <v-icon>mdi-account-circle</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>My Account</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="logout">
+              <v-list-item-icon>
+                <v-icon>mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Logout</v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
     <v-tabs-items v-model="tab">
       <v-tab-item value="tab-0">
         <PostEditor />
@@ -76,6 +103,7 @@ export default {
     const confirmDialog = ref(null)
     const logoutDialog = ref(null)
     const overlay = ref(false)
+    const user = computed(() => store.state.user.user)
 
     const logout = async () => {
       const lg = await logoutDialog.value.open()
@@ -87,7 +115,11 @@ export default {
       }
     }
 
-    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, confirmDialog, logout, overlay, logoutDialog }
+    const goToTab = tabId => {
+      tab.value = tabId
+    }
+
+    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, confirmDialog, logout, overlay, logoutDialog, user, goToTab }
   },
 }
 </script>
