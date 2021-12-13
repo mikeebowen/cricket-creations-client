@@ -9,8 +9,8 @@
             <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#${i}`">
               {{ page.title }}
             </v-tab>
-            <v-tab>
-              <v-icon color="blue" v-text="'mdi-plus-thick'" />
+            <v-tab :href="`#${pages.length - 1}`">
+              <v-icon color="blue" @click="addNewPage()" v-text="'mdi-plus-thick'" />
             </v-tab>
           </v-tabs>
         </v-col>
@@ -24,7 +24,7 @@
         </v-col>
         <v-col cols="4 d-flex justify-end">
           <v-btn-toggle>
-            <v-btn tile @click="savePage">Save</v-btn>
+            <v-btn tile :disabled="noChanges" @click="savePage">Save</v-btn>
             <v-btn class="activator" tile @click="deletePage">Delete</v-btn>
           </v-btn-toggle>
         </v-col>
@@ -48,10 +48,22 @@
           </v-tabs-items>
         </v-col>
       </v-row>
-      <v-snackbar v-model="snackbar" text color="red">
+      <v-snackbar v-model="snackbar" text color="red" timeout="-1">
+        <v-btn icon small bottom right absolute>
+          <v-icon color="red" @click="snackbar = false">mdi-close-thick</v-icon>
+        </v-btn>
         <p>Something went wrong, your post couldn't save.</p>
-        <v-icon color="red">mdi-alert</v-icon>
-        {{ errors }}
+        <ul class="no-bullets">
+          <li v-for="(error, i) in errors" :key="i">
+            <v-icon color="red">mdi-alert</v-icon>
+            {{ error[0] }}
+            <ul class="no-bullets">
+              <li v-for="errMsg in error[1]" :key="errMsg" style="margin-left: 2rem">
+                {{ errMsg }}
+              </li>
+            </ul>
+          </li>
+        </ul>
       </v-snackbar>
     </span>
     <ConfirmDialog ref="dialog" :headline="headline" message="This will be very annoying to undo..." activator-class="activator" />
@@ -74,13 +86,12 @@ import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import store from '@/store/store'
+import isEqual from 'lodash.isequal'
 
 export default {
   name: 'PageEditor',
   components: { Editor, ConfirmDialog },
-  // props: { pages: { type: Array, default: () => [] }, cachedPages: { type: Array, default: () => [] } },
   setup() {
-    const newPage = ref('')
     const tabIndex = ref('0')
     const dialog = ref(null)
     const headline = computed(
@@ -93,25 +104,34 @@ export default {
         await store.dispatch('page/getPages')
         loading.value = false
       } catch (err) {
-        errors.value = err.message || err
+        errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
         loading.value = false
         snackbar.value = true
       }
     }
-    const errors = ref(null)
+    const errors = ref([])
     const snackbar = ref(false)
     const selectedFileName = computed(() => pages.value[tabIndex.value].title)
+    const noChanges = computed(
+      () =>
+        store.state.page.pages.length === store.state.page.cachedPages.length &&
+        store.state.page.pages.every((o, idx) => isEqual(o, store.state.page.cachedPages[idx])),
+    )
+
     const savePage = async () => {
       try {
         loading.value = true
-        store.dispatch('page/updatePage', pages.value[tabIndex.value])
+        const idx = tabIndex.value
+        await store.dispatch('page/updatePage', pages.value[tabIndex.value])
+        tabIndex.value = idx
         loading.value = false
       } catch (err) {
-        errors.value = err.message || err
+        errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
         loading.value = false
         snackbar.value = true
       }
     }
+
     const deletePage = async () => {
       const { id } = pages.value[tabIndex.value]
       const confirmed = await dialog.value.open()
@@ -120,13 +140,18 @@ export default {
           loading.value = true
           await store.dispatch('page/deletePage', id)
         } catch (err) {
-          errors.value = err.message || err
+          errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
           loading.value = false
           snackbar.value = true
         }
       }
-      loading.value = false
     }
+
+    const addNewPage = () => {
+      store.dispatch('page/addPage')
+      tabIndex.value = (pages.value.length - 2).toString()
+    }
+
     const editorConfig = ref({
       height: 500,
       // menubar: false,
@@ -159,13 +184,12 @@ export default {
         : '',
     )
     onMounted(async () => {
-      await getPages()
+      await getPages('admin')
     })
     return {
       loading,
       editorConfig,
       tabIndex,
-      newPage,
       createdDate,
       lastUpdated,
       savePage,
@@ -176,9 +200,17 @@ export default {
       deletePage,
       selectedFileName,
       pages,
+      addNewPage,
+      noChanges,
     }
   },
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+ul.no-bullets {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+</style>

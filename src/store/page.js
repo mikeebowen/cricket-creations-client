@@ -15,23 +15,24 @@ export default {
       state.pages = pages
       state.cachedPages = pages.map(p => cloneDeep(p))
     },
+    ADD_PAGE(state) {
+      state.pages.push(
+        new Page({
+          created: '',
+          lastUpdated: '',
+          title: '',
+          content: '',
+          heading: '',
+        }),
+      )
+      state.cachedPages = state.pages.map(p => cloneDeep(p))
+    },
   },
   actions: {
     async getPages({ commit }, routeName) {
       try {
         const pgs = await axios.get('/api/page')
         const pages = pgs?.data?.data.map(p => new Page(p))
-        if (store.state?.user?.user && routeName?.toLowerCase() === 'admin') {
-          pages.push(
-            new Page({
-              created: '',
-              lastUpdated: '',
-              title: '',
-              content: '',
-              heading: '',
-            }),
-          )
-        }
         commit('GET_PAGES', pages)
         return Promise.resolve()
       } catch (err) {
@@ -41,7 +42,11 @@ export default {
     async updatePage({ dispatch, state }, page) {
       try {
         if (Date.now() >= store.state?.user?.user.expiration) {
-          await dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+          await dispatch(
+            'user/refresh',
+            { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
+            { root: true },
+          )
           if (!store.state?.user?.user) {
             return router.push('/login')
           }
@@ -67,11 +72,18 @@ export default {
         return Promise.reject(err)
       }
     },
+    addPage({ commit }) {
+      commit('ADD_PAGE')
+    },
     async deletePage({ dispatch }, id) {
       try {
         if (id) {
           if (Date.now() >= store.state?.user?.user.expiration) {
-            await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
+            await store.dispatch(
+              'user/refresh',
+              { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
+              { root: true },
+            )
             if (!store.state?.user?.user) {
               return router.push('/login')
             }

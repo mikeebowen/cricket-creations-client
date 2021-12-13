@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tinymce/tinymce-vue": "^3.2.6",
+    "@types/lodash.isequal": "^4.5.5",
     "@vue/composition-api": "^1.0.0-rc.1",
     "axios": "^0.21.1",
     "brick.js": "^3.0.5",
@@ -19,6 +20,7 @@
     "jwt-decode": "^3.1.2",
     "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
+    "lodash.isequal": "^4.5.0",
     "luxon": "^1.26.0",
     "tinymce": "^5.7.0",
     "vue": "^2.6.12",
