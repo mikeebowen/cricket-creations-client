@@ -24,6 +24,9 @@ export default {
       state.selectedPost = post
       state.cachedPost = cloneDeep(post)
     },
+    SET_CACHED_POST(state, post) {
+      state.cachedPost = post
+    },
   },
   actions: {
     getPosts: async ({ commit }, params) => {
@@ -48,7 +51,7 @@ export default {
         return Promise.reject(err)
       }
     },
-    updatePost: async ({ dispatch, state }, post) => {
+    updatePost: async ({ commit }, post) => {
       try {
         if (Date.now() >= store.state?.user?.user.expiration) {
           await store.dispatch('user/refresh', { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken })
@@ -72,6 +75,9 @@ export default {
             },
           })
         }
+
+        commit('SET_CACHED_POST', post)
+
         return Promise.resolve()
       } catch (err) {
         return Promise.reject(err)
