@@ -25,7 +25,9 @@ export default {
           heading: '',
         }),
       )
-      state.cachedPages = state.pages.map(p => cloneDeep(p))
+    },
+    RESET_PAGES(state) {
+      state.pages = state.cachedPages.map(p => cloneDeep(p))
     },
   },
   actions: {
@@ -100,6 +102,9 @@ export default {
       } catch (err) {
         Promise.reject(err)
       }
+    },
+    resetPages({ commit }) {
+      commit('RESET_PAGES')
     },
   },
 }

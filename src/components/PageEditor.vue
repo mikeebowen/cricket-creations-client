@@ -67,11 +67,12 @@
       </v-snackbar>
     </span>
     <ConfirmDialog ref="dialog" :headline="headline" message="This will be very annoying to undo..." activator-class="activator" />
+    <ConfirmDialog ref="changeWarning" :headline="saveWarningHeadline" message="Do you want to save them?" />
   </span>
 </template>
 
 <script>
-import { ref, onMounted, computed } from '@vue/composition-api'
+import { ref, onMounted, computed, watch } from '@vue/composition-api'
 import { DateTime } from 'luxon'
 import Editor from '@tinymce/tinymce-vue'
 import 'tinymce/themes/silver'
@@ -93,12 +94,27 @@ export default {
   components: { Editor, ConfirmDialog },
   setup() {
     const tabIndex = ref('0')
+
+    watch(tabIndex, async (cur, prev) => {
+      if (!cachedPages.value[prev] || !isEqual(pages.value[prev], cachedPages.value[prev])) {
+        await warn(prev)
+      }
+    })
+
     const dialog = ref(null)
+    const changeWarning = ref(null)
+
     const headline = computed(
       () => `Are you sure you want to delete "${pages.value[tabIndex.value] && pages.value[tabIndex.value].title}"?`,
     )
+
+    const unsavedPageTitle = ref('')
+    const saveWarningHeadline = computed(() => `"${unsavedPageTitle.value}" has unsaved changes.`)
+
     const pages = computed(() => store.state.page.pages)
+    const cachedPages = computed(() => store.state.page.cachedPages)
     const loading = ref(true)
+
     const getPages = async () => {
       try {
         await store.dispatch('page/getPages')
@@ -109,6 +125,7 @@ export default {
         snackbar.value = true
       }
     }
+
     const errors = ref([])
     const snackbar = ref(false)
     const selectedFileName = computed(() => pages.value[tabIndex.value].title)
@@ -118,11 +135,17 @@ export default {
         store.state.page.pages.every((o, idx) => isEqual(o, store.state.page.cachedPages[idx])),
     )
 
-    const savePage = async () => {
+    const savePage = async i => {
       try {
+        let page = pages.value[tabIndex.value]
+
+        if (i) {
+          page = pages.value[i]
+        }
+
         loading.value = true
         const idx = tabIndex.value
-        await store.dispatch('page/updatePage', pages.value[tabIndex.value])
+        await store.dispatch('page/updatePage', page)
         tabIndex.value = idx
         loading.value = false
       } catch (err) {
@@ -192,9 +215,22 @@ export default {
         ? DateTime.fromISO(pages.value[tabIndex.value].lastUpdated).toLocaleString(DateTime.DATETIME_MED)
         : '',
     )
+
+    const warn = async i => {
+      unsavedPageTitle.value = pages.value[i].title
+      const discard = await changeWarning.value.open()
+
+      if (!discard) {
+        store.dispatch('page/resetPages')
+      } else {
+        await savePage(i)
+      }
+    }
+
     onMounted(async () => {
       await getPages('admin')
     })
+
     return {
       loading,
       editorConfig,
@@ -206,11 +242,14 @@ export default {
       snackbar,
       dialog,
       headline,
+      saveWarningHeadline,
       deletePage,
       selectedFileName,
       pages,
       addNewPage,
       noChanges,
+      changeWarning,
+      warn,
     }
   },
 }
