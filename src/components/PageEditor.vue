@@ -135,14 +135,23 @@ export default {
     const deletePage = async () => {
       const { id } = pages.value[tabIndex.value]
       const confirmed = await dialog.value.open()
-      if (confirmed) {
+
+      if (confirmed && id) {
         try {
           loading.value = true
+
           await store.dispatch('page/deletePage', id)
         } catch (err) {
           errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
           loading.value = false
           snackbar.value = true
+        }
+      } else if (confirmed && !id) {
+        const idInt = parseInt(tabIndex.value)
+
+        if (!isNaN(idInt)) {
+          pages.value.splice(idInt, 1)
+          tabIndex.value = 0
         }
       }
     }
