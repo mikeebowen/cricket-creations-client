@@ -217,13 +217,21 @@ export default {
     )
 
     const warn = async i => {
-      unsavedPageTitle.value = pages.value[i].title
+      unsavedPageTitle.value = pages.value[i]?.title
       const discard = await changeWarning.value.open()
 
       if (!discard) {
         store.dispatch('page/resetPages')
       } else {
         await savePage(i)
+      }
+    }
+
+    const checkPages = async () => {
+      const exists = !!cachedPages.value[tabIndex.value]
+      const equal = isEqual(pages.value[tabIndex.value], cachedPages.value[tabIndex.value])
+      if (!exists || !equal) {
+        await warn(tabIndex.value)
       }
     }
 
@@ -250,6 +258,7 @@ export default {
       noChanges,
       changeWarning,
       warn,
+      checkPages,
     }
   },
 }

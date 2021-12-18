@@ -1,7 +1,7 @@
 <template>
   <v-container class="admin-container">
     <v-toolbar flat>
-      <v-tabs v-model="tab">
+      <v-tabs v-model="tab" @change="checkPages">
         <v-tab href="#tab-0">Posts</v-tab>
         <v-tab href="#tab-1">Pages</v-tab>
         <v-tab href="#tab-2" class="d-none">Account</v-tab>
@@ -38,7 +38,7 @@
         <PostEditor />
       </v-tab-item>
       <v-tab-item value="tab-1">
-        <PageEditor :pages="pages" :cached-pages="cachedPages" />
+        <PageEditor ref="pageEditor" :pages="pages" :cached-pages="cachedPages" />
       </v-tab-item>
       <v-tab-item value="tab-2">
         <AccountEditor />
@@ -77,6 +77,14 @@ import router from '@/router'
 export default {
   name: 'Admin',
   components: { PostEditor, PageEditor, ConfirmDialog, AccountEditor },
+  methods: {
+    async checkPages() {
+      const { $refs } = this
+      if ($refs.pageEditor) {
+        await $refs.pageEditor.checkPages()
+      }
+    },
+  },
   async beforeRouteLeave(to, from, next) {
     const { pages, cachedPages, selectedPost, cachedPost, unsaved, $refs } = this
     pages.forEach((p, i) => {
@@ -119,7 +127,20 @@ export default {
       tab.value = tabId
     }
 
-    return { tab, pages, cachedPages, selectedPost, cachedPost, unsaved, confirmDialog, logout, overlay, logoutDialog, user, goToTab }
+    return {
+      tab,
+      pages,
+      cachedPages,
+      selectedPost,
+      cachedPost,
+      unsaved,
+      confirmDialog,
+      logout,
+      overlay,
+      logoutDialog,
+      user,
+      goToTab,
+    }
   },
 }
 </script>
