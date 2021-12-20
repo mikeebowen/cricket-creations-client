@@ -2,7 +2,6 @@ import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 import store from './store'
 import router from '../router'
-import DOMPurify from 'dompurify'
 
 export default {
   namespaced: true,
@@ -59,8 +58,6 @@ export default {
             return router.push('/login')
           }
         }
-
-        post.content = DOMPurify.sanitize(post.content)
 
         if (post.id) {
           await axios.patch('/api/blogpost', post.patchData, {

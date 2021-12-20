@@ -1,3 +1,5 @@
+import { sanitize } from 'dompurify'
+
 export default class Page {
   id
   created
@@ -13,7 +15,7 @@ export default class Page {
     this.created = data.created
     this.lastUpdated = data.lastUpdated
     this.title = data.title
-    this.content = data.content
+    this.content = sanitize(data.content)
     this.heading = data.heading
     this.published = data.published
   }

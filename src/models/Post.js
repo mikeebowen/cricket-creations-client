@@ -1,3 +1,5 @@
+import { sanitize } from 'dompurify'
+
 class Post {
   id
   userId
@@ -13,7 +15,7 @@ class Post {
     this.created = data.created
     this.lastUpdated = data.lastUpdated
     this.title = data.title
-    this.content = data.content
+    this.content = sanitize(data.content)
     this.tags = data.tags || []
     this.published = !!data.published
   }
