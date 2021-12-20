@@ -67,7 +67,13 @@
       </v-snackbar>
     </span>
     <ConfirmDialog ref="dialog" :headline="headline" message="This will be very annoying to undo..." activator-class="activator" />
-    <ConfirmDialog ref="changeWarning" :headline="saveWarningHeadline" message="Do you want to save them?" />
+    <ConfirmDialog
+      ref="changeWarning"
+      :headline="saveWarningHeadline"
+      message="Do you want to save them?"
+      false-text="Discard"
+      true-text="Save"
+    />
   </span>
 </template>
 

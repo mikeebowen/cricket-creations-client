@@ -13,12 +13,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="red darken-1" text @click="decide(false)">
-          Cancel
-        </v-btn>
-        <v-btn color="green darken-1" text @click="decide(true)">
-          Yes
-        </v-btn>
+        <v-btn color="red darken-1" text @click="decide(false)"> {{ falseText }} </v-btn>
+        <v-btn color="green darken-1" text @click="decide(true)"> {{ trueText }} </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -34,6 +30,8 @@ export default {
     activatorClass: { default: '.activator', type: String },
     headline: { default: '', type: String },
     message: { default: '', type: String },
+    falseText: { default: 'Cancel', type: String },
+    trueText: { default: 'Yes', type: String },
   },
   setup() {
     const cDialog = ref(false)
