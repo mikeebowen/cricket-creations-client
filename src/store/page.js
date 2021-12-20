@@ -41,6 +41,34 @@ export default {
         return Promise.reject(err)
       }
     },
+    async getAllPages({ commit, dispatch }, routeName) {
+      try {
+        if (Date.now() >= store.state?.user?.user.expiration) {
+          await dispatch(
+            'user/refresh',
+            { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
+            { root: true },
+          )
+
+          if (!store.state?.user?.user) {
+            return router.push('/login')
+          }
+        }
+
+        const pgs = await axios.get('/api/page/include-unpublished', {
+          headers: {
+            Authorization: 'Bearer ' + store.state?.user?.user?.token,
+          },
+        })
+        const pages = pgs?.data?.data.map(p => new Page(p))
+
+        commit('GET_PAGES', pages)
+
+        return Promise.resolve()
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    },
     async updatePage({ dispatch, state }, page) {
       try {
         if (Date.now() >= store.state?.user?.user.expiration) {
@@ -49,6 +77,7 @@ export default {
             { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
             { root: true },
           )
+
           if (!store.state?.user?.user) {
             return router.push('/login')
           }

@@ -30,7 +30,7 @@ export default {
   },
   beforeMount() {
     store.dispatch('page/getPages', this.$route.name).then(() => {
-      this.pages = store.state.page.pages
+      this.pages = store.state.page.pages.filter(p => p.published)
     })
   },
   setup(props, context) {

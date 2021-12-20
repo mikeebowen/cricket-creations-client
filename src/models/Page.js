@@ -17,7 +17,7 @@ export default class Page {
     this.title = data.title
     this.content = sanitize(data.content)
     this.heading = data.heading
-    this.published = data.published
+    this.published = !!data.published
   }
 
   get data() {

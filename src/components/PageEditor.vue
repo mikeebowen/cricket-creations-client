@@ -16,13 +16,13 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="3">
-          <v-subheader inset> Created: {{ createdDate }} </v-subheader>
+        <v-col cols="3" offset="1">
+          <v-subheader> Created: {{ createdDate }} </v-subheader>
         </v-col>
         <v-col cols="3">
-          <v-subheader inset> Last Updated: {{ lastUpdated }} </v-subheader>
+          <v-subheader> Last Updated: {{ lastUpdated }} </v-subheader>
         </v-col>
-        <v-col cols="4 d-flex justify-end">
+        <v-col cols="3 d-flex justify-end">
           <v-btn-toggle>
             <v-btn tile :disabled="noChanges" @click="savePage">Save</v-btn>
             <v-btn class="activator" tile @click="deletePage">Delete</v-btn>
@@ -33,9 +33,10 @@
         <v-col cols="4" offset="1">
           <v-text-field v-if="pages[tabIndex]" v-model="pages[tabIndex].title" label="Title" />
         </v-col>
-        <v-col cols="5">
+        <v-col cols="4">
           <v-text-field v-if="pages[tabIndex]" v-model="pages[tabIndex].heading" label="Heading" />
         </v-col>
+        <v-col cols="1"><v-switch v-if="pages[tabIndex]" v-model="pages[tabIndex].published" inset label="published" /></v-col>
       </v-row>
       <v-row>
         <v-col cols="9" offset="1">
@@ -123,7 +124,7 @@ export default {
 
     const getPages = async () => {
       try {
-        await store.dispatch('page/getPages')
+        await store.dispatch('page/getAllPages')
         loading.value = false
       } catch (err) {
         errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
@@ -144,8 +145,9 @@ export default {
     const savePage = async i => {
       try {
         let page = pages.value[tabIndex.value]
+        const iNum = parseInt(i)
 
-        if (i) {
+        if (i && !isNaN(iNum)) {
           page = pages.value[i]
         }
 
