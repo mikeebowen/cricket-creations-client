@@ -32,6 +32,7 @@ module.exports = {
       },
     },
   ],
+  ignorePatterns: ['/public/**/*'],
   rules: {
     'no-debugger': 'warn',
     'array-bracket-newline': ['error', 'consistent'],
