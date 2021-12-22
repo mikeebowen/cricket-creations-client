@@ -75,6 +75,7 @@ import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import { DateTime } from 'luxon'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
+import { defaultEditorConfig } from '@/utils/utils'
 
 export default {
   name: 'Admin',
@@ -170,27 +171,7 @@ export default {
     const lastUpdated = computed(() =>
       selectedPost.value.lastUpdated ? DateTime.fromISO(selectedPost.value.lastUpdated).toLocaleString(DateTime.DATETIME_MED) : '',
     )
-    const editorConfig = ref({
-      height: 500,
-      // menubar: false,
-      plugins: ['link', 'table', 'spellchecker', 'image', 'imagetools', 'save', 'lists', 'imagetools', 'codesample', 'code '],
-      toolbar:
-        'insertfile undo redo | code | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image codesample | save cancel',
-      menubar: 'file edit insert view format table tools image',
-      browser_spellcheck: true,
-      codesample_languages: [
-        { text: 'HTML/XML', value: 'markup' },
-        { text: 'JavaScript', value: 'javascript' },
-        { text: 'CSS', value: 'css' },
-        { text: 'PHP', value: 'php' },
-        { text: 'Ruby', value: 'ruby' },
-        { text: 'Python', value: 'python' },
-        { text: 'Java', value: 'java' },
-        { text: 'C', value: 'c' },
-        { text: 'C#', value: 'csharp' },
-        { text: 'C++', value: 'cpp' },
-      ],
-    })
+    const editorConfig = ref(defaultEditorConfig)
 
     const getBlogPosts = async () => {
       try {

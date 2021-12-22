@@ -1,3 +1,3 @@
-import isEqual from './isEqual'
+import defaultEditorConfig from './editorConfig'
 
-export { isEqual }
+export { defaultEditorConfig }
