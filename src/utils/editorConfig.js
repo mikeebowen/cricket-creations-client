@@ -21,37 +21,5 @@ export default {
   paste_data_images: true,
   block_unsupported_drop: true,
   automatic_uploads: true,
-  images_upload_handler(blobInfo, success, failure) {
-    try {
-      const mimeType = detectMimeType(blobInfo.base64())
-
-      if (!mimeType) {
-        failure(`${blobInfo.name()} is an unsupported file type`)
-      } else if (Buffer.from(blobInfo.base64(), 'base64').length > 1000000) {
-        failure('File size limit is 1MB')
-      } else {
-        success(`data:${mimeType};charset=utf-8;base64,${blobInfo.base64()}`)
-      }
-    } catch (err) {
-      failure((err && err.message) || err)
-    }
-  },
-}
-
-function detectMimeType(b64) {
-  const signatures = {
-    JVBERi0: 'application/pdf',
-    R0lGODdh: 'image/gif',
-    R0lGODlh: 'image/gif',
-    iVBORw0KGgo: 'image/png',
-    '/9j/': 'image/jpg',
-  }
-
-  for (const s in signatures) {
-    if (b64.indexOf(s) === 0) {
-      return signatures[s]
-    }
-  }
-
-  return ''
+  images_upload_url: 'api/image',
 }
