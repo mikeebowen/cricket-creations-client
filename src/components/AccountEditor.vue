@@ -69,7 +69,6 @@
                 </v-row>
               </v-form>
             </v-card-text>
-
             <v-card-actions>
               <v-spacer />
               <v-btn color="red darken-1" text @click="dialog = false"> Cancel </v-btn>
@@ -87,6 +86,23 @@
         </v-btn-toggle>
       </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar" text color="red" timeout="-1">
+      <v-btn icon small bottom right absolute>
+        <v-icon color="red" @click="snackbar = false">mdi-close-thick</v-icon>
+      </v-btn>
+      <p>Something went wrong, your update couldn't save.</p>
+      <ul class="no-bullets">
+        <li v-for="(error, i) in errors" :key="i">
+          <v-icon color="red">mdi-alert</v-icon>
+          {{ error[0] }}
+          <ul class="no-bullets">
+            <li v-for="errMsg in error[1]" :key="errMsg" style="margin-left: 2rem">
+              {{ errMsg }}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </v-snackbar>
   </v-form>
 </template>
 
@@ -161,13 +177,22 @@ export default defineComponent({
     }
 
     const saveUser = async () => {
-      loading.value = true
-      await store.dispatch('user/saveUser', user.value)
-      loading.value = false
-      userHasUpdates.value = false
+      try {
+        loading.value = true
+        await store.dispatch('user/saveUser', user.value)
+        loading.value = false
+        userHasUpdates.value = false
+      } catch (err) {
+        cancelUserUpdate()
+
+        errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
+        loading.value = false
+        snackbar.value = true
+      }
     }
 
     const cancelUserUpdate = () => {
+      file.value = null
       user.value = Object.assign({}, store.state.user.user)
     }
 
@@ -179,6 +204,9 @@ export default defineComponent({
       await store.dispatch('user/updatePassword', password.value)
       dialog.value = false
     }
+
+    const snackbar = ref(false)
+    const errors = ref([])
 
     return {
       user,
@@ -199,6 +227,8 @@ export default defineComponent({
       verify,
       updatePassword,
       passwordDots,
+      snackbar,
+      errors,
     }
   },
 })

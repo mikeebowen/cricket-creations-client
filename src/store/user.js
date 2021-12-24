@@ -46,9 +46,9 @@ export default {
             'Clear-Site-Data': '*',
           },
         })
+
         commit('SET_USER', userInfo)
       } catch (err) {
-        commit('SET_USER', null)
         return Promise.reject(err)
       }
     },

@@ -53,7 +53,7 @@
         <v-btn icon small bottom right absolute>
           <v-icon color="red" @click="snackbar = false">mdi-close-thick</v-icon>
         </v-btn>
-        <p>Something went wrong, your post couldn't save.</p>
+        <p>Something went wrong, your page couldn't save.</p>
         <ul class="no-bullets">
           <li v-for="(error, i) in errors" :key="i">
             <v-icon color="red">mdi-alert</v-icon>
