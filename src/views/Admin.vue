@@ -44,7 +44,7 @@
         <AccountEditor />
       </v-tab-item>
     </v-tabs-items>
-    <ConfirmDialog ref="confirmDialog" activator-class="activator">
+    <ConfirmDialog ref="confirmDialog" activator-class="activator" false-text="Cancel" true-text="Discard">
       <template v-slot:headline> The following items have unsaved changes </template>
       <v-list flat>
         <v-list-item-group>
