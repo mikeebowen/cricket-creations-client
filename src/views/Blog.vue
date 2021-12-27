@@ -40,9 +40,9 @@ export default {
           endOfList.value = true
         }
 
+        articles.value.push(...res.data)
         page.value++
         loading.value = false
-        articles.value.push(...res.data)
       } catch (err) {
         console.error(err.message || err)
       }

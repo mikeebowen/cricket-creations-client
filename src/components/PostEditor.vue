@@ -61,7 +61,6 @@ import TagEditor from '@/components/TagEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Editor from '@tinymce/tinymce-vue'
 import Post from '@/models/Post'
-import { isEqual } from '@/utils/utils'
 import store from '@/store/store'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
@@ -74,6 +73,7 @@ import 'tinymce/plugins/lists'
 import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import { DateTime } from 'luxon'
+import isEqual from 'lodash.isequal'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 import { defaultEditorConfig } from '@/utils/utils'
 
@@ -121,7 +121,7 @@ export default {
       }
     }
     const close = async checkEqual => {
-      if (!isEqual(selectedPost.value, cachedPost.value) && checkEqual) {
+      if (checkEqual && !isEqual(selectedPost.value, cachedPost.value)) {
         headline.value = `There are unsaved changes to "${selectedPost.value && selectedPost.value.title}".`
         message.value = 'This cannot be undone.'
         const confirm = await dialog.value.open()
