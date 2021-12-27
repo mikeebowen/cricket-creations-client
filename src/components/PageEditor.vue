@@ -141,7 +141,7 @@ export default {
     const noChanges = computed(
       () =>
         store.state.page.pages.length === store.state.page.cachedPages.length &&
-        store.state.page.pages.every((o, idx) => isEqual(o, store.state.page.cachedPages[idx])),
+        store.state.page.pages.every((o, idx) => o && store.state.page.cachedPages[idx] && isEqual(o, store.state.page.cachedPages[idx])),
     )
 
     const savePage = async i => {
@@ -212,13 +212,15 @@ export default {
     )
 
     const warn = async i => {
-      unsavedPageTitle.value = pages.value[i]?.title
-      const discard = await changeWarning.value.open()
+      if (cachedPages.value[i]) {
+        unsavedPageTitle.value = pages.value[i]?.title
+        const discard = await changeWarning.value.open()
 
-      if (!discard) {
-        store.dispatch('page/resetPages')
-      } else {
-        await savePage(i)
+        if (!discard) {
+          store.dispatch('page/resetPages')
+        } else {
+          await savePage(i)
+        }
       }
     }
 
