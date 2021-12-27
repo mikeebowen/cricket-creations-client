@@ -26,6 +26,7 @@
           <v-btn-toggle>
             <v-btn tile :disabled="noChanges" @click="savePage">Save</v-btn>
             <v-btn class="activator" tile @click="deletePage">Delete</v-btn>
+            <v-btn tile @click="discardChanges">Discard</v-btn>
           </v-btn-toggle>
         </v-col>
       </v-row>
@@ -188,6 +189,10 @@ export default {
       }
     }
 
+    const discardChanges = () => {
+      store.dispatch('page/resetPages')
+    }
+
     const addNewPage = () => {
       store.dispatch('page/addPage')
       tabIndex.value = (pages.value.length - 2).toString()
@@ -249,6 +254,7 @@ export default {
       changeWarning,
       warn,
       checkPages,
+      discardChanges,
     }
   },
 }
