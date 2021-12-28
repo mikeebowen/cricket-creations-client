@@ -3,7 +3,7 @@
     <v-skeleton-loader v-if="loading" class="mx-auto my-10" type="article, paragraph, paragraph, paragraph, paragraph" />
     <span v-else>
       <v-row>
-        <v-col cols="9" offset="1">
+        <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
           <v-tabs v-model="tabIndex" show-arrows centered>
             <v-tabs-slider color="teal lighten-3" />
             <v-tab v-for="(page, i) in pages" :key="page.id" :href="`#${i}`">
@@ -16,13 +16,13 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="3" offset="1">
+        <v-col cols="2" offset-xl="3" offset-md="1" offset-sm="1">
           <v-subheader> Created: {{ createdDate }} </v-subheader>
         </v-col>
-        <v-col cols="3">
+        <v-col cols="2">
           <v-subheader> Last Updated: {{ lastUpdated }} </v-subheader>
         </v-col>
-        <v-col cols="3 d-flex justify-end">
+        <v-col xl="2" lg="4" sm="6" class="d-flex justify-end">
           <v-btn-toggle>
             <v-btn tile :disabled="noChanges" @click="savePage">Save</v-btn>
             <v-btn class="activator" tile @click="deletePage">Delete</v-btn>
@@ -31,16 +31,18 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="4" offset="1">
+        <v-col xl="2" lg="3" md="4" sm="4" offset-xl="3" offset-lg="2" offset-sm="1">
           <v-text-field v-if="pages[tabIndex]" v-model="pages[tabIndex].title" label="Title" />
         </v-col>
-        <v-col cols="4">
+        <v-col xl="2" lg="3" md="4" sm="4">
           <v-text-field v-if="pages[tabIndex]" v-model="pages[tabIndex].heading" label="Heading" />
         </v-col>
-        <v-col cols="1"><v-switch v-if="pages[tabIndex]" v-model="pages[tabIndex].published" inset label="published" /></v-col>
+        <v-col lg="2" md="2" sm="1" class="d-flex justify-end">
+          <v-switch v-if="pages[tabIndex]" v-model="pages[tabIndex].published" inset label="published" />
+        </v-col>
       </v-row>
       <v-row>
-        <v-col cols="9" offset="1">
+        <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
           <v-tabs-items v-model="tabIndex">
             <template v-for="(page, i) in pages">
               <v-tab-item :key="page.id" :value="`${i}`">

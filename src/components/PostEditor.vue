@@ -1,7 +1,7 @@
 <template>
   <span v-if="showEditor" class="post-list d-flex flex-column">
-    <v-row>
-      <v-col offset="3">
+    <v-row class="my-2">
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-btn-toggle>
           <v-btn tile @click="updatePost">Save</v-btn>
           <v-btn tile @click="saveAndClose">Save & Close</v-btn>
@@ -11,27 +11,29 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="2" offset="3">
+      <v-col sm="3" offset-sm="1" offset-lg="2" offset-xl="3">
         <v-subheader> Created: {{ createdDate }} </v-subheader>
       </v-col>
-      <v-col cols="2">
+      <v-col sm="3">
         <v-subheader> Last Updated: {{ lastUpdated }} </v-subheader>
       </v-col>
     </v-row>
     <v-skeleton-loader v-if="loading" class="mx-auto my-auto" :type="`list-item@${count}`" />
     <v-row v-else>
-      <v-col cols="5" offset="3">
+      <v-col sm="8" lg="6" xl="4" offset-sm="1" offset-lg="2" offset-xl="3">
         <TagEditor :tags="selectedPost.tags" @new-tags="updateTags" />
       </v-col>
-      <v-col cols="1"> <v-switch v-model="selectedPost.published" inset label="published" /></v-col>
+      <v-col sm="2" class="d-flex justify-end">
+        <v-switch v-model="selectedPost.published" inset label="published" />
+      </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6" offset="3">
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-text-field v-model="selectedPost.title" label="Title" />
       </v-col>
     </v-row>
     <v-row>
-      <v-col offset="3" cols="6">
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-img :src="selectedPost.image">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">
@@ -42,7 +44,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6" offset="3">
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <Editor v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
