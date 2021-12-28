@@ -1,13 +1,7 @@
 <template>
   <span v-if="showEditor" class="post-list d-flex flex-column">
     <v-row>
-      <v-col cols="3">
-        <v-subheader :inset="true"> Created: {{ createdDate }} </v-subheader>
-      </v-col>
-      <v-col cols="3">
-        <v-subheader :inset="true"> Last Updated: {{ lastUpdated }} </v-subheader>
-      </v-col>
-      <v-col cols="4 d-flex justify-end">
+      <v-col offset="3">
         <v-btn-toggle>
           <v-btn tile @click="updatePost">Save</v-btn>
           <v-btn tile @click="saveAndClose">Save & Close</v-btn>
@@ -16,20 +10,39 @@
         </v-btn-toggle>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="2" offset="3">
+        <v-subheader> Created: {{ createdDate }} </v-subheader>
+      </v-col>
+      <v-col cols="2">
+        <v-subheader> Last Updated: {{ lastUpdated }} </v-subheader>
+      </v-col>
+    </v-row>
     <v-skeleton-loader v-if="loading" class="mx-auto my-auto" :type="`list-item@${count}`" />
     <v-row v-else>
-      <v-col cols="7" offset="1">
+      <v-col cols="5" offset="3">
         <TagEditor :tags="selectedPost.tags" @new-tags="updateTags" />
       </v-col>
-      <v-col cols="2"> <v-switch v-model="selectedPost.published" inset label="published" /></v-col>
+      <v-col cols="1"> <v-switch v-model="selectedPost.published" inset label="published" /></v-col>
     </v-row>
     <v-row>
-      <v-col cols="9" offset="1">
+      <v-col cols="6" offset="3">
         <v-text-field v-model="selectedPost.title" label="Title" />
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="9" offset="1">
+      <v-col offset="3" cols="6">
+        <v-img :src="selectedPost.image">
+          <template v-slot:placeholder>
+            <v-row class="fill-height ma-0" align="center" justify="center">
+              <v-progress-circular indeterminate color="grey lighten-5" />
+            </v-row>
+          </template>
+        </v-img>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="6" offset="3">
         <Editor v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>

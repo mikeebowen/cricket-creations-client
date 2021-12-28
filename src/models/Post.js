@@ -9,6 +9,7 @@ class Post {
   content
   tags
   published
+  image
 
   constructor(data) {
     this.id = data.id
@@ -18,6 +19,7 @@ class Post {
     this.content = sanitize(data.content)
     this.tags = data.tags || []
     this.published = !!data.published
+    this.image = data.image || ''
   }
 
   get data() {
@@ -26,6 +28,7 @@ class Post {
       Content: this.content,
       Published: this.published,
       Tags: this.tags.map(t => ({ Id: t.id, Name: t.name })),
+      Image: this.image,
     }
   }
 

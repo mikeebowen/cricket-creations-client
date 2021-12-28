@@ -1,5 +1,5 @@
 export default {
-  height: 500,
+  height: 750,
   // menubar: false,
   plugins: ['link', 'table', 'spellchecker', 'image', 'imagetools', 'save', 'lists', 'imagetools', 'codesample', 'code '],
   toolbar:
