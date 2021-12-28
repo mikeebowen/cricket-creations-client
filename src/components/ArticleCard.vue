@@ -23,8 +23,8 @@
       class="text--primary article"
       v-html="article && article.content && article.content.replace('<p>', '').substring(0, Math.ceil(Math.random() * 200) + 300)"
     />
-    <v-card-actions @click="loadBlogPost">
-      <v-btn text> Read more... </v-btn>
+    <v-card-actions>
+      <v-btn text :to="{ name: 'blogPost', params: { id: article.id, article } }"> Read more... </v-btn>
     </v-card-actions>
   </v-card>
 </template>

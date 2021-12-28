@@ -38,6 +38,15 @@ export default new Router({
       },
     },
     {
+      path: '/blog/:id',
+      name: 'blogPost',
+      props: true,
+      components: {
+        default: () => import(/* webpackChunkName: "blog" */ '@/views/BlogPost.vue'),
+        header: () => import('@/components/Header.vue'),
+      },
+    },
+    {
       path: '/admin',
       name: 'admin',
       components: {

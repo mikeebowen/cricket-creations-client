@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <v-container>
     <v-dialog v-model="dialog" persistent max-width="600px" min-width="360px">
       <div v-if="loading" class="loading">
         <v-progress-circular :size="100" :width="10" color="blue" indeterminate />
@@ -101,7 +101,7 @@
       <v-icon color="red">mdi-alert</v-icon>
       Username or password is incorrect.
     </v-snackbar>
-  </span>
+  </v-container>
 </template>
 
 <script>
