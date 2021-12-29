@@ -132,9 +132,9 @@ export default {
         loading.value = true
         showEditor.value = false
 
-        const res = await saveFile()
+        const location = await saveFile()
 
-        selectedPost.value.image = res.data.location
+        selectedPost.value.image = location
 
         await store.dispatch('post/updatePost', selectedPost.value)
         await getBlogPosts()
@@ -254,7 +254,7 @@ export default {
           },
         })
 
-        return res
+        return res.data.location
       }
     }
 

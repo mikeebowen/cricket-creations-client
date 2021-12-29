@@ -1,6 +1,6 @@
 <template>
   <v-card class="d-inline-block ma-3">
-    <router-link :to="{ name: 'blogPost', params: { id: `${encodeURIComponent(article.title)}%20${article.id}`, article } }">
+    <router-link :to="{ name: 'blogPost', params: { id: link, article } }">
       <v-img :src="(article && article.image) || require('@/assets/logo.png')" min-height="100px" @load="isLoading = false">
         <template #placeholder>
           <v-row class="fill-height ma-0" align="center" justify="center">
@@ -26,9 +26,7 @@
       v-html="article && article.content && article.content.replace('<p>', '').substring(0, Math.ceil(Math.random() * 200) + 300)"
     />
     <v-card-actions>
-      <v-btn text :to="{ name: 'blogPost', params: { id: `${encodeURIComponent(article.title)}%20${article.id}`, article } }">
-        Read more...
-      </v-btn>
+      <v-btn text :to="{ name: 'blogPost', params: { id: link, article } }"> Read more... </v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -36,6 +34,7 @@
 <script>
 // import router from '@/router'
 // import { ref } from '@vue/composition-api'
+import deburr from 'lodash.deburr'
 import BlogPost from '@/models/Post'
 
 export default {
@@ -48,9 +47,9 @@ export default {
       isLoading: true,
     }
   },
-  methods: {
-    loadBlogPost() {
-      console.log(this.article)
+  computed: {
+    link() {
+      return deburr(`${this.article.id}-${this.article.title.replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, '')}`)
     },
   },
 }
