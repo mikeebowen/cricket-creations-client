@@ -95,7 +95,7 @@ import 'tinymce/plugins/code'
 import { DateTime } from 'luxon'
 import isEqual from 'lodash.isequal'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
-import { defaultEditorConfig } from '@/utils/utils'
+import { defaultEditorConfig, refreshCredentials } from '@/utils/utils'
 import axios from 'axios'
 
 export default {
@@ -246,6 +246,8 @@ export default {
         const fd = new FormData()
 
         fd.append('file', file.value, file.value.name)
+
+        await refreshCredentials()
 
         const res = await axios.post('/api/image', fd, {
           headers: {

@@ -1,4 +1,5 @@
 import store from '../store/store'
+import refreshCredentials from './refreshCredentials'
 
 export default {
   height: 750,
@@ -23,8 +24,11 @@ export default {
   paste_data_images: true,
   block_unsupported_drop: true,
   automatic_uploads: true,
-  images_upload_handler(blobInfo, success, failure, progress) {
+  async images_upload_handler(blobInfo, success, failure, progress) {
+    await refreshCredentials()
+
     const xhr = new XMLHttpRequest()
+
     xhr.withCredentials = true
     xhr.open('POST', '/api/image', true)
     xhr.setRequestHeader('Authorization', 'Bearer ' + store.state?.user?.user?.token)

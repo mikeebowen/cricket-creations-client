@@ -3,6 +3,7 @@ import cloneDeep from 'lodash.clonedeep'
 import store from './store'
 import router from '../router'
 import Page from '../models/Page'
+import { refreshCredentials } from '../utils/utils'
 
 export default {
   namespaced: true,
@@ -43,17 +44,7 @@ export default {
     },
     async getAllPages({ commit, dispatch }, routeName) {
       try {
-        if (Date.now() >= store.state?.user?.user.expiration) {
-          await dispatch(
-            'user/refresh',
-            { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
-            { root: true },
-          )
-
-          if (!store.state?.user?.user) {
-            return router.push('/login')
-          }
-        }
+        await refreshCredentials()
 
         const pgs = await axios.get('/api/page/include-unpublished', {
           headers: {
@@ -72,11 +63,7 @@ export default {
     async updatePage({ dispatch, state }, page) {
       try {
         if (Date.now() >= store.state?.user?.user.expiration) {
-          await dispatch(
-            'user/refresh',
-            { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
-            { root: true },
-          )
+          await refreshCredentials()
 
           if (!store.state?.user?.user) {
             return router.push('/login')
@@ -109,16 +96,7 @@ export default {
     async deletePage({ dispatch }, id) {
       try {
         if (id) {
-          if (Date.now() >= store.state?.user?.user.expiration) {
-            await store.dispatch(
-              'user/refresh',
-              { id: store.state?.user?.user.id, refreshToken: store.state?.user?.user.refreshToken },
-              { root: true },
-            )
-            if (!store.state?.user?.user) {
-              return router.push('/login')
-            }
-          }
+          await refreshCredentials()
 
           await axios.delete(`/api/page/${id}`, {
             headers: {
