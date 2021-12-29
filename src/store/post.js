@@ -2,6 +2,7 @@ import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 import store from './store'
 import router from '../router'
+import BlogPost from '../models/Post'
 
 export default {
   namespaced: true,
@@ -16,7 +17,7 @@ export default {
   }),
   mutations: {
     GET_POSTS(state, { posts, total }) {
-      state.posts = posts
+      state.posts = posts.map(p => new BlogPost(p))
       state.total = total
     },
     SELECT_POST(state, post) {

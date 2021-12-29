@@ -45,6 +45,11 @@
     </v-row>
     <v-row>
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
+        <v-file-input v-model="file" label="Select Cover Image" prepend-icon="mdi-camera" accept="image/*" @change="onFilePicked" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <Editor v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
@@ -91,6 +96,7 @@ import { DateTime } from 'luxon'
 import isEqual from 'lodash.isequal'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
 import { defaultEditorConfig } from '@/utils/utils'
+import axios from 'axios'
 
 export default {
   name: 'Admin',
@@ -111,6 +117,7 @@ export default {
     const selectedPost = computed(() => store.state.post.selectedPost)
     const cachedPost = computed(() => store.state.post.cachedPost)
     const showEditor = ref(false)
+    const file = ref(null)
 
     const selectPost = post => {
       store.dispatch('post/selectPost', new Post(post))
@@ -124,8 +131,14 @@ export default {
       try {
         loading.value = true
         showEditor.value = false
+
+        const res = await saveFile()
+
+        selectedPost.value.image = res.data.location
+
         await store.dispatch('post/updatePost', selectedPost.value)
         await getBlogPosts()
+
         page.value = 1
         loading.value = false
         showEditor.value = true
@@ -139,7 +152,9 @@ export default {
       if (checkEqual && !isEqual(selectedPost.value, cachedPost.value)) {
         headline.value = `There are unsaved changes to "${selectedPost.value && selectedPost.value.title}".`
         message.value = 'This cannot be undone.'
+
         const confirm = await dialog.value.open()
+
         if (confirm) {
           showEditor.value = false
           store.dispatch('post/selectPost', null)
@@ -158,22 +173,29 @@ export default {
       const { id } = selectedPost.value
       headline.value = `Are you sure you want to delete "${selectedPost.value && selectedPost.value.title}"?`
       message.value = 'This will be really annoying to undo...'
+
       const confirmed = await dialog.value.open()
+
       if (id && confirmed) {
         try {
           showEditor.value = false
+
           await store.dispatch('post/deletePost', id)
+
           posts.value = posts.value.filter(p => p.id !== id)
           store.dispatch('post/selectPost', null)
         } catch (err) {
           showEditor.value = false
           errors.value = err.message || err
+
           store.dispatch('post/selectPost', null)
+
           loading.value = false
           snackbar.value = true
         }
       } else if (confirmed) {
         showEditor.value = false
+
         store.dispatch('post/selectPost', null)
       }
     }
@@ -198,10 +220,41 @@ export default {
             count: count.value,
           },
         })
+
         loading.value = false
       } catch (err) {
         errors.value = err.message || err
         snackbar.value = true
+      }
+    }
+
+    const onFilePicked = async () => {
+      if (file.value.size > 800000) {
+        alert('file is too large')
+        return
+      }
+
+      const fr = new FileReader()
+      fr.readAsDataURL(file.value)
+      fr.addEventListener('load', async () => {
+        selectedPost.value.image = fr.result
+      })
+    }
+
+    const saveFile = async () => {
+      if (file.value) {
+        const fd = new FormData()
+
+        fd.append('file', file.value, file.value.name)
+
+        const res = await axios.post('/api/image', fd, {
+          headers: {
+            Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+
+        return res
       }
     }
 
@@ -237,6 +290,8 @@ export default {
       message,
       selectedPost,
       showEditor,
+      file,
+      onFilePicked,
     }
   },
 }

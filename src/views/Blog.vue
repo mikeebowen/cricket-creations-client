@@ -14,35 +14,40 @@
 import ArticleCard from '@/components/ArticleCard.vue'
 import axios from 'axios'
 import { ref, onMounted, onBeforeUnmount } from '@vue/composition-api'
+import BlogPost from '@/models/Post'
 
 export default {
   name: 'Blog',
   components: { ArticleCard },
   setup(props) {
     const articles = ref([])
+    const total = ref(null)
     const page = ref(1)
     const count = ref(4)
-    const total = ref(null)
 
     const getBlogPosts = async () => {
       try {
-        loading.value = true
-        const { data: res } = await axios.get('/api/blogpost', {
-          method: 'get',
-          headers: { 'X-Requested-With': 'XMLHttpRequest' },
-          params: { page: page.value, count: count.value },
-          baseURL: '/',
-        })
+        if (!loading.value || page.value === 1) {
+          loading.value = true
 
-        total.value = res.meta.total
+          const { data: res } = await axios.get('/api/blogpost', {
+            method: 'get',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            params: { page: page.value, count: count.value },
+            baseURL: '/',
+          })
 
-        if (total.value <= count.value * page.value) {
-          endOfList.value = true
+          total.value = res.meta.total
+
+          if (total.value <= count.value * page.value) {
+            endOfList.value = true
+          }
+
+          articles.value.push(...res.data.map(p => new BlogPost(p)))
+
+          page.value++
+          loading.value = false
         }
-
-        articles.value.push(...res.data)
-        page.value++
-        loading.value = false
       } catch (err) {
         console.error(err.message || err)
       }

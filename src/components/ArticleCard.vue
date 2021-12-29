@@ -1,17 +1,19 @@
 <template>
   <v-card class="d-inline-block ma-3">
-    <v-img :src="(article && article.image) || require('@/assets/logo.png')" min-height="100px" @load="isLoading = false">
-      <v-card-title v-if="!isLoading" class="align-end fill-height">
-        <h3 v-if="article && article.title" class="grey--text text--darken-2">{{ article.title }}</h3>
-      </v-card-title>
-      <template #placeholder>
-        <v-row class="fill-height ma-0" align="center" justify="center">
-          <v-col>
-            <v-icon v-text="'fas fa-circle-notch fa-spin'" />
-          </v-col>
-        </v-row>
-      </template>
-    </v-img>
+    <router-link :to="{ name: 'blogPost', params: { id: `${encodeURIComponent(article.title)}%20${article.id}`, article } }">
+      <v-img :src="(article && article.image) || require('@/assets/logo.png')" min-height="100px" @load="isLoading = false">
+        <template #placeholder>
+          <v-row class="fill-height ma-0" align="center" justify="center">
+            <v-col>
+              <v-icon v-text="'fas fa-circle-notch fa-spin'" />
+            </v-col>
+          </v-row>
+        </template>
+      </v-img>
+    </router-link>
+    <v-card-title v-if="!isLoading" class="align-end fill-height">
+      <h3 v-if="article && article.title" class="grey--text text--darken-2">{{ article.title }}</h3>
+    </v-card-title>
     <v-card-text>
       <v-divider />
       <v-chip-group>
@@ -24,16 +26,22 @@
       v-html="article && article.content && article.content.replace('<p>', '').substring(0, Math.ceil(Math.random() * 200) + 300)"
     />
     <v-card-actions>
-      <v-btn text :to="{ name: 'blogPost', params: { id: article.id, article } }"> Read more... </v-btn>
+      <v-btn text :to="{ name: 'blogPost', params: { id: `${encodeURIComponent(article.title)}%20${article.id}`, article } }">
+        Read more...
+      </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+// import router from '@/router'
+// import { ref } from '@vue/composition-api'
+import BlogPost from '@/models/Post'
+
 export default {
   name: 'ArticleCard',
   props: {
-    article: { type: Object, default: () => ({}) },
+    article: { type: BlogPost, default: () => new BlogPost({}) },
   },
   data() {
     return {
