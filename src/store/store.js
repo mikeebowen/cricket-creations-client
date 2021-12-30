@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
-import post from './post'
+import blogPost from './blogPost'
 import page from './page'
 import user from './user'
 
@@ -9,7 +9,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    post,
+    blogPost,
     page,
     user,
   },

@@ -2,12 +2,12 @@
   <v-list>
     <v-subheader>My Posts</v-subheader>
     <v-list-item-group v-model="selectedItem" color="primary">
-      <v-list-item v-for="post in posts" :key="post.id" @click="emitPost">
+      <v-list-item v-for="blogPost in blogPosts" :key="blogPost.id" @click="emitPost">
         <v-list-item-icon>
           <v-icon v-text="'mdi-lead-pencil'" />
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title v-text="post.title" />
+          <v-list-item-title v-text="blogPost.title" />
         </v-list-item-content>
       </v-list-item>
     </v-list-item-group>
@@ -22,13 +22,13 @@ export default {
     const selectedItem = ref(null)
     const emitPost = () => {
       setTimeout(() => {
-        emit('post-selected', props.posts[selectedItem.value])
+        emit('blogPost-selected', props.blogPosts[selectedItem.value])
       })
     }
     return { selectedItem, emitPost }
   },
   props: {
-    posts: { type: Array, default: () => [] },
+    blogPosts: { type: Array, default: () => [] },
   },
 }
 </script>

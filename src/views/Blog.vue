@@ -2,7 +2,7 @@
   <v-container class="masonry-container content-wrapper" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
     <h1 class="text-center">My Musings & Other Thoughts</h1>
     <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
-      <ArticleCard v-for="article in articles" :key="article.id" :article="article" class="masonry-item" />
+      <BlogPostCard v-for="blogPost in blogPosts" :key="blogPost.id" :blog-post="blogPost" class="masonry-item" />
     </masonry>
     <div v-if="loading && !endOfList" class="d-flex w-100 justify-center loading-icon" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
       <v-icon x-large v-text="'fas fa-circle-notch fa-10x fa-spin'" />
@@ -11,16 +11,16 @@
 </template>
 
 <script>
-import ArticleCard from '@/components/ArticleCard.vue'
+import BlogPostCard from '@/components/BlogPostCard.vue'
 import axios from 'axios'
 import { ref, onMounted, onBeforeUnmount } from '@vue/composition-api'
-import BlogPost from '@/models/Post'
+import BlogPost from '@/models/BlogPost'
 
 export default {
   name: 'Blog',
-  components: { ArticleCard },
+  components: { BlogPostCard },
   setup(props) {
-    const articles = ref([])
+    const blogPosts = ref([])
     const total = ref(null)
     const page = ref(1)
     const count = ref(4)
@@ -43,7 +43,7 @@ export default {
             endOfList.value = true
           }
 
-          articles.value.push(...res.data.map(p => new BlogPost(p)))
+          blogPosts.value.push(...res.data.map(p => new BlogPost(p)))
 
           page.value++
           loading.value = false
@@ -83,7 +83,7 @@ export default {
       document.body.removeEventListener('scroll', onScroll)
     })
 
-    return { articles, loading, endOfList, page, count }
+    return { blogPosts, loading, endOfList, page, count }
   },
 }
 </script>

@@ -1,6 +1,6 @@
 import { sanitize } from 'dompurify'
 
-class Post {
+class BlogPost {
   id
   userId
   created
@@ -40,4 +40,4 @@ class Post {
   }
 }
 
-export default Post
+export default BlogPost

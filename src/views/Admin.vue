@@ -35,7 +35,7 @@
     </v-toolbar>
     <v-tabs-items v-model="tab">
       <v-tab-item value="tab-0">
-        <PostEditor />
+        <BlogPostEditor />
       </v-tab-item>
       <v-tab-item value="tab-1">
         <PageEditor ref="pageEditor" :pages="pages" :cached-pages="cachedPages" />
@@ -68,7 +68,7 @@
 import { ref, computed } from '@vue/composition-api'
 import { isEqual } from '@/utils/utils'
 import store from '@/store/store'
-import PostEditor from '@/components/PostEditor'
+import BlogPostEditor from '@/components/BlogPostEditor'
 import PageEditor from '@/components/PageEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import AccountEditor from '@/components/AccountEditor'
@@ -76,7 +76,7 @@ import router from '@/router'
 
 export default {
   name: 'Admin',
-  components: { PostEditor, PageEditor, ConfirmDialog, AccountEditor },
+  components: { BlogPostEditor, PageEditor, ConfirmDialog, AccountEditor },
   methods: {
     async checkPages() {
       const { $refs } = this
@@ -105,8 +105,8 @@ export default {
     const tab = ref('tab-0')
     const pages = computed(() => store.state.page.pages)
     const cachedPages = computed(() => store.state.page.cachedPages)
-    const selectedPost = computed(() => store.state.post.selectedPost)
-    const cachedPost = computed(() => store.state.post.cachedPost)
+    const selectedPost = computed(() => store.state.blogPost.selectedPost)
+    const cachedPost = computed(() => store.state.blogPost.cachedPost)
     const unsaved = ref([])
     const confirmDialog = ref(null)
     const logoutDialog = ref(null)

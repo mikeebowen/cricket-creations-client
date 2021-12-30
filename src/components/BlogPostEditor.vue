@@ -1,5 +1,5 @@
 <template>
-  <span v-if="showEditor" class="post-list d-flex flex-column">
+  <span v-if="showEditor" class="blogPost-list d-flex flex-column">
     <v-row class="my-2">
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-btn-toggle>
@@ -56,11 +56,11 @@
     <ConfirmDialog ref="dialog" :headline="headline" :message="message" activator-class="activator" />
   </span>
   <v-skeleton-loader v-else-if="loading" class="mx-auto my-10" type="article, paragraph, paragraph, paragraph, paragraph" />
-  <span v-else class="post-list">
+  <span v-else class="blogPost-list">
     <v-row>
       <v-col cols="10">
         <v-skeleton-loader v-if="loading" class="mx-auto" :type="`list-item@${count}`" />
-        <BlogPostList v-else :posts="posts" @post-selected="selectPost" />
+        <BlogPostList v-else :blog-posts="blogPosts" @blogPost-selected="selectPost" />
       </v-col>
       <v-col cols="1">
         <v-btn color="gray" depressed outlined class="grey--text text--darken-3" @click="createPost"> New </v-btn>
@@ -80,7 +80,7 @@ import BlogPostList from '@/components/BlogPostList'
 import TagEditor from '@/components/TagEditor'
 import ConfirmDialog from '@/components/ConfirmDialog'
 import Editor from '@tinymce/tinymce-vue'
-import Post from '@/models/Post'
+import BlogPost from '@/models/BlogPost'
 import store from '@/store/store'
 import 'tinymce/themes/silver'
 import 'tinymce/plugins/table'
@@ -104,8 +104,8 @@ export default {
   setup() {
     const page = ref(1)
     const count = ref(10)
-    const posts = computed(() => store.state.post.posts)
-    const t = computed(() => store.state.post.total)
+    const blogPosts = computed(() => store.state.blogPost.blogPosts)
+    const t = computed(() => store.state.blogPost.total)
     const error = ref('')
     const total = computed(() => Math.max(parseInt(t.value / count.value + 1)))
     const loading = ref(true)
@@ -114,17 +114,17 @@ export default {
     const message = ref('')
     const errors = ref(null)
     const snackbar = ref(false)
-    const selectedPost = computed(() => store.state.post.selectedPost)
-    const cachedPost = computed(() => store.state.post.cachedPost)
+    const selectedPost = computed(() => store.state.blogPost.selectedPost)
+    const cachedPost = computed(() => store.state.blogPost.cachedPost)
     const showEditor = ref(false)
     const file = ref(null)
 
-    const selectPost = post => {
-      store.dispatch('post/selectPost', new Post(post))
+    const selectPost = blogPost => {
+      store.dispatch('blogPost/selectPost', new BlogPost(blogPost))
       showEditor.value = true
     }
     const createPost = () => {
-      store.dispatch('post/selectPost', new Post({}))
+      store.dispatch('blogPost/selectPost', new BlogPost({}))
       showEditor.value = true
     }
     const updatePost = async () => {
@@ -136,7 +136,7 @@ export default {
 
         selectedPost.value.image = location
 
-        await store.dispatch('post/updatePost', selectedPost.value)
+        await store.dispatch('blogPost/updatePost', selectedPost.value)
         await getBlogPosts()
 
         page.value = 1
@@ -157,11 +157,11 @@ export default {
 
         if (confirm) {
           showEditor.value = false
-          store.dispatch('post/selectPost', null)
+          store.dispatch('blogPost/selectPost', null)
         }
       } else {
         showEditor.value = false
-        store.dispatch('post/selectPost', null)
+        store.dispatch('blogPost/selectPost', null)
       }
     }
     const saveAndClose = async () => {
@@ -180,15 +180,15 @@ export default {
         try {
           showEditor.value = false
 
-          await store.dispatch('post/deletePost', id)
+          await store.dispatch('blogPost/deletePost', id)
 
-          posts.value = posts.value.filter(p => p.id !== id)
-          store.dispatch('post/selectPost', null)
+          blogPosts.value = blogPosts.value.filter(p => p.id !== id)
+          store.dispatch('blogPost/selectPost', null)
         } catch (err) {
           showEditor.value = false
           errors.value = err.message || err
 
-          store.dispatch('post/selectPost', null)
+          store.dispatch('blogPost/selectPost', null)
 
           loading.value = false
           snackbar.value = true
@@ -196,7 +196,7 @@ export default {
       } else if (confirmed) {
         showEditor.value = false
 
-        store.dispatch('post/selectPost', null)
+        store.dispatch('blogPost/selectPost', null)
       }
     }
     const updateTags = e => {
@@ -213,7 +213,7 @@ export default {
     const getBlogPosts = async () => {
       try {
         loading.value = true
-        await store.dispatch('post/getPosts', {
+        await store.dispatch('blogPost/getPosts', {
           params: {
             userId: store.state?.user?.user?.id,
             page: page.value,
@@ -271,7 +271,7 @@ export default {
     return {
       page,
       count,
-      posts,
+      blogPosts,
       total,
       error,
       selectPost,
@@ -300,7 +300,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.post-list {
+.blogPost-list {
   height: 100%;
 }
 

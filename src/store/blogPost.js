@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 import store from './store'
-import BlogPost from '../models/Post'
+import BlogPost from '../models/BlogPost'
 import { refreshCredentials } from '../utils/utils'
 
 export default {
@@ -9,23 +9,23 @@ export default {
   state: () => ({
     selectedPost: null,
     cachedPost: null,
-    posts: [],
+    blogPosts: [],
     total: 0,
     userId: 0,
     page: 1,
     count: 10,
   }),
   mutations: {
-    GET_POSTS(state, { posts, total }) {
-      state.posts = posts.map(p => new BlogPost(p))
+    GET_POSTS(state, { blogPosts, total }) {
+      state.blogPosts = blogPosts.map(p => new BlogPost(p))
       state.total = total
     },
-    SELECT_POST(state, post) {
-      state.selectedPost = post
-      state.cachedPost = cloneDeep(post)
+    SELECT_POST(state, blogPost) {
+      state.selectedPost = blogPost
+      state.cachedPost = cloneDeep(blogPost)
     },
-    SET_CACHED_POST(state, post) {
-      state.cachedPost = post
+    SET_CACHED_POST(state, blogPost) {
+      state.cachedPost = blogPost
     },
   },
   actions: {
@@ -41,39 +41,39 @@ export default {
             'Clear-Site-Data': '*',
           },
         })
-        commit('GET_POSTS', { posts: ps?.data?.data, total: ps?.data?.meta?.total })
+        commit('GET_POSTS', { blogPosts: ps?.data?.data, total: ps?.data?.meta?.total })
         return Promise.resolve()
       } catch (err) {
         return Promise.reject(err)
       }
     },
-    updatePost: async ({ commit }, post) => {
+    updatePost: async ({ commit }, blogPost) => {
       try {
         await refreshCredentials()
 
-        if (post.id) {
-          await axios.patch('/api/blogpost', post.patchData, {
+        if (blogPost.id) {
+          await axios.patch('/api/blogpost', blogPost.patchData, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },
           })
         } else {
-          await axios.post('/api/blogpost', post.data, {
+          await axios.post('/api/blogpost', blogPost.data, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },
           })
         }
 
-        commit('SET_CACHED_POST', post)
+        commit('SET_CACHED_POST', blogPost)
 
         return Promise.resolve()
       } catch (err) {
         return Promise.reject(err)
       }
     },
-    selectPost({ commit }, post) {
-      commit('SELECT_POST', post)
+    selectPost({ commit }, blogPost) {
+      commit('SELECT_POST', blogPost)
     },
     async deletePost({ commit }, id) {
       await refreshCredentials()
