@@ -176,6 +176,9 @@ export default {
           loading.value = true
 
           await store.dispatch('page/deletePage', id)
+
+          loading.value = false
+          tabIndex.value = 0
         } catch (err) {
           errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
           loading.value = false

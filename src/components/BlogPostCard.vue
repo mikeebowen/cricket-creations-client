@@ -16,7 +16,8 @@
     </v-card-title>
     <v-card-text>
       <v-divider />
-      <v-chip-group>
+      <p class="text-subtitle-2 text-right mb-0">{{ lastUpdated }}</p>
+      <v-chip-group column>
         <v-chip v-for="tag in blogPost.tags" :key="tag.id" class="text-uppercase">{{ tag.name }}</v-chip>
       </v-chip-group>
       <p>{{ blogPost && blogPost.author && blogPost.author.firstName }} {{ blogPost && blogPost.author && blogPost.author.lastName }}</p>
@@ -36,6 +37,7 @@
 // import { ref } from '@vue/composition-api'
 import deburr from 'lodash.deburr'
 import BlogPost from '@/models/BlogPost'
+import { DateTime } from 'luxon'
 
 export default {
   name: 'BlogPostCard',
@@ -50,6 +52,9 @@ export default {
   computed: {
     link() {
       return deburr(`${this.blogPost.id}-${this.blogPost.title.replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, '')}`)
+    },
+    lastUpdated() {
+      return DateTime.fromISO(this.blogPost.lastUpdated).toLocaleString(DateTime.DATE_FULL)
     },
   },
   methods: {
