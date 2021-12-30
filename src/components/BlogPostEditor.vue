@@ -6,7 +6,8 @@
           <v-btn tile @click="updatePost">Save</v-btn>
           <v-btn tile @click="saveAndClose">Save & Close</v-btn>
           <v-btn tile @click="close(true)">Close Without Saving</v-btn>
-          <v-btn class="activator" tile @click="deletePost">Delete</v-btn>
+          <v-btn tile @click="deletePost">Delete</v-btn>
+          <v-btn tile @click="resetPost">Reset</v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
@@ -123,10 +124,12 @@ export default {
       store.dispatch('blogPost/selectPost', new BlogPost(blogPost))
       showEditor.value = true
     }
+
     const createPost = () => {
       store.dispatch('blogPost/selectPost', new BlogPost({}))
       showEditor.value = true
     }
+
     const updatePost = async () => {
       try {
         loading.value = true
@@ -150,6 +153,20 @@ export default {
         snackbar.value = true
       }
     }
+
+    const resetPost = async () => {
+      headline.value = `There are unsaved changes to "${selectedPost.value && selectedPost.value.title}".`
+      message.value = 'This cannot be undone.'
+
+      if (!isEqual(selectedPost.value, cachedPost.value)) {
+        const confirm = await dialog.value.open()
+
+        if (confirm) {
+          store.dispatch('blogPost/selectPost', cachedPost.value)
+        }
+      }
+    }
+
     const close = async checkEqual => {
       if (checkEqual && !isEqual(selectedPost.value, cachedPost.value)) {
         headline.value = `There are unsaved changes to "${selectedPost.value && selectedPost.value.title}".`
@@ -166,11 +183,13 @@ export default {
         store.dispatch('blogPost/selectPost', null)
       }
     }
+
     const saveAndClose = async () => {
       showEditor.value = false
       await updatePost()
       close(false)
     }
+
     const deletePost = async () => {
       const { id } = selectedPost.value
       headline.value = `Are you sure you want to delete "${selectedPost.value && selectedPost.value.title}"?`
@@ -201,6 +220,7 @@ export default {
         store.dispatch('blogPost/selectPost', null)
       }
     }
+
     const updateTags = e => {
       selectedPost.value.tags = e
     }
@@ -296,6 +316,7 @@ export default {
       showEditor,
       file,
       onFilePicked,
+      resetPost,
     }
   },
 }

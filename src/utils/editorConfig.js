@@ -6,7 +6,7 @@ export default {
   // menubar: false,
   plugins: ['link', 'table', 'spellchecker', 'image', 'imagetools', 'save', 'lists', 'imagetools', 'codesample', 'code '],
   toolbar:
-    'insertfile undo redo | code | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image codesample | save cancel',
+    'insertfile undo redo | code | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image codesample',
   menubar: 'file edit insert view format table tools image',
   browser_spellcheck: true,
   codesample_languages: [
