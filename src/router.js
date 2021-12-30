@@ -44,6 +44,7 @@ export default new Router({
       components: {
         default: () => import(/* webpackChunkName: "blog" */ '@/views/BlogPost.vue'),
         header: () => import('@/components/Header.vue'),
+        footer: () => import('@/components/Footer.vue'),
       },
     },
     {

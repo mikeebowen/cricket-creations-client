@@ -34,8 +34,6 @@ export default {
     selectedBlogPost: () => store.state.blogPost.selectedPost,
   },
   async mounted() {
-    console.log({ blogPostSlug: this.blogPostSlug, selectedBlogPost: this.selectedBlogPost })
-
     if (this.$route.params.blogPost && this.$route.params.blogPost instanceof BlogPost) {
       store.dispatch('blogPost/selectPost', this.$route.params.blogPost)
     } else {
@@ -47,10 +45,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.blog-post-sheet p img {
-  height: auto;
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
+.blog-post-sheet {
+  padding: 1rem;
+  margin-bottom: 3rem;
+
+  p {
+    img {
+      height: auto;
+      width: auto;
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
 }
 </style>
