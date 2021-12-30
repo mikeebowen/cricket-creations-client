@@ -49,7 +49,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
+      <v-col class="blog-post-editor" xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <Editor v-model="selectedPost.content" :init="editorConfig" />
       </v-col>
     </v-row>
@@ -132,9 +132,10 @@ export default {
         loading.value = true
         showEditor.value = false
 
-        const location = await saveFile()
-
-        selectedPost.value.image = location
+        if (file.value) {
+          const location = await saveFile()
+          selectedPost.value.image = location
+        }
 
         await store.dispatch('blogPost/updatePost', selectedPost.value)
         await getBlogPosts()
@@ -142,6 +143,7 @@ export default {
         page.value = 1
         loading.value = false
         showEditor.value = true
+        file.value = null
       } catch (err) {
         errors.value = err.message || err
         loading.value = false
@@ -302,6 +304,10 @@ export default {
 <style lang="scss" scoped>
 .blogPost-list {
   height: 100%;
+}
+
+.blog-post-editor {
+  margin-bottom: 13rem;
 }
 
 .pagination {
