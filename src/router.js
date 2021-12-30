@@ -38,7 +38,7 @@ export default new Router({
       },
     },
     {
-      path: '/blog/:id',
+      path: '/blog/:slug',
       name: 'blogPost',
       props: true,
       components: {

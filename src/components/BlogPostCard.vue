@@ -1,6 +1,6 @@
 <template>
   <v-card class="d-inline-block ma-3">
-    <router-link :to="{ name: 'blogPost', params: { id: link, blogPost } }">
+    <router-link :to="{ name: 'blogPost', params: { slug: slug, blogPost } }">
       <v-img :src="(blogPost && blogPost.image) || require('@/assets/logo.png')" min-height="100px" @load="isLoading = false">
         <template #placeholder>
           <v-row class="fill-height ma-0" align="center" justify="center">
@@ -24,17 +24,15 @@
     </v-card-text>
     <v-card-text
       class="text--primary blogPost"
-      v-html="blogPost && blogPost.content && blogPost.content.replace('<p>', '').substring(0, Math.ceil(Math.random() * 200) + 300)"
+      v-html="blogPost && blogPost.content && `${blogPost.content.substring(0, Math.ceil(Math.random() * 200) + 50)}...`"
     />
     <v-card-actions>
-      <v-btn text :to="{ name: 'blogPost', params: { id: link, blogPost } }"> Read more... </v-btn>
+      <v-btn text :to="{ name: 'blogPost', params: { slug: slug, blogPost } }"> Read more... </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-// import router from '@/router'
-// import { ref } from '@vue/composition-api'
 import deburr from 'lodash.deburr'
 import BlogPost from '@/models/BlogPost'
 import { DateTime } from 'luxon'
@@ -50,30 +48,13 @@ export default {
     }
   },
   computed: {
-    link() {
-      return deburr(`${this.blogPost.id}-${this.blogPost.title.replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, '')}`)
+    slug() {
+      return deburr(`${this.blogPost.id}-${this.blogPost.title.replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, '')}`).toLowerCase()
     },
     lastUpdated() {
       return DateTime.fromISO(this.blogPost.lastUpdated).toLocaleString(DateTime.DATE_FULL)
     },
   },
-  methods: {
-    // readMore() {
-    //   console.log('🚀 ~ file: BlogPostCard.vue ~ line 49 ~ readMore ~ this.blogPost', this.$route.query)
-    //   router.push({
-    //     name: 'blogPost',
-    //     params: { id: `${this.blogPost.title.replaceAll(' ', '-')}-${this.blogPost.id}`, blogPost: this.blogPost },
-    //   })
-    // },
-  },
-  // setup(props) {
-  //   const readMore = () => {
-  //     console.log('🚀 ~ file: BlogPostCard.vue ~ line 47 ~ setup ~ props', props.blogPost)
-  //     router.push({ name: 'blogPost', params: { id: props.blogPost.id, blogPost: props.blogPost } })
-  //   }
-
-  //   return { readMore }
-  // },
 }
 </script>
 

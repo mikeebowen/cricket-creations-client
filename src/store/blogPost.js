@@ -21,7 +21,7 @@ export default {
       state.total = total
     },
     SELECT_POST(state, blogPost) {
-      state.selectedPost = blogPost
+      state.selectedPost = blogPost instanceof BlogPost ? blogPost : new BlogPost(blogPost)
       state.cachedPost = cloneDeep(blogPost)
     },
     SET_CACHED_POST(state, blogPost) {
@@ -42,6 +42,22 @@ export default {
           },
         })
         commit('GET_POSTS', { blogPosts: ps?.data?.data, total: ps?.data?.meta?.total })
+        return Promise.resolve()
+      } catch (err) {
+        return Promise.reject(err)
+      }
+    },
+    async getPost({ commit }, blogPostId) {
+      try {
+        const bpId = parseInt(blogPostId)
+
+        if (isNaN(bpId)) {
+          return Promise.reject(new Error('Invalid blog post id'))
+        }
+
+        const res = await axios.get(`/api/blogpost/${blogPostId}`)
+
+        commit('SELECT_POST', res.data.data)
         return Promise.resolve()
       } catch (err) {
         return Promise.reject(err)
