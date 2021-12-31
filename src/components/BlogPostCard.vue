@@ -11,16 +11,18 @@
         </template>
       </v-img>
     </router-link>
-    <v-card-title v-if="!isLoading" class="align-end fill-height">
-      <h3 v-if="blogPost && blogPost.title" class="grey--text text--darken-2">{{ blogPost.title }}</h3>
+    <v-card-title v-if="!isLoading && blogPost && blogPost.title" class="align-end fill-height">
+      {{ blogPost.title }}
     </v-card-title>
+    <v-card-subtitle>
+      {{ blogPost.subtitle }}
+    </v-card-subtitle>
     <v-card-text>
       <v-divider />
       <p class="text-subtitle-2 text-right mb-0">{{ lastUpdated }}</p>
       <v-chip-group column>
         <v-chip v-for="tag in blogPost.tags" :key="tag.id" class="text-uppercase">{{ tag.name }}</v-chip>
       </v-chip-group>
-      <p>{{ blogPost && blogPost.author && blogPost.author.firstName }} {{ blogPost && blogPost.author && blogPost.author.lastName }}</p>
     </v-card-text>
     <v-card-text
       class="text--primary blogPost"

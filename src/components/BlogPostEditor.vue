@@ -35,6 +35,11 @@
     </v-row>
     <v-row>
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
+        <v-text-field v-model="selectedPost.subtitle" label="Subtitle" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-img :src="selectedPost.image">
           <template v-slot:placeholder>
             <v-row class="fill-height ma-0" align="center" justify="center">

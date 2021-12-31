@@ -3,6 +3,7 @@
     <v-row v-if="selectedBlogPost && selectedBlogPost.title">
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <p class="text-h1">{{ selectedBlogPost.title }}</p>
+        <p v-if="selectedBlogPost && selectedBlogPost.subtitle" class="text-subtitle-1">{{ selectedBlogPost.subtitle }}</p>
       </v-col>
     </v-row>
     <v-row v-if="selectedBlogPost && selectedBlogPost.image">

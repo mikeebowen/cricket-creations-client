@@ -6,6 +6,7 @@ class BlogPost {
   created
   lastUpdated
   title
+  subtitle
   content
   tags
   published
@@ -16,6 +17,7 @@ class BlogPost {
     this.created = data.created
     this.lastUpdated = data.lastUpdated
     this.title = data.title
+    this.subtitle = data.subtitle
     this.content = sanitize(data.content)
     this.tags = data.tags || []
     this.published = !!data.published
@@ -25,6 +27,7 @@ class BlogPost {
   get data() {
     return {
       Title: this.title,
+      Subtitle: this.subtitle,
       Content: this.content,
       Published: this.published,
       Tags: this.tags.map(t => ({ Id: t.id, Name: t.name })),

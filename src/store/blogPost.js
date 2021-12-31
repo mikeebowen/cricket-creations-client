@@ -41,7 +41,9 @@ export default {
             'Clear-Site-Data': '*',
           },
         })
+
         commit('GET_POSTS', { blogPosts: ps?.data?.data, total: ps?.data?.meta?.total })
+
         return Promise.resolve()
       } catch (err) {
         return Promise.reject(err)
