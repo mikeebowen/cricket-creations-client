@@ -5,6 +5,7 @@ class BlogPost {
   userId
   created
   lastUpdated
+  author
   title
   subtitle
   content
@@ -16,6 +17,7 @@ class BlogPost {
     this.id = data.id
     this.created = data.created
     this.lastUpdated = data.lastUpdated
+    this.author = data.author
     this.title = data.title
     this.subtitle = data.subtitle
     this.content = sanitize(data.content)

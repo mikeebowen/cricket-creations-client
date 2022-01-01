@@ -13,6 +13,11 @@
     </v-row>
     <v-row>
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
+        <p class="text-right my-0">By: {{ selectedBlogPost.author }}</p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-sheet class="blog-post-sheet" color="white" elevation="1" outlined tile v-html="selectedBlogPost && selectedBlogPost.content" />
       </v-col>
     </v-row>
