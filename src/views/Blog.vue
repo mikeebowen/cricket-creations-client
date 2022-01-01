@@ -1,6 +1,6 @@
 <template>
-  <v-container class="masonry-container content-wrapper" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
-    <h1 class="text-center">My Musings & Other Thoughts</h1>
+  <v-container :key="$route.fullPath" class="masonry-container content-wrapper" :style="{ height: Boolean(page) ? 'auto' : '100%' }">
+    <h1 class="text-center">{{ title }}</h1>
     <masonry :cols="{ default: 4, 1264: 3, 960: 2, 600: 1 }" :gutter="20">
       <BlogPostCard v-for="blogPost in blogPosts" :key="blogPost.id" :blog-post="blogPost" class="masonry-item" />
     </masonry>
@@ -15,27 +15,67 @@ import BlogPostCard from '@/components/BlogPostCard.vue'
 import axios from 'axios'
 import { ref, onMounted, onBeforeUnmount } from '@vue/composition-api'
 import BlogPost from '@/models/BlogPost'
+import router from '@/router'
 
 export default {
   name: 'Blog',
   components: { BlogPostCard },
+  props: { tagName: { type: String, default: '' } },
+  watch: {
+    $route(to, from) {
+      this.page = 1
+    },
+  },
+  beforeUpdate() {},
   setup(props) {
     const blogPosts = ref([])
     const total = ref(null)
     const page = ref(1)
     const count = ref(4)
+    const title = ref('')
 
     const getBlogPosts = async () => {
       try {
         if (!loading.value || page.value === 1) {
           loading.value = true
+          let res
 
-          const { data: res } = await axios.get('/api/blogpost', {
-            method: 'get',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            params: { page: page.value, count: count.value },
-            baseURL: '/',
-          })
+          if (router.currentRoute.params.tagName) {
+            title.value = router.currentRoute.params.tagName
+
+            const data = await axios.get('/api/tag/blogposts', {
+              params: {
+                tagName: router.currentRoute.params.tagName,
+                page: page.value,
+                count: count.value,
+              },
+            })
+
+            res = data.data
+          } else if (router.currentRoute.name === 'projects') {
+            title.value = 'Projects'
+
+            const data = await axios.get('/api/tag/blogposts', {
+              params: {
+                tagName: 'projects',
+                page: page.value,
+                count: count.value,
+              },
+            })
+
+            res = data.data
+          } else {
+            title.value = 'Musings & Other Thoughts'
+
+            const data = await axios.get('/api/blogpost', {
+              method: 'get',
+              headers: { 'X-Requested-With': 'XMLHttpRequest' },
+              params: { page: page.value, count: count.value },
+              baseURL: '/',
+            })
+
+            res = data.data
+          }
 
           total.value = res.meta.total
 
@@ -83,7 +123,7 @@ export default {
       document.body.removeEventListener('scroll', onScroll)
     })
 
-    return { blogPosts, loading, endOfList, page, count }
+    return { blogPosts, loading, endOfList, page, count, title }
   },
 }
 </script>

@@ -21,7 +21,7 @@
       <v-divider />
       <p class="text-subtitle-2 text-right mb-0">{{ lastUpdated }}</p>
       <v-chip-group column>
-        <v-chip v-for="tag in blogPost.tags" :key="tag.id" class="text-uppercase">{{ tag.name }}</v-chip>
+        <v-chip v-for="tag in blogPost.tags" :key="tag.id" class="text-uppercase" @click="loadTagPage(tag)">{{ tag.name }}</v-chip>
       </v-chip-group>
     </v-card-text>
     <v-card-text
@@ -37,6 +37,7 @@
 <script>
 import deburr from 'lodash.deburr'
 import BlogPost from '@/models/BlogPost'
+import router from '@/router'
 import { DateTime } from 'luxon'
 
 export default {
@@ -55,6 +56,11 @@ export default {
     },
     lastUpdated() {
       return DateTime.fromISO(this.blogPost.lastUpdated).toLocaleString(DateTime.DATE_FULL)
+    },
+  },
+  methods: {
+    loadTagPage(e) {
+      router.push({ name: 'tagSearch', params: { tagName: e.name } })
     },
   },
 }

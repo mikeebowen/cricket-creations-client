@@ -8,7 +8,7 @@
         <v-btn depressed small class="grey--text text--darken-3" @click="dialog = true">
           <v-icon v-text="'mdi-tag-plus-outline'" />
         </v-btn>
-        <v-chip-group>
+        <v-chip-group column>
           <v-chip v-for="(tag, i) in tags" :key="tag.id" close @click:close="removeTag(i)">
             {{ tag.name }}
           </v-chip>

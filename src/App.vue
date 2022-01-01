@@ -3,7 +3,7 @@
     <router-view name="header" />
     <router-view name="adminHeader" />
     <v-main>
-      <router-view />
+      <router-view :key="$route.fullPath" />
     </v-main>
     <router-view name="footer" />
   </v-app>

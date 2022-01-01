@@ -21,15 +21,6 @@ export default new Router({
       },
     },
     {
-      path: '/projects',
-      name: 'projects',
-      components: {
-        default: () => import(/* webpackChunkName: "projects" */ '@/views/Projects.vue'),
-        header: () => import('@/components/Header.vue'),
-        footer: () => import('@/components/Footer.vue'),
-      },
-    },
-    {
       path: '/blog',
       name: 'blog',
       components: {
@@ -42,9 +33,27 @@ export default new Router({
       name: 'blogPost',
       props: true,
       components: {
-        default: () => import(/* webpackChunkName: "blog" */ '@/views/BlogPost.vue'),
+        default: () => import(/* webpackChunkName: "blogPost" */ '@/views/BlogPost.vue'),
         header: () => import('@/components/Header.vue'),
         footer: () => import('@/components/Footer.vue'),
+      },
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      components: {
+        default: () => import(/* webpackChunkName: "tagSearch" */ '@/views/Blog.vue'),
+        header: () => import('@/components/Header.vue'),
+        footer: null,
+      },
+    },
+    {
+      path: '/tag/:tagName',
+      name: 'tagSearch',
+      components: {
+        default: () => import(/* webpackChunkName: "tagSearch" */ '@/views/Blog.vue'),
+        header: () => import('@/components/Header.vue'),
+        footer: null,
       },
     },
     {
@@ -53,7 +62,6 @@ export default new Router({
       components: {
         default: () => import(/* webpackChunkName: "admin" */ '@/views/Admin.vue'),
         header: () => import('@/components/Header.vue'),
-        // adminHeader: () => import('@/components/AdminMenu.vue'),
         footer: null,
       },
       beforeEnter: async (to, from, next) => {
