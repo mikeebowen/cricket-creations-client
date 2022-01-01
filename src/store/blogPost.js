@@ -21,8 +21,13 @@ export default {
       state.total = total
     },
     SELECT_POST(state, blogPost) {
-      state.selectedPost = blogPost instanceof BlogPost ? blogPost : new BlogPost(blogPost)
-      state.cachedPost = cloneDeep(blogPost)
+      if (blogPost == null) {
+        state.selectPost = null
+        state.cachedPost = null
+      } else {
+        state.selectedPost = blogPost instanceof BlogPost ? blogPost : new BlogPost(blogPost)
+        state.cachedPost = cloneDeep(blogPost)
+      }
     },
     SET_CACHED_POST(state, blogPost) {
       state.cachedPost = blogPost

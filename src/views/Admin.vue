@@ -66,7 +66,6 @@
 
 <script>
 import { ref, computed } from '@vue/composition-api'
-import { isEqual } from '@/utils/utils'
 import store from '@/store/store'
 import BlogPostEditor from '@/components/BlogPostEditor'
 import PageEditor from '@/components/PageEditor'
@@ -84,22 +83,6 @@ export default {
         await $refs.pageEditor.checkPages()
       }
     },
-  },
-  async beforeRouteLeave(to, from, next) {
-    const { pages, cachedPages, selectedPost, cachedPost, unsaved, $refs } = this
-    pages.forEach((p, i) => {
-      if (!isEqual(p, cachedPages[i])) {
-        unsaved.push(p.title)
-      }
-    })
-    if (!isEqual(selectedPost, cachedPost)) {
-      unsaved.push(selectedPost.title)
-    }
-    if (unsaved.length) {
-      const decision = await $refs.confirmDialog.open()
-      return next(decision)
-    }
-    return next(true)
   },
   setup() {
     const tab = ref('tab-0')
