@@ -72,8 +72,7 @@ export default {
       }
 
       if (!included) {
-        // TODO: navigate to 404 here
-        this.page = null
+        this.$router.push({ name: 'notfound' })
       }
     },
   },

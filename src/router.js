@@ -106,6 +106,15 @@ export default new Router({
       },
     },
     {
+      path: '/notfound',
+      name: 'notfound',
+      components: {
+        default: () => import(/* webpackChunkName: "page" */ '@/views/FourOFour.vue'),
+        header: () => import('@/components/Header.vue'),
+        footer: () => import('@/components/Footer.vue'),
+      },
+    },
+    {
       path: '/:heading',
       components: {
         default: () => import(/* webpackChunkName: "page" */ '@/views/Page.vue'),
