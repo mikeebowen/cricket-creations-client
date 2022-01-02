@@ -7,7 +7,12 @@ import store from './store/store'
 import vuetify from './plugins/vuetify'
 import VueCompositionAPI from '@vue/composition-api'
 import '@fortawesome/fontawesome-free/css/all.css'
+import VueAnalytics from 'vue-analytics'
 
+Vue.use(VueAnalytics, {
+  id: process.env.VUE_APP_ANALYTICS_KEY,
+  router,
+})
 Vue.use(Vuelidate)
 Vue.config.productionTip = false
 Vue.use(VueMasonry)

@@ -25,6 +25,7 @@
     "luxon": "^1.26.0",
     "tinymce": "^5.7.0",
     "vue": "^2.6.12",
+    "vue-analytics": "^5.22.1",
     "vue-masonry-css": "^1.0.3",
     "vue-router": "^3.5.3",
     "vuelidate": "^0.7.6",
