@@ -32,7 +32,6 @@ export default {
       pages: [
         { name: 'Projects', link: '/projects' },
         { name: 'Blog', link: '/blog' },
-        { name: 'About', link: '/about' },
       ],
     }
   },
