@@ -97,9 +97,9 @@
       </v-tabs>
     </v-dialog>
     <v-snackbar v-model="snackbar" text color="red">
-      <p class="text-center">Login Failed</p>
+      <p class="text-center">{{ errTitle }}</p>
       <v-icon color="red">mdi-alert</v-icon>
-      Username or password is incorrect.
+      {{ errMsg }}
     </v-snackbar>
   </v-container>
 </template>
@@ -124,6 +124,8 @@ export default {
       { name: 'Register', icon: 'mdi-account-outline', disabled: false },
     ])
     const valid = ref(true)
+    const errMsg = ref('')
+    const errTitle = ref('')
 
     const name = ref('')
     const surname = ref('')
@@ -158,6 +160,8 @@ export default {
             loading.value = false
           }
         } catch (err) {
+          errTitle.value = 'Login Failed'
+          errMsg.value = 'Username or password is incorrect.'
           loading.value = false
           snackbar.value = true
           loginPassword.value = ''
@@ -172,22 +176,41 @@ export default {
     }
 
     const register = async () => {
-      if (registerForm.value.validate()) {
-        loading.value = true
-        await store.dispatch('user/register', {
-          name: name.value,
-          surname: surname.value,
-          email: email.value,
-          userName: userName.value,
-          password: password.value,
-        })
-        loading.value = false
-        const user = store.state?.user?.user
-
-        if (user) {
-          router.push('admin')
+      try {
+        if (registerForm.value.validate()) {
+          loading.value = true
+          await store.dispatch('user/register', {
+            name: name.value,
+            surname: surname.value,
+            email: email.value,
+            userName: userName.value,
+            password: password.value,
+          })
           loading.value = false
+          const user = store.state?.user?.user
+
+          if (user) {
+            router.push('admin')
+            loading.value = false
+          }
         }
+      } catch (err) {
+        errTitle.value = 'Registration Failed'
+        errMsg.value = 'New user registrations are not being accepted at this time.'
+        loading.value = false
+        snackbar.value = true
+        animated.value = true
+        name.value = ''
+        surname.value = ''
+        email.value = ''
+        userName.value = ''
+        password.value = ''
+        verify.value = ''
+        tab.value = 0
+
+        setTimeout(() => {
+          animated.value = false
+        }, 500)
       }
     }
     const reset = () => {
@@ -232,6 +255,8 @@ export default {
       loading,
       snackbar,
       animated,
+      errMsg,
+      errTitle,
     }
   },
 }
