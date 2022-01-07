@@ -23,7 +23,6 @@ export default {
   ],
   relative_urls: false,
   remove_script_host: false,
-  convert_urls: true,
   paste_data_images: true,
   block_unsupported_drop: true,
   automatic_uploads: true,
