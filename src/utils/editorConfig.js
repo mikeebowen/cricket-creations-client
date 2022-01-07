@@ -21,6 +21,8 @@ export default {
     { text: 'C#', value: 'csharp' },
     { text: 'C++', value: 'cpp' },
   ],
+  relative_urls: false,
+  remove_script_host: false,
   paste_data_images: true,
   block_unsupported_drop: true,
   automatic_uploads: true,
