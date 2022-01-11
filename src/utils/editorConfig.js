@@ -1,6 +1,3 @@
-import store from '../store/store'
-import refreshCredentials from './refreshCredentials'
-
 export default {
   height: 750,
   // menubar: false,
@@ -27,46 +24,36 @@ export default {
   block_unsupported_drop: true,
   automatic_uploads: true,
   async images_upload_handler(blobInfo, success, failure, progress) {
-    await refreshCredentials()
+    try {
+      const mimeType = detectMimeType(blobInfo.base64())
 
-    const xhr = new XMLHttpRequest()
-
-    xhr.withCredentials = true
-    xhr.open('POST', '/api/image', true)
-    xhr.setRequestHeader('Authorization', 'Bearer ' + store.state?.user?.user?.token)
-
-    xhr.upload.onprogress = function (e) {
-      progress((e.loaded / e.total) * 100)
-    }
-
-    xhr.onload = function () {
-      if (xhr.status === 403) {
-        failure('HTTP Error: ' + xhr.status, { remove: true })
-        return
+      if (!mimeType) {
+        failure(`${blobInfo.name()} is an unsupported file type`)
+      } else if (Buffer.from(blobInfo.base64(), 'base64').length > 1000000) {
+        failure('File size limit is 1MB')
+      } else {
+        success(`data:${mimeType};charset=utf-8;base64,${blobInfo.base64()}`)
       }
-
-      if (xhr.status < 200 || xhr.status >= 300) {
-        failure('HTTP Error: ' + xhr.status)
-        return
-      }
-
-      const json = JSON.parse(xhr.responseText)
-
-      if (!json || typeof json.location !== 'string') {
-        failure('Invalid JSON: ' + xhr.responseText)
-        return
-      }
-
-      success(json.location)
+    } catch (err) {
+      failure((err && err.message) || err)
     }
-
-    xhr.onerror = function () {
-      failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status)
-    }
-
-    const formData = new FormData()
-    formData.append('file', blobInfo.blob(), blobInfo.filename())
-
-    xhr.send(formData)
   },
+}
+
+function detectMimeType(b64) {
+  const signatures = {
+    JVBERi0: 'application/pdf',
+    R0lGODdh: 'image/gif',
+    R0lGODlh: 'image/gif',
+    iVBORw0KGgo: 'image/png',
+    '/9j/': 'image/jpg',
+  }
+
+  for (const s in signatures) {
+    if (b64.indexOf(s) === 0) {
+      return signatures[s]
+    }
+  }
+
+  return ''
 }

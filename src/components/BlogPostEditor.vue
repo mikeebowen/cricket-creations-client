@@ -101,8 +101,7 @@ import 'tinymce/plugins/code'
 import { DateTime } from 'luxon'
 import isEqual from 'lodash.isequal'
 import { ref, onMounted, watch, computed } from '@vue/composition-api'
-import { defaultEditorConfig, refreshCredentials } from '@/utils/utils'
-import axios from 'axios'
+import { defaultEditorConfig } from '@/utils/utils'
 
 export default {
   name: 'Admin',
@@ -139,11 +138,6 @@ export default {
       try {
         loading.value = true
         showEditor.value = false
-
-        if (file.value) {
-          const location = await saveFile()
-          selectedPost.value.image = location
-        }
 
         await store.dispatch('blogPost/updatePost', selectedPost.value)
         await getBlogPosts()
@@ -266,25 +260,6 @@ export default {
       fr.addEventListener('load', async () => {
         selectedPost.value.image = fr.result
       })
-    }
-
-    const saveFile = async () => {
-      if (file.value) {
-        const fd = new FormData()
-
-        fd.append('file', file.value, file.value.name)
-
-        await refreshCredentials()
-
-        const res = await axios.post('/api/image', fd, {
-          headers: {
-            Authorization: 'Bearer ' + store.state?.user?.user?.token,
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-
-        return res.data.location
-      }
     }
 
     watch(page, async (cur, prev) => {

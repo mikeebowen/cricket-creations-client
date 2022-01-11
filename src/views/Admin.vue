@@ -11,7 +11,10 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn fab dark small v-bind="attrs" v-on="on">
             <v-avatar>
-              <img :src="user && user.avatar" :alt="`${user && user.name} ${user && user.surname}`" />
+              <img
+                :src="(user && user.avatar) || require('@/assets/images/abstract-user-flat-4.svg')"
+                :alt="`${user && user.name} ${user && user.surname}`"
+              />
             </v-avatar>
           </v-btn>
         </template>

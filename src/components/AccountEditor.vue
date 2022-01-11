@@ -3,7 +3,7 @@
   <v-form v-else v-model="valid" class="mt-5">
     <v-row>
       <v-col cols="3" offset="1">
-        <v-img :src="user.avatar" max-width="300" max-height="300">
+        <v-img :src="(user && user.avatar) || require('@/assets/images/abstract-user-flat-4.svg')" max-width="300" max-height="300">
           <template v-slot:placeholder>
             <v-progress-circular indeterminate color="grey lighten-4" />
           </template>

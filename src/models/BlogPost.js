@@ -30,7 +30,7 @@ class BlogPost {
     return {
       Title: this.title,
       Subtitle: this.subtitle,
-      Content: this.content.replaceAll('src="Images', 'src="/Images'),
+      Content: this.content,
       Published: this.published,
       Tags: this.tags.map(t => ({ Id: t.id, Name: t.name })),
       Image: this.image,
