@@ -44,7 +44,10 @@
         </v-tab-item>
         <v-tab-item>
           <v-card class="px-4">
-            <v-card-text>
+            <v-img src="@/assets/images/1024px-Sphynx_kittens._img_020.jpg" class="white--text align-end">
+              <v-card-title class="justify-center">Registration is disabled.</v-card-title>
+            </v-img>
+            <!-- <v-card-text>
               <v-form ref="registerForm" v-model="valid" lazy-validation>
                 <v-row>
                   <v-col cols="12" sm="6" md="6">
@@ -91,7 +94,7 @@
                   </v-col>
                 </v-row>
               </v-form>
-            </v-card-text>
+            </v-card-text> -->
           </v-card>
         </v-tab-item>
       </v-tabs>
