@@ -23,6 +23,11 @@ body {
   }
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 
 @for $i from 1 to 6 {
   h#{$i} {
