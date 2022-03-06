@@ -6,22 +6,8 @@ import router from './router'
 import store from './store/store'
 import vuetify from './plugins/vuetify'
 import VueCompositionAPI from '@vue/composition-api'
-import VueGtag from 'vue-gtag'
 import '@fortawesome/fontawesome-free/css/all.css'
 
-Vue.use(
-  VueGtag,
-  {
-    config: { id: process.env?.GOOGLE_ANALYTICS_KEY },
-    pageTrackerTemplate(to) {
-      return {
-        page_title: to.name,
-        page_path: to.path,
-      }
-    },
-  },
-  router,
-)
 Vue.use(Vuelidate)
 Vue.config.productionTip = false
 Vue.use(VueMasonry)
