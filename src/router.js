@@ -4,7 +4,7 @@ import store from '@/store/store'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL || 8080,
   routes: [
@@ -124,3 +124,16 @@ export default new Router({
     },
   ],
 })
+
+router.afterEach((to, from) => {
+  // eslint-disable-next-line no-undef
+  gtag('set', 'page_path', to.path)
+  // eslint-disable-next-line no-undef
+  gtag('set', 'page_title', to.name)
+  // eslint-disable-next-line no-undef
+  gtag('set', 'page_location', location.href)
+  // eslint-disable-next-line no-undef
+  gtag('event', 'page_view')
+})
+
+export default router
