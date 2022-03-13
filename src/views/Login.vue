@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-dialog v-model="dialog" persistent max-width="600px" min-width="360px">
+    <v-dialog v-model="showLoginDialog" persistent max-width="600px" min-width="360px">
       <div v-if="loading" class="loading">
         <v-progress-circular :size="100" :width="10" color="blue" indeterminate />
       </div>
@@ -13,11 +13,13 @@
         <v-tab-item>
           <v-card class="px-4">
             <v-card-text>
-              <v-form ref="loginForm" v-model="valid" lazy-validation>
+              <v-form ref="loginForm" v-model="loginFormValid">
                 <v-row>
                   <v-col cols="12">
-                    <v-text-field v-model="loginEmail" :rules="loginEmailRules" label="E-mail" required />
+                    <v-text-field v-model="loginEmail" :rules="loginEmailRules" label="Email" type="email" required />
                   </v-col>
+                </v-row>
+                <v-row>
                   <v-col cols="12">
                     <v-text-field
                       v-model="loginPassword"
@@ -32,10 +34,13 @@
                       @keyup.enter="login"
                     />
                   </v-col>
-                  <v-col class="d-flex" cols="12" sm="6" xsm="12" />
-                  <v-spacer />
-                  <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>
-                    <v-btn x-large block :disabled="!valid" color="success" @click="login"> Login </v-btn>
+                </v-row>
+                <v-row :class="{ 'flex-column-reverse': $vuetify.breakpoint.xs }">
+                  <v-col cols="12" sm="9" class="d-flex align-end">
+                    <v-btn text color="primary" @click="switchDialogs">Forgot Password?</v-btn>
+                  </v-col>
+                  <v-col cols="12" sm="2" :class="{ 'd-flex': $vuetify.breakpoint.xs, 'justify-center': $vuetify.breakpoint.xs }">
+                    <v-btn x-large :disabled="!loginFormValid" color="success" align-end @click="login"> Login </v-btn>
                   </v-col>
                 </v-row>
               </v-form>
@@ -48,7 +53,7 @@
               <v-card-title class="justify-center">Registration is disabled.</v-card-title>
             </v-img>
             <!-- <v-card-text>
-              <v-form ref="registerForm" v-model="valid" lazy-validation>
+              <v-form ref="registerForm" v-model="registerFormValid" lazy-validation>
                 <v-row>
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field v-model="name" :rules="[rules.required]" label="First Name" maxlength="20" required />
@@ -90,7 +95,7 @@
                   </v-col>
                   <v-spacer />
                   <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
-                    <v-btn x-large block :disabled="!valid" color="success" @click="register"> Register </v-btn>
+                    <v-btn x-large block :disabled="!registerFormValid" color="success" @click="register"> Register </v-btn>
                   </v-col>
                 </v-row>
               </v-form>
@@ -98,6 +103,31 @@
           </v-card>
         </v-tab-item>
       </v-tabs>
+    </v-dialog>
+    <v-dialog v-model="showResetPasswordDialog" persistent max-width="600px" min-width="360px">
+      <v-card>
+        <v-card-title> Reset Password </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12"> Enter your email address and we'll send you instructions to reset your password </v-col>
+          </v-row>
+          <v-form v-model="resetPasswordFormValid">
+            <v-row class="px-4">
+              <v-col cols="12">
+                <v-text-field v-model="resetPasswordEmail" :rules="loginEmailRules" type="email" label="Email Address" />
+              </v-col>
+            </v-row>
+            <v-row :class="{ 'flex-column-reverse': $vuetify.breakpoint.xs }">
+              <v-col cols="12" sm="9" class="d-flex align-end">
+                <v-btn text color="primary" @click="switchDialogs">Login with your credentials</v-btn>
+              </v-col>
+              <v-col cols="12" sm="2" :class="{ 'd-flex': $vuetify.breakpoint.xs, 'justify-center': $vuetify.breakpoint.xs }">
+                <v-btn x-large :disabled="!resetPasswordFormValid" color="primary" align-end @click="resetPassword">Reset</v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" text color="red">
       <p class="text-center">{{ errTitle }}</p>
@@ -118,7 +148,8 @@ export default {
   setup(props, { root }) {
     const primaryColorAdmin = ref(scssVariables.primaryColorAdmin)
     const accentColorAdmin = ref(scssVariables.accentColorAdmin)
-    const dialog = ref(true)
+    const showLoginDialog = ref(true)
+    const showResetPasswordDialog = ref(false)
     const snackbar = ref(false)
     const animated = ref(false)
     const tab = ref(0)
@@ -126,7 +157,9 @@ export default {
       { name: 'Login', icon: 'mdi-account', disabled: false },
       { name: 'Register', icon: 'mdi-account-outline', disabled: false },
     ])
-    const valid = ref(true)
+    const loginFormValid = ref(false)
+    const registerFormValid = ref(false)
+    const resetPasswordFormValid = ref(false)
     const errMsg = ref('')
     const errTitle = ref('')
 
@@ -223,6 +256,16 @@ export default {
       registerForm.value.resetValidation()
     }
 
+    const resetPasswordEmail = ref('')
+    const resetPassword = () => {
+      console.log('resetting password: ', resetPasswordEmail.value)
+    }
+
+    const switchDialogs = () => {
+      showLoginDialog.value = !showLoginDialog.value
+      showResetPasswordDialog.value = !showResetPasswordDialog.value
+    }
+
     onBeforeMount(() => {
       if (store.state.user) {
         router.push('admin')
@@ -232,10 +275,11 @@ export default {
     return {
       primaryColorAdmin,
       accentColorAdmin,
-      dialog,
+      showLoginDialog,
+      showResetPasswordDialog,
       tab,
       tabs,
-      valid,
+      loginFormValid,
       name,
       surname,
       email,
@@ -260,6 +304,11 @@ export default {
       animated,
       errMsg,
       errTitle,
+      resetPassword,
+      resetPasswordEmail,
+      switchDialogs,
+      resetPasswordFormValid,
+      registerFormValid,
     }
   },
 }
