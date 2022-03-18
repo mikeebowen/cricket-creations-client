@@ -16,7 +16,7 @@
               <v-form ref="loginForm" v-model="loginFormValid">
                 <v-row>
                   <v-col cols="12">
-                    <v-text-field v-model="loginEmail" :rules="loginEmailRules" label="Email" type="email" required />
+                    <v-text-field v-model="loginEmail" :rules="emailRules" label="Email" type="email" required />
                   </v-col>
                 </v-row>
                 <v-row>
@@ -114,7 +114,13 @@
           <v-form v-model="resetPasswordFormValid">
             <v-row class="px-4">
               <v-col cols="12">
-                <v-text-field v-model="resetPasswordEmail" :rules="loginEmailRules" type="email" label="Email Address" />
+                <v-text-field
+                  v-model="resetPasswordEmail"
+                  :rules="emailRules"
+                  type="email"
+                  label="Email Address"
+                  :class="{ shake: invalidResetEmail }"
+                />
               </v-col>
             </v-row>
             <v-row :class="{ 'flex-column-reverse': $vuetify.breakpoint.xs }">
@@ -122,11 +128,17 @@
                 <v-btn text color="primary" @click="switchDialogs">Login with your credentials</v-btn>
               </v-col>
               <v-col cols="12" sm="2" :class="{ 'd-flex': $vuetify.breakpoint.xs, 'justify-center': $vuetify.breakpoint.xs }">
-                <v-btn x-large :disabled="!resetPasswordFormValid" color="primary" align-end @click="resetPassword">Reset</v-btn>
+                <v-btn x-large :disabled="!resetPasswordFormValid" color="primary" align-end @click="sendResetPasswordCode">Reset</v-btn>
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showCheckEmailDialog" persistent max-width="600px" min-width="360px">
+      <v-card>
+        <v-card-title> Reset password code sent </v-card-title>
+        <v-card-text> Please check your inbox for the password reset code. </v-card-text>
       </v-card>
     </v-dialog>
     <v-snackbar v-model="snackbar" text color="red">
@@ -150,8 +162,10 @@ export default {
     const accentColorAdmin = ref(scssVariables.accentColorAdmin)
     const showLoginDialog = ref(true)
     const showResetPasswordDialog = ref(false)
+    const showCheckEmailDialog = ref(false)
     const snackbar = ref(false)
     const animated = ref(false)
+    const invalidResetEmail = ref(false)
     const tab = ref(0)
     const tabs = ref([
       { name: 'Login', icon: 'mdi-account', disabled: false },
@@ -171,7 +185,6 @@ export default {
     const verify = ref('')
     const loginPassword = ref('')
     const loginEmail = ref('')
-    const loginEmailRules = ref([v => !!v || 'Required', v => /.+@.+\..+/.test(v) || 'Email must be valid'])
     const emailRules = ref([v => !!v || 'Required', v => /.+@.+\..+/.test(v) || 'Email must be valid'])
     const passwordMatch = computed(() => password.value === verify.value || 'Password must match')
     const loading = ref(false)
@@ -257,8 +270,12 @@ export default {
     }
 
     const resetPasswordEmail = ref('')
-    const resetPassword = () => {
-      console.log('resetting password: ', resetPasswordEmail.value)
+    const sendResetPasswordCode = async () => {
+      await store.dispatch('user/sendResetPasswordCode', resetPasswordEmail.value)
+
+      showLoginDialog.value = false
+      showResetPasswordDialog.value = false
+      showCheckEmailDialog.value = true
     }
 
     const switchDialogs = () => {
@@ -288,7 +305,6 @@ export default {
       verify,
       loginPassword,
       loginEmail,
-      loginEmailRules,
       emailRules,
       show1,
       rules,
@@ -304,11 +320,13 @@ export default {
       animated,
       errMsg,
       errTitle,
-      resetPassword,
+      sendResetPasswordCode,
       resetPasswordEmail,
       switchDialogs,
       resetPasswordFormValid,
       registerFormValid,
+      showCheckEmailDialog,
+      invalidResetEmail,
     }
   },
 }
@@ -320,30 +338,5 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.shake {
-  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  transform: translate3d(0, 0, 0);
-}
-
-@keyframes shake {
-  10%,
-  90% {
-    transform: translate3d(-1px, 0, 0);
-  }
-  20%,
-  80% {
-    transform: translate3d(2px, 0, 0);
-  }
-  30%,
-  50%,
-  70% {
-    transform: translate3d(-4px, 0, 0);
-  }
-  40%,
-  60% {
-    transform: translate3d(4px, 0, 0);
-  }
 }
 </style>

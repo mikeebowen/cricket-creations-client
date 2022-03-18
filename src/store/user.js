@@ -113,6 +113,24 @@ export default {
         return Promise.reject(err)
       }
     },
+    async sendResetPasswordCode({ commit }, emailAddress) {
+      try {
+        const res = await axios.post('/api/user/set-reset-code', { emailAddress })
+
+        commit('SET_USER', null)
+
+        if (res.status === 200) {
+          return Promise.resolve(true)
+        }
+
+        return Promise.resolve(false)
+      } catch (err) {
+        if (err?.response?.status === 404) {
+          return Promise.resolve(false)
+        }
+        return Promise.reject(err)
+      }
+    },
   },
 }
 

@@ -42,7 +42,7 @@ const router = new Router({
       path: '/projects',
       name: 'projects',
       components: {
-        default: () => import(/* webpackChunkName: "tagSearch" */ '@/views/Blog.vue'),
+        default: () => import(/* webpackChunkName: "projects" */ '@/views/Blog.vue'),
         header: () => import('@/components/Header.vue'),
         footer: null,
       },
@@ -106,10 +106,23 @@ const router = new Router({
       },
     },
     {
+      path: '/password-reset/:id',
+      name: 'passwordReset',
+      components: {
+        header: () => import('@/components/Header.vue'),
+        footer: null,
+        default: () => import(/* webpackChunkName: "passwordReset" */ '@/views/ResetPassword.vue'),
+      },
+    },
+    {
+      path: '/password-reset',
+      redirect: { name: 'login' },
+    },
+    {
       path: '/notfound',
       name: 'notfound',
       components: {
-        default: () => import(/* webpackChunkName: "page" */ '@/views/FourOFour.vue'),
+        default: () => import(/* webpackChunkName: "notfound" */ '@/views/FourOFour.vue'),
         header: () => import('@/components/Header.vue'),
         footer: () => import('@/components/Footer.vue'),
       },
