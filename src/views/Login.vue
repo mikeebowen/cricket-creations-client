@@ -205,8 +205,8 @@ export default {
           const user = store.state?.user?.user
 
           if (user) {
-            router.push('admin')
             loading.value = false
+            await router.push('admin')
           }
         } catch (err) {
           errTitle.value = 'Login Failed'

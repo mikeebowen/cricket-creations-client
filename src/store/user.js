@@ -16,18 +16,10 @@ export default {
   },
   actions: {
     login: async ({ commit }, loginInfo) => {
-      try {
-        const res = await axios.post('/api/user/authenticate', loginInfo)
-        if (res) {
-          const user = getUser(res)
-          commit('SET_USER', user)
-        } else {
-          commit('SET_USER', null)
-        }
-        return Promise.resolve()
-      } catch (err) {
-        return Promise.reject(err)
-      }
+      return await validateUser(loginInfo, '/api/user/authenticate', commit)
+    },
+    async loginWithResetToken({ commit }, loginInfo) {
+      return await validateUser({ resetCode: loginInfo.resetCode }, `/api/user/validate-reset-code/${loginInfo?.id}`, commit)
     },
     async saveUser({ commit, dispatch }, userInfo) {
       try {
@@ -162,4 +154,20 @@ function getDatabaseUser(user) {
   newUser.Avatar = user.avatar
 
   return newUser
+}
+
+async function validateUser(loginInfo, api, commit) {
+  try {
+    const res = await axios.post(api, loginInfo)
+
+    if (res) {
+      const user = getUser(res)
+      commit('SET_USER', user)
+    } else {
+      commit('SET_USER', null)
+    }
+    return Promise.resolve()
+  } catch (err) {
+    return Promise.reject(err)
+  }
 }

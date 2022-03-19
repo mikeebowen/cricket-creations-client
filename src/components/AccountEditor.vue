@@ -201,8 +201,13 @@ export default defineComponent({
     }
 
     const updatePassword = async () => {
-      await store.dispatch('user/updatePassword', password.value)
-      dialog.value = false
+      try {
+        await store.dispatch('user/updatePassword', password.value)
+        dialog.value = false
+      } catch (err) {
+        errors.value = Object.entries(err?.response?.data?.errors) || [err?.message] || [err]
+        snackbar.value = true
+      }
     }
 
     const snackbar = ref(false)
