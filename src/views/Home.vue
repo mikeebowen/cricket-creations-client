@@ -2,19 +2,25 @@
   <span class="content-wrapper">
     <div v-for="i in 4" :id="`stars${i}`" :key="i" />
     <v-container class="main-wrapper d-flex flex-column justify-space-around">
-      <div class="home-container pt-4 align-start">
-        <h1 class="text-center">Cricket Creations</h1>
-      </div>
-      <div class="home-container">
-        <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" />
-      </div>
-      <div class="home-container mt-5">
-        <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
-          <span class="pr-1">{</span>
-          {{ page.name }}
-          <span class="pl-1">}</span>
-        </v-btn>
-      </div>
+      <v-row>
+        <v-col class="home-container pt-4 align-start">
+          <h1 class="text-center">Cricket Creations</h1>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="home-container">
+          <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="home-container mt-5">
+          <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
+            <span class="pr-1">{</span>
+            {{ page.name }}
+            <span class="pl-1">}</span>
+          </v-btn>
+        </v-col>
+      </v-row>
       <ExplodingParticles v-show="showParticles" ref="particles" />
     </v-container>
   </span>
