@@ -28,6 +28,7 @@
 
 <script>
 import ExplodingParticles from '@/components/ExplodingParticles.vue'
+import store from '../store/store'
 
 export default {
   name: 'Home',
@@ -52,6 +53,13 @@ export default {
     body.removeEventListener('mousedown', this.toggleStarBurst)
     body.removeEventListener('mouseup', this.toggleStarBurst)
     body.removeAttribute('style')
+  },
+  beforeMount() {
+    store.dispatch('page/getPages', this.$route.name).then(() => {
+      const dynamicPages = store.state.page.pages.filter(p => p.published).map(p => ({ name: p.heading, link: encodeURI(`${p.heading}`) }))
+
+      this.pages = [...this.pages, ...dynamicPages]
+    })
   },
   methods: {
     toggleStarBurst(e) {
