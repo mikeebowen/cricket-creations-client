@@ -30,7 +30,13 @@
     </v-row>
     <v-row>
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
-        <v-text-field v-model="selectedPost.title" label="Title" />
+        <v-text-field
+          ref="titleField"
+          v-model="selectedPost.title"
+          :rules="[x => !!x || 'Title is required']"
+          label="Title"
+          aria-required="true"
+        />
       </v-col>
     </v-row>
     <v-row>
@@ -57,6 +63,11 @@
     <v-row>
       <v-col class="blog-post-editor" xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <Editor v-model="selectedPost.content" :init="editorConfig" />
+        <v-snackbar v-model="titleErrorSnackbar" text color="red">
+          <v-icon color="red">mdi-alert</v-icon>
+          Title is required
+          <v-icon color="red" style="float: right" @click="titleErrorSnackbar = false">mdi-close-circle-outline</v-icon>
+        </v-snackbar>
       </v-col>
     </v-row>
     <ConfirmDialog ref="dialog" :headline="headline" :message="message" activator-class="activator" />
@@ -123,6 +134,8 @@ export default {
     const cachedPost = computed(() => store.state.blogPost.cachedPost)
     const showEditor = ref(false)
     const file = ref(null)
+    const titleField = ref(null)
+    const titleErrorSnackbar = ref(false)
 
     const selectPost = blogPost => {
       store.dispatch('blogPost/selectPost', new BlogPost(blogPost))
@@ -136,16 +149,20 @@ export default {
 
     const updatePost = async () => {
       try {
-        loading.value = true
-        showEditor.value = false
+        if (titleField.value.valid) {
+          loading.value = true
+          showEditor.value = false
 
-        await store.dispatch('blogPost/updatePost', selectedPost.value)
-        await getBlogPosts()
+          await store.dispatch('blogPost/updatePost', selectedPost.value)
+          await getBlogPosts()
 
-        page.value = 1
-        loading.value = false
-        showEditor.value = true
-        file.value = null
+          page.value = 1
+          loading.value = false
+          showEditor.value = true
+          file.value = null
+        } else {
+          titleErrorSnackbar.value = true
+        }
       } catch (err) {
         errors.value = err.message || err
         loading.value = false
@@ -297,6 +314,8 @@ export default {
       file,
       onFilePicked,
       resetPost,
+      titleField,
+      titleErrorSnackbar,
     }
   },
 }
