@@ -8,12 +8,12 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col class="home-container">
+        <v-col class="cricket-container home-container">
           <img src="@/assets/images/grasshopper-black.png" alt="grasshopper" />
         </v-col>
       </v-row>
       <v-row>
-        <v-col class="home-container mt-5">
+        <v-col class="home-container">
           <v-btn v-for="(page, i) in pages" :key="i" text x-large top :to="`${page.link}`" class="homepage-link">
             <span class="pr-1">{</span>
             {{ page.name }}
@@ -127,7 +127,9 @@ export default {
       text-decoration: none;
     }
   }
+}
 
+.cricket-container {
   img {
     max-height: 300px;
   }
@@ -199,7 +201,9 @@ $shadows-xl: multiple-box-shadow(500);
     h1 {
       font-size: 3.8rem;
     }
+  }
 
+  .cricket-container {
     img {
       max-width: 350px;
     }
@@ -211,13 +215,17 @@ $shadows-xl: multiple-box-shadow(500);
     &::v-deep .v-btn:not(.v-btn--round).v-size--x-large {
       padding-right: 0;
     }
+
+    overflow: visible;
   }
 
   .home-container {
     h1 {
       font-size: 2.8rem;
     }
+  }
 
+  .cricket-container {
     img {
       max-height: 150px;
     }

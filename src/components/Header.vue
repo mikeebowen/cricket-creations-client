@@ -9,7 +9,7 @@
     <v-toolbar-items>
       <v-btn :class="{ admin__text: isAdmin }" text to="/projects"> Projects </v-btn>
       <v-btn :class="{ admin__text: isAdmin }" text to="/blog"> Blog </v-btn>
-      <v-btn v-for="page in pages" :key="page.id" :class="{ admin__text: isAdmin }" text :to="encodeURI(`${page.heading}`)">
+      <v-btn v-for="page in pages" :key="page.id" :class="{ admin__text: isAdmin }" text :to="{ path: `/${encodeURI(page.heading)}` }">
         {{ page.heading }}
       </v-btn>
     </v-toolbar-items>
