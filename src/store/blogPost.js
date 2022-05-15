@@ -26,7 +26,7 @@ export default {
         state.cachedPost = null
       } else {
         state.selectedPost = blogPost instanceof BlogPost ? blogPost : new BlogPost(blogPost)
-        state.cachedPost = cloneDeep(blogPost)
+        state.cachedPost = cloneDeep(state.selectedPost)
       }
     },
     SET_CACHED_POST(state, blogPost) {
@@ -75,20 +75,26 @@ export default {
         await refreshCredentials()
 
         if (blogPost.id) {
-          await axios.patch('/api/blogpost', blogPost.patchData, {
+          const {
+            data: { data },
+          } = await axios.patch('/api/blogpost', blogPost.patchData, {
             headers: {
               Authorization: 'Bearer ' + store.state?.user?.user?.token,
             },
           })
-        } else {
-          await axios.post('/api/blogpost', blogPost.data, {
-            headers: {
-              Authorization: 'Bearer ' + store.state?.user?.user?.token,
-            },
-          })
-        }
 
-        commit('SET_CACHED_POST', blogPost)
+          commit('SELECT_POST', data)
+        } else {
+          const {
+            data: { data },
+          } = await axios.post('/api/blogpost', blogPost.data, {
+            headers: {
+              Authorization: 'Bearer ' + store.state?.user?.user?.token,
+            },
+          })
+
+          commit('SELECT_POST', data)
+        }
 
         return Promise.resolve()
       } catch (err) {
