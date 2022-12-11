@@ -44,11 +44,9 @@
       <v-row>
         <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
           <v-tabs-items v-model="tabIndex">
-            <template v-for="(page, i) in pages">
-              <v-tab-item :key="page.id" :value="`${i}`">
-                <Editor v-model="page.content" :init="editorConfig" />
-              </v-tab-item>
-            </template>
+            <v-tab-item v-for="(page, i) in pages" :key="page.id" :value="`${i}`">
+              <Editor v-model="page.content" :init="editorConfig" />
+            </v-tab-item>
           </v-tabs-items>
         </v-col>
       </v-row>

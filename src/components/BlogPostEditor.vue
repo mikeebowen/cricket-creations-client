@@ -111,7 +111,7 @@ import 'tinymce/plugins/codesample'
 import 'tinymce/plugins/code'
 import { DateTime } from 'luxon'
 import isEqual from 'lodash.isequal'
-import { ref, onMounted, watch, computed } from '@vue/composition-api'
+import { ref, onMounted, watch, computed, onDeactivated } from '@vue/composition-api'
 import { defaultEditorConfig } from '@/utils/utils'
 
 export default {
@@ -279,12 +279,25 @@ export default {
       })
     }
 
+    const ctrlSHandler = e => {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault()
+
+        updatePost()
+      }
+    }
+
     watch(page, async (cur, prev) => {
       await getBlogPosts()
     })
 
     onMounted(async () => {
+      document.addEventListener('keydown', ctrlSHandler)
       await getBlogPosts()
+    })
+
+    onDeactivated(() => {
+      document.removeEventListener('keydown', ctrlSHandler)
     })
 
     return {
