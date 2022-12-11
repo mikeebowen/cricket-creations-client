@@ -19,7 +19,7 @@
     </v-card-subtitle>
     <v-card-text>
       <v-divider />
-      <p class="text-subtitle-2 text-right mb-0">{{ lastUpdated }}</p>
+      <p class="text-subtitle-2 text-right mb-0">{{ blogPost.formattedCreatedDate }}</p>
       <v-chip-group column>
         <v-chip v-for="tag in blogPost.tags" :key="tag.id" class="text-uppercase" @click="loadTagPage(tag)">{{ tag.name }}</v-chip>
       </v-chip-group>
@@ -38,7 +38,6 @@
 import deburr from 'lodash.deburr'
 import BlogPost from '@/models/BlogPost'
 import router from '@/router'
-import { DateTime } from 'luxon'
 
 export default {
   name: 'BlogPostCard',
@@ -53,9 +52,6 @@ export default {
   computed: {
     slug() {
       return deburr(`${this.blogPost.id}-${this.blogPost.title.replaceAll(' ', '-').replace(/[^a-zA-Z0-9-_]/g, '')}`).toLowerCase()
-    },
-    lastUpdated() {
-      return DateTime.fromISO(this.blogPost.lastUpdated).toLocaleString(DateTime.DATE_FULL)
     },
   },
   methods: {

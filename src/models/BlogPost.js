@@ -1,4 +1,5 @@
 import { sanitize } from 'dompurify'
+import { DateTime } from 'luxon'
 
 class BlogPost {
   id
@@ -42,6 +43,10 @@ class BlogPost {
       Id: this.id,
       ...this.data,
     }
+  }
+
+  get formattedCreatedDate() {
+    return DateTime.fromISO(this.created).toLocaleString(DateTime.DATE_FULL)
   }
 }
 
