@@ -21,6 +21,16 @@
     </v-row>
     <v-row>
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
+        <v-divider />
+        <v-chip-group column>
+          <v-chip v-for="tag in selectedBlogPost.tags" :key="tag.id" class="text-uppercase" @click="loadTagPage(tag)">
+            {{ tag.name }}
+          </v-chip>
+        </v-chip-group>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <v-sheet class="blog-post-sheet" color="white" elevation="1" outlined tile v-html="selectedBlogPost && selectedBlogPost.content" />
       </v-col>
     </v-row>
@@ -30,6 +40,7 @@
 <script>
 import BlogPost from '@/models/BlogPost'
 import store from '@/store/store'
+import router from '@/router'
 
 export default {
   name: 'BlogPost',
@@ -49,6 +60,11 @@ export default {
       const id = this.blogPostSlug.split('-')[0]
       await store.dispatch('blogPost/getPost', id)
     }
+  },
+  methods: {
+    loadTagPage(e) {
+      router.push({ name: 'tagSearch', params: { tagName: e.name } })
+    },
   },
 }
 </script>
