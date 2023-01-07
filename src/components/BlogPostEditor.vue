@@ -156,7 +156,6 @@ export default {
           await store.dispatch('blogPost/updatePost', selectedPost.value)
           await getBlogPosts()
 
-          page.value = 1
           loading.value = false
           showEditor.value = true
           file.value = null
