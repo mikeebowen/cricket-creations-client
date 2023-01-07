@@ -3,7 +3,7 @@
     <v-row v-if="selectedBlogPost && selectedBlogPost.title">
       <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
         <p class="text-h1">{{ selectedBlogPost.title }}</p>
-        <p v-if="selectedBlogPost && selectedBlogPost.subtitle" class="text-subtitle-1">{{ selectedBlogPost.subtitle }}</p>
+        <p v-if="selectedBlogPost && selectedBlogPost.subtitle" class="text-h4">{{ selectedBlogPost.subtitle }}</p>
       </v-col>
     </v-row>
     <v-row v-if="selectedBlogPost && selectedBlogPost.image">
@@ -12,7 +12,10 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col xl="6" lg="8" sm="10" offset-xl="3" offset-lg="2" offset-sm="1">
+      <v-col xl="2" offset-xl="3" lg="5" offset-lg="2" offset-md="1" offset-sm="1" cols="5">
+        <p class="my-0">{{ selectedBlogPost.formattedCreatedDate }}</p>
+      </v-col>
+      <v-col xl="4" lg="3" md="5" sm="5">
         <p class="text-right my-0">By: {{ selectedBlogPost.author }}</p>
       </v-col>
     </v-row>
