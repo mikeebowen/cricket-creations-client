@@ -11,7 +11,7 @@
         </template>
       </v-img>
     </router-link>
-    <v-card-title v-if="!isLoading && blogPost && blogPost.title" class="align-end fill-height">
+    <v-card-title v-if="!isLoading && blogPost && blogPost.title" class="align-end fill-height blog-post-card__title">
       {{ blogPost.title }}
     </v-card-title>
     <v-card-subtitle>
@@ -62,4 +62,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.blog-post-card__title {
+  word-break: break-word;
+}
+</style>

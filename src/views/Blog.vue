@@ -31,7 +31,7 @@ export default {
     const blogPosts = ref([])
     const total = ref(null)
     const page = ref(1)
-    const count = ref(4)
+    const count = ref(8)
     const title = ref('')
 
     const getBlogPosts = async () => {
@@ -85,7 +85,7 @@ export default {
 
           blogPosts.value.push(...res.data.map(p => new BlogPost(p)))
 
-          page.value++
+          count.value = 4
           loading.value = false
         }
       } catch (err) {
@@ -108,15 +108,13 @@ export default {
     }
 
     onMounted(async () => {
-      await getBlogPosts()
       document.body.addEventListener('scroll', onScroll)
+      let hasVerticalScrollbar
 
-      let hasVerticalScrollbar = document.body.scrollHeight > document.body.clientHeight
-
-      while (!hasVerticalScrollbar && total.value > count.value * page.value) {
+      do {
         await getBlogPosts()
         hasVerticalScrollbar = document.body.scrollHeight > document.body.clientHeight
-      }
+      } while (!hasVerticalScrollbar && total.value > count.value * page.value)
     })
 
     onBeforeUnmount(() => {
