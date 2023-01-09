@@ -22,7 +22,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.deburr": "^4.1.0",
     "lodash.isequal": "^4.5.0",
-    "luxon": "^1.26.0",
+    "luxon": "^2.5.2",
     "tinymce": "^5.7.0",
     "vue": "^2.6.12",
     "vue-masonry-css": "^1.0.3",
