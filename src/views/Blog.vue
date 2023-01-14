@@ -85,6 +85,7 @@ export default {
 
           blogPosts.value.push(...res.data.map(p => new BlogPost(p)))
 
+          page.value++
           count.value = 4
           loading.value = false
         }
